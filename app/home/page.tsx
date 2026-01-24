@@ -19,85 +19,47 @@ import { checkSSOSession, getSSOLoginUrl } from '@/lib/sso-utils'
  * เช็คว่าเป็น development environment หรือไม่ (client-side)
  */
 function isDevelopment(): boolean {
-  const nodeEnv = process.env.NODE_ENV
-  if (nodeEnv === 'development' || !nodeEnv) {
-    return true
-  }
-  if (nodeEnv !== 'production') {
-    return true
-  }
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname
-    const port = window.location.port
-    if (
-      hostname === 'localhost' ||
-      hostname === '127.0.0.1' ||
-      port === '8112' ||
-      port === '3000' ||
-      port === '3001'
-    ) {
-      return true
-    }
-    if (!hostname.includes('trirex.com') && !hostname.includes('lobbey360.trirex.com')) {
-      return true
-    }
-  }
-  if (process.env.NEXT_PUBLIC_SSO_BASE_URL?.includes('localhost')) {
-    return true
-  }
-  return false
+  return process.env.NODE_ENV === 'development';
 }
 
 /**
  * ดึง Lobbey Base URL ตาม environment (client-side)
  */
 function getLobbeyBaseURL(): string {
-  const isDev = isDevelopment()
-  return isDev ? 'http://lobbey.local:8112' : 'https://360.trirex.cloud'
+  if (process.env.NEXT_PUBLIC_LOBBEY_URL) return process.env.NEXT_PUBLIC_LOBBEY_URL;
+  return 'https://360.trirex.cloud';
 }
 
 /**
  * ดึง BI Base URL ตาม environment (client-side)
  */
 function getBIBaseURL(): string {
-  if (process.env.NEXT_PUBLIC_BI_URL) {
-    return process.env.NEXT_PUBLIC_BI_URL
-  }
-  const isDev = isDevelopment()
-  return isDev ? 'http://bi.local:8113' : 'https://bi360.trirex.cloud'
+  if (process.env.NEXT_PUBLIC_BI_URL) return process.env.NEXT_PUBLIC_BI_URL;
+  return 'https://bi360.trirex.cloud';
 }
 
 /**
  * ดึง SSO Base URL ตาม environment (client-side)
  */
 function getSSOBaseURL(): string {
-  if (process.env.NEXT_PUBLIC_SSO_BASE_URL) {
-    return process.env.NEXT_PUBLIC_SSO_BASE_URL
-  }
-  const isDev = isDevelopment()
-  return isDev ? 'http://sso.local:8111' : 'https://sso360.trirex.cloud'
+  if (process.env.NEXT_PUBLIC_SSO_BASE_URL) return process.env.NEXT_PUBLIC_SSO_BASE_URL;
+  return 'https://sso360.trirex.cloud';
 }
 
 /**
  * ดึง POS Base URL ตาม environment (client-side)
  */
 function getPOSBaseURL(): string {
-  if (process.env.NEXT_PUBLIC_POS_URL) {
-    return process.env.NEXT_PUBLIC_POS_URL
-  }
-  const isDev = isDevelopment()
-  return isDev ? 'http://pos.local:8114' : 'https://pos.trirex.cloud'
+  if (process.env.NEXT_PUBLIC_POS_URL) return process.env.NEXT_PUBLIC_POS_URL;
+  return 'https://pos.trirex.cloud';
 }
 
 /**
  * ดึง NexDocs Base URL ตาม environment (client-side)
  */
 function getNexDocsBaseURL(): string {
-  if (process.env.NEXT_PUBLIC_NEXDOCS_URL) {
-    return process.env.NEXT_PUBLIC_NEXDOCS_URL
-  }
-  const isDev = isDevelopment()
-  return isDev ? 'http://nexdocs.local:8115' : 'https://nexdocs.trirex.cloud'
+  if (process.env.NEXT_PUBLIC_NEXDOCS_URL) return process.env.NEXT_PUBLIC_NEXDOCS_URL;
+  return 'https://nexdocs.trirex.cloud';
 }
 
 function HomePageContent() {
