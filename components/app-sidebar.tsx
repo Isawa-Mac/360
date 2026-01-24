@@ -22,6 +22,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { UserMenu } from "@/components/user-menu"
 import { SystemSwitcher } from "@/components/system-switcher"
 import { usePathname } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 
 export function AppSidebar() {
   const { user } = useAuth()
