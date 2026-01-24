@@ -5,6 +5,8 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { useHeaderControl } from "@/contexts/header-control-context"
 import { HeaderFilters } from "@/components/header-filters"
 import { cn } from "@/lib/utils"
+import { UserMenu } from "@/components/user-menu"
+import { useAuth } from "@/contexts/auth-context"
 import { DashboardControl } from "@/components/dashboard-control"
 import { useDashboardScale } from "@/contexts/dashboard-scale-context"
 import { usePathname } from "next/navigation"
@@ -33,6 +35,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
 
   const headerControl = useHeaderControl()
   const dashboardScale = useDashboardScale()
+  const { user } = useAuth()
 
   useEffect(() => {
     setMounted(true)
@@ -130,6 +133,13 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
               onScaleChange={setScaleMode}
             />
           </div>
+          <Separator orientation="vertical" className="h-6 mx-1" />
+          <UserMenu
+            name={user?.username || "Guest"}
+            email={user?.email || ""}
+            avatarSrc={user?.avatarUrl}
+            className="w-auto border-none hover:bg-transparent"
+          />
         </div>
       </header>
 

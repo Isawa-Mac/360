@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 const nexusInsightUser: User = {
                     username: userObj.username || userObj.email,
                     email: userObj.email,
-                    avatarUrl: userObj.avatarUrl,
+                    avatarUrl: userObj.avatarUrl || userObj.avatar_url,
                     roles: [],
                     isSuperAdmin: userObj.username === 'admin'
                 };
@@ -197,7 +197,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     id: user.id,
                     username: user.username || user.email,
                     email: user.email,
-                    avatarUrl: user.avatarUrl,
+                    avatarUrl: user.avatarUrl || user.avatar_url,
                     isSuperAdmin: user.username === 'admin'
                 };
                 setUser(nexusUser);

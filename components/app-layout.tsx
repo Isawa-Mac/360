@@ -13,6 +13,8 @@ import { Help } from "@/components/ui/help"
 import { ReactNode } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ProjectToggle } from "@/components/project-toggle"
+import { UserMenu } from "@/components/user-menu"
+import { useAuth } from "@/contexts/auth-context"
 
 
 interface AppLayoutProps {
@@ -31,9 +33,9 @@ interface AppLayoutProps {
 }
 
 // Inner component that uses the module context
-function AppLayoutInner({ 
-  children, 
-  showFilters = true, 
+function AppLayoutInner({
+  children,
+  showFilters = true,
   disableDepartment = false,
   disableEmployee = false,
   pageTitle: customPageTitle,
@@ -50,6 +52,7 @@ function AppLayoutInner({
   const [pageDescription, setPageDescription] = useState("")
   const [mounted, setMounted] = useState(false)
   const { isHeaderHidden, setHeaderHidden } = useFullscreen()
+  const { user } = useAuth()
 
   useEffect(() => {
     setMounted(true)
@@ -116,6 +119,13 @@ function AppLayoutInner({
                   activeColor="blue-500"
                   activeSegment="first"
                 />
+                <Separator orientation="vertical" className="h-6 mx-1" />
+                <UserMenu
+                  name={user?.username || "Guest"}
+                  email={user?.email || ""}
+                  avatarSrc={user?.avatarUrl}
+                  className="w-auto border-none hover:bg-transparent"
+                />
               </div>
 
             </header>
@@ -135,7 +145,7 @@ function AppLayoutInner({
         </div>
 
       </div>
-      
+
 
     </SidebarProvider>
   )
@@ -162,7 +172,7 @@ function SidebarAutoClose({ pathname, mounted }: { pathname: string; mounted: bo
       const timer = setTimeout(() => {
         setOpen(false)
       }, 100)
-      
+
       prevPathnameRef.current = pathname
       return () => clearTimeout(timer)
     }
@@ -171,9 +181,9 @@ function SidebarAutoClose({ pathname, mounted }: { pathname: string; mounted: bo
   return null
 }
 
-export function AppLayout({ 
-  children, 
-  showFilters = true, 
+export function AppLayout({
+  children,
+  showFilters = true,
   disableDepartment = false,
   disableEmployee = false,
   pageTitle,
@@ -187,7 +197,7 @@ export function AppLayout({
   // Regular app layout with sidebar
   return (
     <ModuleProvider>
-      <AppLayoutInner 
+      <AppLayoutInner
         showFilters={showFilters}
         disableDepartment={disableDepartment}
         disableEmployee={disableEmployee}

@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn, getPermissionsFromCookie } from "@/lib/utils"
 import menuConfig from "@/lib/user-menu-config.json"
+import { useAuth } from "@/contexts/auth-context"
 
 interface MenuItem {
   id: string
@@ -45,13 +46,14 @@ export function UserMenu({
   className,
   permissionsCookieName = "permissions",
 }: UserMenuProps) {
+  const { logout } = useAuth()
   const [permissions, setPermissions] = React.useState<string[]>([])
 
   React.useEffect(() => {
     // Read permissions from cookie on mount
     const cookiePermissions = getPermissionsFromCookie(permissionsCookieName)
     setPermissions(cookiePermissions)
-    
+
     // Optional: Listen for cookie changes
     const interval = setInterval(() => {
       const newPermissions = getPermissionsFromCookie(permissionsCookieName)
@@ -62,7 +64,7 @@ export function UserMenu({
         return prev
       })
     }, 1000) // Check every second
-    
+
     return () => clearInterval(interval)
   }, [permissionsCookieName])
 
@@ -79,6 +81,13 @@ export function UserMenu({
   // Logout always visible, no permission check needed
   const canLogout = true
 
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "GU"
+
   const renderIcon = (iconName: string) => {
     const Icon = iconMap[iconName]
     return Icon ? <Icon /> : null
@@ -89,13 +98,15 @@ export function UserMenu({
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "flex items-center gap-2 px-2 py-2 rounded-md hover:bg-accent hover:bg-sidebar-accent transition-colors w-full text-left",
+            "flex items-center gap-3 px-2 py-2 rounded-md hover:bg-accent hover:bg-sidebar-accent transition-colors w-full text-left",
             className
           )}
         >
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-8 w-8 border border-border/50">
             <AvatarImage src={avatarSrc} alt={name} />
-            <AvatarFallback>{avatarFallback}</AvatarFallback>
+            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+              {initials}
+            </AvatarFallback>
           </Avatar>
           <div className="flex flex-col flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
             <div className="font-medium text-sm text-foreground text-sidebar-foreground truncate">
@@ -110,10 +121,12 @@ export function UserMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" side="right" className="w-56">
         <DropdownMenuLabel className="p-3">
-          <div className="flex items-center gap-2">
-            <Avatar className="h-8 w-8">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-8 w-8 border border-border/50">
               <AvatarImage src={avatarSrc} alt={name} />
-              <AvatarFallback>{avatarFallback}</AvatarFallback>
+              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                {initials}
+              </AvatarFallback>
             </Avatar>
             <div className="flex flex-col min-w-0">
               <div className="font-medium text-sm text-foreground truncate">
@@ -142,7 +155,10 @@ export function UserMenu({
         {canLogout && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant={menuConfig.logoutItem.variant as "default" | "destructive" | undefined}>
+            <DropdownMenuItem
+              variant={menuConfig.logoutItem.variant as "default" | "destructive" | undefined}
+              onSelect={logout}
+            >
               {renderIcon(menuConfig.logoutItem.icon)}
               {menuConfig.logoutItem.label}
             </DropdownMenuItem>

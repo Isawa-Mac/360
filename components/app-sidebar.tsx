@@ -21,10 +21,12 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { UserMenu } from "@/components/user-menu"
 import { SystemSwitcher } from "@/components/system-switcher"
+import { useAuth } from "@/contexts/auth-context"
 
 
 
 export function AppSidebar() {
+  const { user } = useAuth()
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -81,8 +83,9 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <UserMenu
-          name="superadmin"
-          email="isawa.mac@gmail.com"
+          name={user?.username || "Guest"}
+          email={user?.email || ""}
+          avatarSrc={user?.avatarUrl}
           className="group-data-[collapsible=icon]:justify-center"
         />
       </SidebarFooter>
