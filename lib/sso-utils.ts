@@ -11,17 +11,17 @@ function isDevelopment(): boolean {
   if (nodeEnv === 'development') {
     return true
   }
-  
+
   // เช็คว่า NODE_ENV ไม่ใช่ production
   if (nodeEnv !== 'production') {
     return true
   }
-  
+
   // เช็คจาก window.location (client-side only)
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname
     const port = window.location.port
-    
+
     // เช็คว่าเป็น localhost, 127.0.0.1, .local domain หรือ local development
     if (
       hostname === 'localhost' ||
@@ -34,19 +34,19 @@ function isDevelopment(): boolean {
     ) {
       return true
     }
-    
+
     // ถ้า hostname ไม่ใช่ production domain ให้ถือว่าเป็น dev
     if (!hostname.includes('trirex.com') && !hostname.includes('lobbey360.trirex.com')) {
       return true
     }
   }
-  
+
   // เช็คจาก environment variable อื่นๆ
-  if (process.env.NEXT_PUBLIC_SSO_BASE_URL?.includes('localhost') || 
-      process.env.NEXT_PUBLIC_SSO_BASE_URL?.includes('.local')) {
+  if (process.env.NEXT_PUBLIC_SSO_BASE_URL?.includes('localhost') ||
+    process.env.NEXT_PUBLIC_SSO_BASE_URL?.includes('.local')) {
     return true
   }
-  
+
   return false
 }
 
@@ -58,22 +58,22 @@ function getSSOBaseURL(): string {
   if (process.env.NEXT_PUBLIC_SSO_BASE_URL) {
     return process.env.NEXT_PUBLIC_SSO_BASE_URL
   }
-  
+
   // เช็ค environment และเลือก URL ที่เหมาะสม
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname
-    
+
     // ถ้าเป็น .local domain ให้ใช้ .local
     if (hostname.includes('.local')) {
       return DEV_SSO_BASE
     }
-    
+
     // ถ้าเป็น localhost ให้ใช้ localhost
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return DEV_SSO_BASE_LOCALHOST
     }
   }
-  
+
   const isDev = isDevelopment()
   return isDev ? DEV_SSO_BASE_LOCALHOST : PROD_SSO_BASE
 }
@@ -113,7 +113,7 @@ function decodeJWT(token: string): any | null {
   try {
     const parts = token.split('.')
     if (parts.length !== 3) return null
-    
+
     const payload = parts[1]
     const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'))
     return JSON.parse(decoded)
@@ -130,7 +130,7 @@ export function isTokenExpired(token: string): boolean {
   try {
     const decoded = decodeJWT(token)
     if (!decoded || !decoded.exp) return true
-    
+
     const expirationTime = decoded.exp * 1000 // Convert to milliseconds
     return Date.now() >= expirationTime
   } catch (error) {
@@ -145,7 +145,7 @@ export function getTimeUntilExpiration(token: string): number {
   try {
     const decoded = decodeJWT(token)
     if (!decoded || !decoded.exp) return 0
-    
+
     const expirationTime = decoded.exp * 1000 // Convert to milliseconds
     const timeUntilExpiration = expirationTime - Date.now()
     return Math.max(0, Math.floor(timeUntilExpiration / 1000))
@@ -200,7 +200,7 @@ export async function checkSSOSession(): Promise<SSOSession | null> {
   try {
     // เช็คว่าอยู่ใน server-side หรือ client-side
     const isServerSide = typeof window === 'undefined'
-    
+
     if (isServerSide) {
       // Server-side: เรียกตรงไปที่ SSO server (ไม่มี CORS issue)
       const response = await fetch(`${SSO_BASE_URL}/api/auth/session`, {
@@ -220,14 +220,14 @@ export async function checkSSOSession(): Promise<SSOSession | null> {
     } else {
       // Client-side: ใช้ API route เพื่อหลีกเลี่ยง CORS
       // ดึง token จาก localStorage เพื่อส่งผ่าน Authorization header
-      const token = typeof window !== 'undefined' 
+      const token = typeof window !== 'undefined'
         ? localStorage.getItem('bi_token') || null
         : null
-      
+
       const headers: HeadersInit = {
         'Content-Type': 'application/json',
       }
-      
+
       // ส่ง token ผ่าน Authorization header ถ้ามี
       if (token) {
         headers['Authorization'] = `Bearer ${token}`
@@ -242,14 +242,14 @@ export async function checkSSOSession(): Promise<SSOSession | null> {
           console.log('🔍 checkSSOSession - Token-related keys:', tokenKeys)
         }
       }
-      
+
       // สร้าง URL พร้อม query parameter (fallback)
       let sessionUrl = '/api/sso/session'
       if (token) {
         // ส่ง token ผ่าน query parameter เป็น fallback (ไม่แนะนำแต่ใช้ได้)
         sessionUrl += `?token=${encodeURIComponent(token)}`
       }
-      
+
       const response = await fetch(sessionUrl, {
         method: 'GET',
         headers,

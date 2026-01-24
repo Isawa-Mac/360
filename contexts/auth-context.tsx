@@ -136,15 +136,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
         setIsAuthenticated(false);
 
-        // Clear all localStorage items
+        // Clear all storage and cookies
         if (typeof window !== "undefined") {
+            // 1. Clear LocalStorage and SessionStorage
             localStorage.clear();
             sessionStorage.clear();
-        }
 
-        // Remove cookies
-        document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        document.cookie = "permissions=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            // 2. Clear all Cookies
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i];
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                // Clear for current path, root path, and common permutations
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname};`;
+            }
+        }
 
         // Redirect to logout success page
         window.location.href = "/auth/logout";
