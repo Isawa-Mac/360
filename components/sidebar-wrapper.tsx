@@ -133,13 +133,6 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
               onScaleChange={setScaleMode}
             />
           </div>
-          <Separator orientation="vertical" className="h-6 mx-1" />
-          <UserMenu
-            name={user?.username || "Guest"}
-            email={user?.email || ""}
-            avatarSrc={user?.avatarUrl}
-            className="w-auto border-none hover:bg-transparent"
-          />
         </div>
       </header>
 
