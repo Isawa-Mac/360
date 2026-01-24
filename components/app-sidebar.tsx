@@ -21,12 +21,17 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { UserMenu } from "@/components/user-menu"
 import { SystemSwitcher } from "@/components/system-switcher"
-import { useAuth } from "@/contexts/auth-context"
-
-
+import { usePathname } from "next/navigation"
 
 export function AppSidebar() {
   const { user } = useAuth()
+  const pathname = usePathname()
+
+  // Hide sidebar on auth pages (login, logout, callback)
+  if (pathname?.startsWith('/auth/')) {
+    return null
+  }
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
