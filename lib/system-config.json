@@ -1,0 +1,28 @@
+{
+  "currentSystem": "acme-inc",
+  "systems": [
+    {
+      "id": "acme-inc",
+      "name": "Acme Inc",
+      "description": "Enterprise System",
+      "icon": "Box",
+      "shortcut": "1"
+    },
+    {
+      "id": "acme-corp",
+      "name": "Acme Corp.",
+      "description": "Corporate System",
+      "icon": "Building2",
+      "shortcut": "2"
+    },
+    {
+      "id": "evil-corp",
+      "name": "Evil Corp.",
+      "description": "Organization System",
+      "icon": "Hexagon",
+      "shortcut": "3"
+    }
+  ],
+  "showAddSystem": true,
+  "addSystemLabel": "Add system"
+}

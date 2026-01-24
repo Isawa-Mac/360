@@ -1,0 +1,50 @@
+[
+  {
+    "id": "G1",
+    "รหัสกลุ่ม": "G1",
+    "ชื่อกลุ่ม": "อาชวีร์",
+    "updatedAt": "2025-11-26T05:28:27.229Z"
+  },
+  {
+    "id": "G3",
+    "รหัสกลุ่ม": "G3",
+    "ชื่อกลุ่ม": "อุตสาหกรรมแก้ว",
+    "logoUrl": "/uploads/departments/AQMJ0UO6379U_OHzJq-KaWT2FP5JQeyoJICcL_xgaUfRao8Rc2MLsppUvUn_uuSHyosDjWPFZ9dPoEWuQo_kp_Z9M8b230E_I5VJJ4UXanAP47ob4m933dfxLkOZtO-dQNyves3fUX54YtxLQOhJx0RfGzk8kw-1764129236540.jpeg",
+    "updatedAt": "2025-11-26T05:53:56.585Z"
+  },
+  {
+    "id": "G4",
+    "รหัสกลุ่ม": "G4",
+    "ชื่อกลุ่ม": "อุตสาหกรรมเหล็กและหล่อหลอมโลหะ",
+    "logoUrl": "/uploads/departments/AQMje8lTECMpsY0KN2DZJQgQa8emmbnAcCs7WQRPOkYaotKyisWKQh7_RLYLLnYTlDaE237731HV31VBf_Cme-nUVGlyeiFx4zgRRJViyV-6-x4BZvdimJlb1fA36ayZ-1764132898828.jpeg",
+    "updatedAt": "2025-11-26T04:54:58.881Z"
+  },
+  {
+    "id": "G5",
+    "รหัสกลุ่ม": "G5",
+    "ชื่อกลุ่ม": "ฝ่ายอุตสาหกรรมปูน",
+    "logoUrl": "/uploads/departments/AQNBLHrais__5MOHsshlnv1sBLojgrXhzyVtts1_0A_Ssw6kaykFp6GNxKBUyjXVEqFM0DWFV-KGFwSnqA7pO7oHozNXqP0VPSMmUSe01AgIFj7MzTDkXIkZR_y-Jae5lHIaI29-7LK8U8B_8FU25riqqSeMkQ-1764134787803.jpeg",
+    "updatedAt": "2025-11-26T05:26:27.931Z"
+  },
+  {
+    "id": "G69",
+    "รหัสกลุ่ม": "G69",
+    "ชื่อกลุ่ม": "อุตสาหกรรมโรงไฟฟ้าถ่านหิน",
+    "logoUrl": "/uploads/departments/AQMybxxF7Uzrbvqromza1UrekN49aoW1HuKotQonIlyH9GIrdv99HaVI4BJXXHS0sAH9-Lt-AI7t9C7x-YWHw6HXbBKwNeXGVyfuYetoCwe_i5bpmo-i1lWEwLuBNpqqSk-FS9ZGgTcmuKaHfBo7Z4HaHp_jaQ-1764134812807.jpeg",
+    "updatedAt": "2025-11-26T05:26:52.862Z"
+  },
+  {
+    "id": "G7",
+    "รหัสกลุ่ม": "G7",
+    "ชื่อกลุ่ม": "ฝ่ายโซ่สายพาน",
+    "logoUrl": "/uploads/departments/AQMHKYt6-oVa6G48gtqEDCvHIfYsZ_0jykYzqdNVidBg4gHVk76p4VPgCvWrX9sE0T-Tzj_mcNfL8PHx0i6zgUddcoPgViOh-zgGSVLFHx1n-i69U4uWmPzksJmTv8ig-1764134839278.jpeg",
+    "updatedAt": "2025-11-26T05:27:19.323Z"
+  },
+  {
+    "id": "G9",
+    "รหัสกลุ่ม": "G9",
+    "ชื่อกลุ่ม": "ฝ่ายเซรามิค",
+    "logoUrl": "/uploads/departments/AQMu5ktva-tlLf8m7JaM6yR3qUVn5AT9sL4j1M8Zck9064ST2mgHzyoHztr8qeIIPXiZvQtV-jwBF2Iq5CfTfMEc7J-L-Nhny1zvlrb9drrY_9CMG6rmT666yb7e89pR3k7bBF5P1DijGtxIpMdoswlipMMHYA-1764134892983.jpeg",
+    "updatedAt": "2025-11-26T05:28:13.038Z"
+  }
+]

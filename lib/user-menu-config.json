@@ -1,0 +1,25 @@
+{
+  "menuItems": [
+    {
+      "id": "profile",
+      "label": "Profile",
+      "icon": "UserIcon",
+      "permission": "user.profile.view",
+      "variant": "default"
+    },
+    {
+      "id": "settings",
+      "label": "Settings",
+      "icon": "SettingsIcon",
+      "permission": "system.settings.view",
+      "variant": "default"
+    }
+  ],
+  "logoutItem": {
+    "id": "logout",
+    "label": "ออกจากระบบ",
+    "icon": "LogOutIcon",
+    "permission": "auth.logout",
+    "variant": "destructive"
+  }
+}
