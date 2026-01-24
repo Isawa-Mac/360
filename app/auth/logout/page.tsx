@@ -8,11 +8,8 @@ export default function LogoutPage() {
     const redirectToSSO = () => {
         const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
         const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
-        const redirectUri = typeof window !== "undefined"
-            ? `${window.location.protocol}//${window.location.host}/auth/sso-callback`
-            : "https://360.trirex.cloud/auth/sso-callback";
         // ใส่ prompt=login เพื่อบังคับให้ SSO หน้า Login แสดงทุกครั้งแม้เคยล็อกอินแล้ว
-        window.location.href = `${ssoUrl}/#/login?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&prompt=login`;
+        window.location.href = `${ssoUrl}/#/login?client_id=${clientId}&prompt=login`;
     };
 
     return (
