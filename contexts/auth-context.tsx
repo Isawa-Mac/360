@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (typeof window === "undefined") return;
 
         const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
-        const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_tl6uxv5w";
+        const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
 
         let url = `${ssoUrl}/#/login?client_id=${clientId}`;
         if (forceLogin) {
@@ -158,7 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const handleCodeExchange = async (code: string) => {
         setIsLoading(true);
         try {
-            const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_tl6uxv5w";
+            const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
 
             // เรียกผ่าน API Route ของเราเอง (ปลอดภัยกว่า)
             const response = await fetch("/api/auth/exchange", {

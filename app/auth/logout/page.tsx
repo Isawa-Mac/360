@@ -7,7 +7,7 @@ import { motion } from "motion/react"
 export default function LogoutPage() {
     const redirectToSSO = () => {
         const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
-        const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_tl6uxv5w";
+        const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
         // ใส่ prompt=login เพื่อบังคับให้ SSO หน้า Login แสดงทุกครั้งแม้เคยล็อกอินแล้ว
         window.location.href = `${ssoUrl}/#/login?client_id=${clientId}&prompt=login`;
     };

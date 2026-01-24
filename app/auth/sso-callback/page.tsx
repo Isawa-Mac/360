@@ -34,7 +34,7 @@ function SSOCallbackContent() {
                 } catch (e) {
                     console.error("SSO Exchange failed", e);
                     const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
-                    const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_tl6uxv5w";
+                    const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
                     window.location.href = `${ssoUrl}/#/login?client_id=${clientId}&error=ExchangeFailed`;
                 }
             };
