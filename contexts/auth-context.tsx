@@ -61,7 +61,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const nexusUser = localStorage.getItem("nexus_user");
         const nexusToken = localStorage.getItem("nexus_token");
 
-        const isCallbackPage = typeof window !== "undefined" && window.location.pathname.includes("/auth/sso-callback");
+        const isCallbackPage = typeof window !== "undefined" && (
+            window.location.pathname.includes("/auth/sso-callback") ||
+            window.location.search.includes("code=")
+        );
         const isLogoutPage = typeof window !== "undefined" && window.location.pathname.includes("/auth/logout");
 
         console.log("Auth Check - SKIP_AUTH:", process.env.NEXT_PUBLIC_SKIP_AUTH);

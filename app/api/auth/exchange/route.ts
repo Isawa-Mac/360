@@ -5,7 +5,7 @@ export async function POST(request: Request) {
         const { code, clientId } = await request.json();
 
         // 1. ตรวจสอบเบื้องต้น
-        if (!code || clientId !== process.env.NEXT_PUBLIC_CLIENT_ID) {
+        if (!code) {
             return NextResponse.json({ success: false, error: 'Invalid request' }, { status: 400 });
         }
 
