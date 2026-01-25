@@ -37,7 +37,8 @@ function SSOCallbackContent() {
                     const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
                     const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
                     // Remove redirect_uri and error to prevent infinite loops on error
-                    window.location.href = `${ssoUrl}/#/login?client_id=${clientId}`;
+                    // Add prompt=login to FORCE stop the auto-redirect loop at SSO side
+                    window.location.href = `${ssoUrl}/#/login?client_id=${clientId}&prompt=login`;
                 }
             };
             exchange();
