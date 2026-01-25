@@ -1,0 +1,51 @@
+[
+    {
+        "id": "SITTAMON-G7-168-1",
+        "username": "sittamon",
+        "departmentCode": "all",
+        "departmentName": "ทุกหน่วยงาน",
+        "employeeCode": "all",
+        "employeeName": "พนักงานทุกคน",
+        "priority": 1,
+        "note": "1= filter header จะกรองได้ทุกอย่าง"
+    },
+    {
+        "id": "ADMINISTRATOR-G7-04-1",
+        "username": "administrator",
+        "departmentCode": "all",
+        "departmentName": "ทุกหน่วยงาน",
+        "employeeCode": "all",
+        "employeeName": "พนักงานทุกคน",
+        "priority": 1,
+        "note": "Administrator"
+    },
+    {
+        "id": "ARCHWEE-ALL-ALL-1",
+        "username": "archwee",
+        "departmentCode": "all",
+        "departmentName": "ทุกหน่วยงาน",
+        "employeeCode": "all",
+        "employeeName": "พนักงานทุกคน",
+        "priority": 1,
+        "note": "super"
+    },
+    {
+        "id": "SAWAT-ALL-ALL-1",
+        "username": "sawat",
+        "departmentCode": "all",
+        "departmentName": "ทุกหน่วยงาน",
+        "employeeCode": "all",
+        "employeeName": "พนักงานทุกคน",
+        "priority": 1,
+        "note": "super"
+    },
+    {
+        "id": "PAIBOON-G7-ALL-2",
+        "username": "paiboon",
+        "departmentCode": "G7",
+        "departmentName": "ฝ่ายโซ่สายพาน",
+        "employeeCode": "all",
+        "employeeName": "พนักงานทุกคน",
+        "priority": 2
+    }
+]
