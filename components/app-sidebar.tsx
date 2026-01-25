@@ -31,9 +31,25 @@ export function AppSidebar() {
   const pathname = usePathname()
   const { hasPermission } = usePermission()
 
+  // Permissions check logic mirroring nexusSSO
+  const hasDashboardPermission = (): boolean => {
+    if (hasPermission('dashboard.full')) return true;
+    if (hasPermission('dashboard.read') || hasPermission('dashboard.view')) return true;
+    if (hasPermission('dashboard')) return true;
+    return false;
+  };
+
+  const checkNavPermission = (permission: string | string[]) => {
+    const perms = Array.isArray(permission) ? permission : [permission];
+    if (perms.includes('dashboard')) {
+      return hasDashboardPermission();
+    }
+    return hasPermission(permission);
+  }
+
   // Filter menu items based on user permissions
   const filteredNavItems = useMemo(() => {
-    return filterNavItemsByPermission(navItems, hasPermission)
+    return filterNavItemsByPermission(navItems, checkNavPermission)
   }, [hasPermission])
 
   // Hide sidebar on auth pages (login, logout, callback)

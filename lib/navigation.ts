@@ -26,7 +26,7 @@ export const navItems: NavItem[] = [
     title: "ERP 360 Online",
     url: "/home",
     icon: Globe,
-    // ไม่ต้องเช็ค permission - เป็นหน้าแรก
+    requiredPermission: 'dashboard',
   },
   {
     title: "Business Intelligence 360",
