@@ -14,6 +14,8 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { checkSSOSession, getSSOLoginUrl } from '@/lib/sso-utils'
+import { usePermission } from '@/hooks/use-permission'
+
 
 /**
  * เช็คว่าเป็น development environment หรือไม่ (client-side)
@@ -65,6 +67,8 @@ function getNexDocsBaseURL(): string {
 function HomePageContent() {
   const router = useRouter()
   const [loadingItem, setLoadingItem] = useState<string | null>(null)
+  const { hasPermission } = usePermission()
+
 
   // Main menu items
   const menuItems = [
@@ -74,6 +78,7 @@ function HomePageContent() {
       icon: Globe,
       url: getLobbeyBaseURL(),
       isExternal: true,
+      // ไม่ต้องเช็ค permission - เป็นหน้าแรก
     },
     {
       title: "Business Intelligence 360",
@@ -81,6 +86,7 @@ function HomePageContent() {
       icon: BarChart3,
       url: getBIBaseURL(),
       isExternal: true,
+      requiredPermission: ['lobbey:dashboard:menu', 'LOBBEY:dashboard:menu', 'lobbey:dashboard:read', 'LOBBEY:dashboard:read'],
     },
     {
       title: "NexDocs 360",
@@ -88,6 +94,7 @@ function HomePageContent() {
       icon: FileText,
       url: getNexDocsBaseURL(),
       isExternal: true,
+      requiredPermission: ['lobbey:nexdocs:menu', 'LOBBEY:nexdocs:menu', 'lobbey:nexdocs:read', 'LOBBEY:nexdocs:read'],
     },
     {
       title: "Point of Sale 360 Online",
@@ -95,6 +102,7 @@ function HomePageContent() {
       icon: ShoppingCart,
       url: getPOSBaseURL(),
       isExternal: true,
+      requiredPermission: ['lobbey:pos:menu', 'LOBBEY:pos:menu', 'lobbey:pos:read', 'LOBBEY:pos:read'],
     },
     {
       title: "Single Sign-On 360",
@@ -102,6 +110,7 @@ function HomePageContent() {
       icon: Key,
       url: getSSOBaseURL(),
       isExternal: true,
+      requiredPermission: ['lobbey:sso:menu', 'LOBBEY:sso:menu', 'lobbey:sso:read', 'LOBBEY:sso:read'],
     }
   ]
 
@@ -140,7 +149,10 @@ function HomePageContent() {
               Nexus ERP 360
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {menuItems.map((item, index) => (
+              {menuItems.filter(item => {
+                if (!item.requiredPermission) return true
+                return hasPermission(item.requiredPermission)
+              }).map((item, index) => (
                 <Card
                   key={index}
                   className={`relative hover:shadow-xl hover:bg-white/90 hover:dark:bg-gray-800/90 hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer bg-white/50 dark:bg-gray-900/50 backdrop-blur-md border-0 ${loadingItem === item.title ? 'opacity-75 pointer-events-none' : ''

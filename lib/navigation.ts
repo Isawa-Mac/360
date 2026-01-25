@@ -32,7 +32,7 @@ export const navItems: NavItem[] = [
     title: "Business Intelligence 360",
     url: process.env.NEXT_PUBLIC_BI360_URL || "https://bi360.trirex.cloud",
     icon: BarChart3,
-    requiredPermission: ['bi.dashboard.read', 'bi.home.read', 'bi.dashboard.view'],
+    requiredPermission: ['lobbey:dashboard:menu', 'LOBBEY:dashboard:menu', 'lobbey:dashboard:read', 'LOBBEY:dashboard:read'],
   },
   {
     title: "NexDocs 360",

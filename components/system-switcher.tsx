@@ -11,20 +11,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
-import { navItems } from "@/lib/navigation"
+import { navItems, filterNavItemsByPermission } from "@/lib/navigation"
 import { usePathname } from "next/navigation"
+import { usePermission } from "@/hooks/use-permission"
+import { useMemo } from "react"
 
 export function SystemSwitcher({ className }: { className?: string }) {
   const pathname = usePathname()
+  const { hasPermission } = usePermission()
+
+  // Filter menu items based on user permissions
+  const filteredNavItems = useMemo(() => {
+    return filterNavItemsByPermission(navItems, hasPermission)
+  }, [hasPermission])
 
   // Find current system based on pathname
   // Since ERP 360 Online is /home, we check that first
-  const currentSystem = navItems.find((item) => {
+  const currentSystem = filteredNavItems.find((item) => {
     if (item.url === "/home" && (pathname === "/home" || pathname === "/")) return true
     return pathname.startsWith(item.url) && item.url !== "/home"
-  }) || navItems[0]
+  }) || navItems[0] // Fallback to raw navItems[0] if filtered is empty or not found? Or filteredNavItems[0]? 
+  // If user has NO permissions, filteredNavItems might be empty. 
+  // But usually they have access to at least Home? 
+  // ERP 360 Online has no requiredPermission in navItems, so it is always visible.
 
-
+  const displayItems = filteredNavItems
 
   return (
     <DropdownMenu>
@@ -44,8 +55,8 @@ export function SystemSwitcher({ className }: { className?: string }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="my-1" />
         <div className="grid grid-cols-1 gap-1">
-          {navItems.map((item) => {
-            const isActive = currentSystem.title === item.title
+          {displayItems.map((item) => {
+            const isActive = currentSystem?.title === item.title
             const Icon = item.icon
             return (
               <DropdownMenuItem
