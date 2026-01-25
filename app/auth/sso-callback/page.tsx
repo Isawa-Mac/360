@@ -30,7 +30,8 @@ function SSOCallbackContent() {
                 try {
                     await handleCodeExchange(code!);
                     // เมื่อสำเร็จ ให้ไปที่หน้าแรก
-                    window.location.href = "/";
+                    // เมื่อสำเร็จ ให้ไปที่หน้าแรก
+                    router.replace("/");
                 } catch (e) {
                     console.error("SSO Exchange failed", e);
                     const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
