@@ -170,7 +170,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const handleCodeExchange = async (code: string) => {
-        setIsLoading(true);
+        // Do not set global isLoading(true) here, as it causes the AuthProvider to unmount the children (including the CallbackPage),
+        // destroying the component state and causing a double-request which fails with "code expired".
+        // The CallbackPage itself is responsible for showing a loading state if needed.
+
         try {
             const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
 
@@ -216,9 +219,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
             console.error("Code exchange failed:", error);
             throw error;
-        } finally {
-            setIsLoading(false);
         }
+        // finally block removed as we are not managing global loading here anymore
     };
 
     return (
