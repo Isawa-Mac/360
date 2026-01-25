@@ -38,7 +38,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
         const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
 
-        let url = `${ssoUrl}/#/login?client_id=${clientId}`;
+        // Construct callback URL dynamically to support both localhost and production
+        const callbackUrl = `${window.location.origin}/auth/sso-callback`;
+
+        let url = `${ssoUrl}/#/login?client_id=${clientId}&redirect_uri=${encodeURIComponent(callbackUrl)}`;
         if (forceLogin) {
             url += "&prompt=login";
         }
