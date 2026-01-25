@@ -50,15 +50,8 @@ function SSOCallbackContent() {
     return (
         <div className="flex h-screen w-full items-center justify-center bg-black text-white p-6">
             <div className="flex flex-col items-center gap-6 max-w-md text-center">
-                <div className="relative">
-                    <div className="h-20 w-20 animate-spin rounded-full border-4 border-slate-800 border-t-white"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="h-2 w-2 bg-white rounded-full animate-ping"></div>
-                    </div>
-                </div>
                 <div className="space-y-2">
-                    <h2 className="text-2xl font-bold tracking-tight">กำลังยืนยันตัวตน</h2>
-                    <p className="text-slate-400 font-sarabun text-sm">กรุณารอสักครู่ ระบบกำลังเชื่อมต่อกับ Nexus SSO...</p>
+                    {/* No spinner as requested */}
                 </div>
             </div>
         </div>
