@@ -1,21 +1,19 @@
 "use client";
 
-import { useEffect, Suspense, useRef } from "react";
+import { useEffect, Suspense, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useAuth } from "@/contexts/auth-context";
 
-let globalIsExchanging = false; // Module-level lock for Strict Mode
-
 function SSOCallbackContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { handleCodeExchange, isAuthenticated } = useAuth();
+    const { handleCodeExchange } = useAuth();
     const hasExchanged = useRef(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        // Prevent double invocation in Strict Mode / Fast remounts
-        if (globalIsExchanging || hasExchanged.current) return;
+        if (hasExchanged.current) return;
 
         // 1. ลองอ่านจาก Query Params (?code=...)
         let code = searchParams.get("code");
@@ -29,38 +27,52 @@ function SSOCallbackContent() {
 
         if (code) {
             hasExchanged.current = true;
-            globalIsExchanging = true;
 
             const exchange = async () => {
                 try {
                     await handleCodeExchange(code!);
                     // เมื่อสำเร็จ ให้ไปที่หน้าแรก
-                    globalIsExchanging = false; // Reset (though we navigate away)
                     router.replace("/");
                 } catch (e: any) {
                     console.error("SSO Exchange failed", e);
-                    globalIsExchanging = false;
 
-                    // RACE CONDITION CHECK:
-                    // If the other "thread" succeeded, useAuth might not update fast enough,
-                    // but query token from localStorage to satisfy "did it work?" check.
-                    if (localStorage.getItem("nexus_token")) {
-                        console.log("Token found despite error (Race condition resolved). Redirecting...");
+                    // Check local storage one last time in case race condition succeeded
+                    if (typeof window !== "undefined" && localStorage.getItem("nexus_token")) {
                         router.replace("/");
                         return;
                     }
 
-                    // Real Failure
-                    // DEBUG: Show validation error instead of redirecting
-                    alert(`SSO Login Failed: ${e.message}`);
-                    // window.location.href = `${process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud"}/#/login?client_id=${process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz"}&prompt=login`;
+                    setError(e.message || "Unknown Error");
                 }
             };
             exchange();
         } else {
-            console.error("No code found in URL or Hash");
+            // No code found, maybe just redirect to login?
+            // setError("No authorization code found.");
         }
     }, [searchParams, handleCodeExchange, router]);
+
+    if (error) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center bg-black text-white p-6">
+                <div className="flex flex-col items-center gap-6 max-w-md text-center">
+                    <div className="space-y-4">
+                        <div className="text-red-500 text-5xl">⚠️</div>
+                        <h2 className="text-2xl font-bold tracking-tight text-red-400">Login Failed</h2>
+                        <p className="text-slate-300 font-sarabun text-sm bg-slate-900 p-4 rounded border border-slate-800">
+                            {error}
+                        </p>
+                        <button
+                            onClick={() => window.location.href = "/"}
+                            className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex h-screen w-full items-center justify-center bg-black text-white p-6">
