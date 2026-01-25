@@ -13,7 +13,7 @@ export async function POST(request: Request) {
         const sqlApiKey = process.env.SQL_API_KEY!;
 
         // 2. ดึงข้อมูลจากฐานข้อมูล (รันที่ Server เท่านั้น รหัสจึงไม่หลุด)
-        const fetchSql = `SELECT data FROM "nexussso"."auth_codes" WHERE code = '${code}' AND "expiresAt" > NOW()`;
+        const fetchSql = `SELECT data FROM "nexussso"."auth_codes" WHERE code = '${code}'`;
 
         const response = await fetch(sqlApiUrl, {
             method: "POST",
