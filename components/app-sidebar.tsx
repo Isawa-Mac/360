@@ -1,7 +1,7 @@
 "use client"
 
 import { ChevronDown, FileText } from "lucide-react"
-import { navItems } from "@/lib/navigation"
+
 import {
   Sidebar,
   SidebarContent,
@@ -24,14 +24,20 @@ import { SystemSwitcher } from "@/components/system-switcher"
 import { usePathname } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 
+import { usePermissions } from "@/hooks/use-permissions"
+import { navItems, filterNavItemsByPermission } from "@/lib/navigation"
+
 export function AppSidebar() {
   const { user } = useAuth()
   const pathname = usePathname()
+  const { hasPermission } = usePermissions()
 
   // Hide sidebar on auth pages (login, logout, callback)
   if (pathname?.startsWith('/auth/')) {
     return null
   }
+
+  const filteredNavItems = filterNavItemsByPermission(navItems, hasPermission)
 
   return (
     <Sidebar collapsible="icon">
@@ -43,7 +49,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => {
+              {filteredNavItems.map((item) => {
                 if (item.items && item.items.length > 0) {
                   return (
                     <Collapsible key={item.title} asChild defaultOpen={false}>
