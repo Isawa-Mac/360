@@ -13,8 +13,7 @@ import { Help } from "@/components/ui/help"
 import { ReactNode } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ProjectToggle } from "@/components/project-toggle"
-import { UserMenu } from "@/components/user-menu"
-import { useAuth } from "@/contexts/auth-context"
+import { SystemSwitcher } from "@/components/system-switcher"
 
 
 interface AppLayoutProps {
@@ -52,7 +51,6 @@ function AppLayoutInner({
   const [pageDescription, setPageDescription] = useState("")
   const [mounted, setMounted] = useState(false)
   const { isHeaderHidden, setHeaderHidden } = useFullscreen()
-  const { user } = useAuth()
 
   useEffect(() => {
     setMounted(true)
@@ -120,11 +118,8 @@ function AppLayoutInner({
                   activeSegment="first"
                 />
                 <Separator orientation="vertical" className="h-6 mx-1" />
-                <UserMenu
-                  name={user?.username || "Guest"}
-                  email={user?.email || ""}
-                  avatarSrc={user?.avatarUrl}
-                  className="w-auto border-none hover:bg-transparent"
+                <SystemSwitcher
+                  className="w-auto min-w-[200px] border-none bg-transparent shadow-none hover:bg-accent"
                 />
               </div>
 
