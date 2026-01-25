@@ -32,13 +32,11 @@ function SSOCallbackContent() {
                     // เมื่อสำเร็จ ให้ไปที่หน้าแรก
                     // เมื่อสำเร็จ ให้ไปที่หน้าแรก
                     router.replace("/");
-                } catch (e) {
+                } catch (e: any) {
                     console.error("SSO Exchange failed", e);
-                    const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
-                    const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
-                    // Remove redirect_uri and error to prevent infinite loops on error
-                    // Add prompt=login to FORCE stop the auto-redirect loop at SSO side
-                    window.location.href = `${ssoUrl}/#/login?client_id=${clientId}&prompt=login`;
+                    // DEBUG: Show validation error instead of redirecting
+                    // window.location.href = ...
+                    alert(`SSO Login Failed: ${e.message}`);
                 }
             };
             exchange();
