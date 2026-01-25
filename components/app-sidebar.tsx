@@ -36,7 +36,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <SystemSwitcher className="w-full" />
+        <SystemSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
