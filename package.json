@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
+    "dev:nologin": "set NEXT_PUBLIC_SKIP_AUTH=true&& next dev -p 3001",
     "build": "next build",
     "start": "next start -p 3001",
     "lint": "eslint"
