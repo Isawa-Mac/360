@@ -32,7 +32,7 @@ export function usePermission() {
         userId: user?.id,
         userPermissions: user?.permissions?.length || 0
       })
-      
+
       if (!isAuthenticated || !user) {
         console.log('⚠️ usePermission - Not authenticated or no user, setting empty permissions')
         setPermissionsData({ permissions: [], isSuperAdmin: false })
@@ -46,8 +46,8 @@ export function usePermission() {
         const authToken = token || authData?.token
 
         // เช็คว่า token เป็น JWT token จริงๆ หรือไม่ (ไม่ใช่ 'sso-session' string literal)
-        const isValidJWT = authToken && 
-          authToken !== 'sso-session' && 
+        const isValidJWT = authToken &&
+          authToken !== 'sso-session' &&
           typeof authToken === 'string' &&
           authToken.length > 20 // JWT tokens มักจะยาวกว่า 20 characters
 
@@ -56,7 +56,7 @@ export function usePermission() {
           isValidJWT,
           tokenType: authToken === 'sso-session' ? 'sso-session' : 'jwt'
         })
-        
+
         const response = await fetch('/api/sso/permissions', {
           method: 'GET',
           headers: {
@@ -87,19 +87,19 @@ export function usePermission() {
 
         const result = await response.json()
         const data = result.data || { permissions: [], isSuperAdmin: false }
-        
+
         console.log('✅ usePermission - API response:', {
           permissionsCount: data.permissions?.length || 0,
           isSuperAdmin: data.isSuperAdmin,
           userPermissionsCount: user?.permissions?.length || 0
         })
-        
+
         // Fallback to user permissions from context if API fails
-        const finalPermissions = data.permissions?.length > 0 
-          ? data.permissions 
+        const finalPermissions = data.permissions?.length > 0
+          ? data.permissions
           : (user?.permissions || [])
-        const finalIsSuperAdmin = data.isSuperAdmin !== undefined 
-          ? data.isSuperAdmin 
+        const finalIsSuperAdmin = data.isSuperAdmin !== undefined
+          ? data.isSuperAdmin
           : (user?.isSuperAdmin || false)
 
         console.log('✅ usePermission - Final permissions:', {
@@ -139,7 +139,32 @@ export function usePermission() {
   }, [isAuthenticated, user?.id, token, getAuthData, user])
 
   const permissions = useMemo(() => {
-    return permissionsData?.permissions || user?.permissions || []
+    // 1. API Fetched Permissions
+    if (permissionsData?.permissions && permissionsData.permissions.length > 0) {
+      return permissionsData.permissions
+    }
+
+    // 2. User Context Permissions
+    if (user?.permissions && user.permissions.length > 0) {
+      return user.permissions
+    }
+
+    // 3. LocalStorage (nexus_permissions) - Fallback
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("nexus_permissions")
+        if (raw) {
+          const parsed = JSON.parse(raw)
+          if (Array.isArray(parsed)) {
+            return parsed
+          }
+        }
+      } catch (e) {
+        console.error("Error reading nexus_permissions:", e)
+      }
+    }
+
+    return []
   }, [permissionsData?.permissions, user?.permissions])
 
   const isSuperAdmin = useMemo(() => {
@@ -160,9 +185,9 @@ export function usePermission() {
       }
 
       const permissionsToCheck = Array.isArray(permissionName) ? permissionName : [permissionName]
-      
+
       // ตรวจสอบว่ามี permission ใด permission หนึ่งหรือไม่
-      return permissionsToCheck.some(perm => 
+      return permissionsToCheck.some(perm =>
         permissions.includes(perm)
       )
     }
@@ -206,9 +231,9 @@ export function usePermission() {
     return (resource: string, actions: string[] = ['read', 'write']): boolean => {
       if (isSuperAdmin) return true
       if (!permissions || permissions.length === 0) return false
-      
+
       const resourceLower = resource.toLowerCase()
-      
+
       // Map actions ที่เทียบเท่ากัน (write = create + update)
       const actionMap: Record<string, string[]> = {
         'write': ['write', 'create', 'update'],
@@ -217,18 +242,18 @@ export function usePermission() {
         'edit': ['edit', 'update', 'write'],
         'delete': ['delete', 'remove'],
       }
-      
+
       return permissions.some(perm => {
         const permLower = perm.toLowerCase()
         // เช็คหลายรูปแบบ: module:resource:action, resource:action, หรือ resource
         return actions.some(action => {
           const actionLower = action.toLowerCase()
           const equivalentActions = actionMap[actionLower] || [actionLower]
-          
+
           return equivalentActions.some(eqAction => {
             // เช็ครูปแบบ SSO:profile:read, sso:profile:read
-            if (permLower.includes(`${resourceLower}:${eqAction}`) || 
-                permLower.includes(`:${resourceLower}:${eqAction}`)) {
+            if (permLower.includes(`${resourceLower}:${eqAction}`) ||
+              permLower.includes(`:${resourceLower}:${eqAction}`)) {
               return true
             }
             // เช็ครูปแบบ profile:read
