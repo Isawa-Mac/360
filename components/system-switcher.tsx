@@ -34,7 +34,6 @@ const projects = [
     url: "https://bi360.trirex.cloud",
     icon: BarChart3,
     permission: "erp360.bi",
-    clientId: "cli_t16uxv5w"
   },
   {
     name: "NexDocs 360",
