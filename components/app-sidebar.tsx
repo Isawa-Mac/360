@@ -2,6 +2,7 @@
 
 import { ChevronDown, FileText } from "lucide-react"
 import { navItems, filterNavItemsByPermission } from "@/lib/navigation"
+import { checkPermission } from "@/lib/utils"
 import {
   Sidebar,
   SidebarContent,
@@ -29,22 +30,17 @@ import { useMemo } from "react"
 export function AppSidebar() {
   const { user } = useAuth()
   const pathname = usePathname()
-  const { hasPermission } = usePermission()
+  const { hasPermission: _ignored } = usePermission() // Keep import to avoid breaking if other things use it, but ignore for this check. or just remove usage.
 
-  // Permissions check logic mirroring nexusSSO
-  const hasDashboardPermission = (): boolean => {
-    if (hasPermission('dashboard.full')) return true;
-    if (hasPermission('dashboard.read') || hasPermission('dashboard.view')) return true;
-    if (hasPermission('dashboard')) return true;
-    return false;
-  };
+  const hasPermission = (permission: string) => checkPermission(user?.permissions, permission)
 
   const checkNavPermission = (permission: string | string[]) => {
     const perms = Array.isArray(permission) ? permission : [permission];
     if (perms.includes('dashboard')) {
-      return hasDashboardPermission();
+      // Logic mirroring legacy dashboard behavior but using new checkPermission
+      if (hasPermission('dashboard.full') || hasPermission('dashboard.read') || hasPermission('dashboard.view') || hasPermission('dashboard')) return true;
     }
-    return hasPermission(permission);
+    return perms.some(p => hasPermission(p));
   }
 
   // Filter menu items based on user permissions

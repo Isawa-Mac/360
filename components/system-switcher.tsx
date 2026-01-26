@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { cn } from "@/lib/utils"
+import { cn, checkPermission } from "@/lib/utils"
 import { usePermission } from "@/hooks/use-permission"
 
 const projects = [
@@ -56,11 +56,11 @@ const projects = [
 
 export function SystemSwitcher({ className }: { className?: string }) {
   // Use user permissions
-  const { hasPermission } = usePermission();
+  const { permissions } = usePermission();
 
   // Filter projects based on permission
   const visibleProjects = projects.filter(project =>
-    !project.permission || hasPermission(`${project.permission}.read`)
+    !project.permission || checkPermission(permissions, project.permission)
   )
 
   const getAppUrl = (project: typeof projects[0]) => {
