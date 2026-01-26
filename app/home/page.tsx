@@ -78,7 +78,7 @@ function HomePageContent() {
       icon: Globe,
       url: getLobbeyBaseURL(),
       isExternal: true,
-      // ไม่ต้องเช็ค permission - เป็นหน้าแรก
+      requiredPermission: ['erp360.erp'],
     },
     {
       title: "Business Intelligence 360",
@@ -86,7 +86,7 @@ function HomePageContent() {
       icon: BarChart3,
       url: getBIBaseURL(),
       isExternal: true,
-      requiredPermission: ['lobbey:dashboard:menu', 'LOBBEY:dashboard:menu', 'lobbey:dashboard:read', 'LOBBEY:dashboard:read'],
+      requiredPermission: ['erp360.bi'],
     },
     {
       title: "NexDocs 360",
@@ -94,7 +94,7 @@ function HomePageContent() {
       icon: FileText,
       url: getNexDocsBaseURL(),
       isExternal: true,
-      requiredPermission: ['lobbey:nexdocs:menu', 'LOBBEY:nexdocs:menu', 'lobbey:nexdocs:read', 'LOBBEY:nexdocs:read'],
+      requiredPermission: ['erp360.docs'],
     },
     {
       title: "Point of Sale 360 Online",
@@ -102,7 +102,7 @@ function HomePageContent() {
       icon: ShoppingCart,
       url: getPOSBaseURL(),
       isExternal: true,
-      requiredPermission: ['lobbey:pos:menu', 'LOBBEY:pos:menu', 'lobbey:pos:read', 'LOBBEY:pos:read'],
+      requiredPermission: ['erp360.pos'],
     },
     {
       title: "Single Sign-On 360",
@@ -110,7 +110,7 @@ function HomePageContent() {
       icon: Key,
       url: getSSOBaseURL(),
       isExternal: true,
-      requiredPermission: ['lobbey:sso:menu', 'LOBBEY:sso:menu', 'lobbey:sso:read', 'LOBBEY:sso:read'],
+      requiredPermission: ['erp360.admin'],
     }
   ]
 
