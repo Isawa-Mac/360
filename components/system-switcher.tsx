@@ -24,7 +24,8 @@ const projects = [
     url: "https://360.trirex.cloud",
     icon: Globe,
     active: true,
-    permission: "erp360.erp"
+    permission: "erp360.erp",
+    clientId: "cli_1mkd41fz"
   },
   {
     name: "Business Intelligence 360",
