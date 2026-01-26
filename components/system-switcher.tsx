@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { cn, checkPermission } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import { usePermission } from "@/hooks/use-permission"
 
 const projects = [
