@@ -82,7 +82,7 @@ export function SystemSwitcher({ className }: { className?: string }) {
     if (project.clientId) {
       // Ensure we redirect to the callback handler, not the root, to avoid loops
       const callbackUrl = `${effectiveUrl}/auth/sso-callback`;
-      return `${process.env.NEXT_PUBLIC_SSO_URL || 'https://sso360.trirex.cloud'}/#/login?client_id=${project.clientId}&redirect_uri=${callbackUrl}&response_type=code`;
+      return `${process.env.NEXT_PUBLIC_SSO_URL || 'https://sso360.trirex.cloud'}/#/login?client_id=${project.clientId}&response_type=code`;
     }
 
     return effectiveUrl;
