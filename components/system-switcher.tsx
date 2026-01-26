@@ -58,11 +58,11 @@ const projects = [
 
 export function SystemSwitcher({ className }: { className?: string }) {
   // Use user permissions
-  const { permissions } = usePermission();
+  const { permissions, hasPermission } = usePermission();
 
   // Filter projects based on permission
   const visibleProjects = projects.filter(project =>
-    !project.permission || checkPermission(permissions, project.permission)
+    !project.permission || hasPermission(project.permission)
   )
 
   const getAppUrl = (project: typeof projects[0]) => {
