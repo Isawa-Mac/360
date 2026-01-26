@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import {
   Grip, Check,
@@ -36,7 +38,7 @@ const projects = [
   },
   {
     name: "NexDocs 360",
-    url: "https://NexDocs360.trirex.cloud",
+    url: "https://nexdocs.trirex.cloud",
     icon: FileText,
     permission: "erp360.docs"
   },
@@ -82,6 +84,8 @@ export function SystemSwitcher({ className }: { className?: string }) {
     if (project.clientId) {
       // Ensure we redirect to the callback handler, not the root, to avoid loops
       const callbackUrl = `${effectiveUrl}/auth/sso-callback`;
+      // Remove redirect_uri to let SSO use the default callback URL registered for the client
+      // This helps avoid potential mismatch errors or loops if the registered redirect URI is strictly enforced
       return `${process.env.NEXT_PUBLIC_SSO_URL || 'https://sso360.trirex.cloud'}/#/login?client_id=${project.clientId}&response_type=code`;
     }
 
