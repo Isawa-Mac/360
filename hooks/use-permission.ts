@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/contexts/auth-context"
 import { useMemo, useState, useEffect } from "react"
+import { checkPermission } from "@/lib/utils"
 
 /**
  * Custom hook สำหรับตรวจสอบ permission จาก auth context และ API
@@ -188,7 +189,7 @@ export function usePermission() {
 
       // ตรวจสอบว่ามี permission ใด permission หนึ่งหรือไม่
       return permissionsToCheck.some(perm =>
-        permissions.includes(perm)
+        checkPermission(permissions, perm)
       )
     }
   }, [permissions, isSuperAdmin])

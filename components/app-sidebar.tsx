@@ -30,9 +30,9 @@ import { useMemo } from "react"
 export function AppSidebar() {
   const { user } = useAuth()
   const pathname = usePathname()
-  const { hasPermission: _ignored } = usePermission() // Keep import to avoid breaking if other things use it, but ignore for this check. or just remove usage.
+  const { hasPermission } = usePermission()
 
-  const hasPermission = (permission: string) => checkPermission(user?.permissions, permission)
+  // Removed local hasPermission definition as we now use the hook correctly
 
   const checkNavPermission = (permission: string | string[]) => {
     const perms = Array.isArray(permission) ? permission : [permission];
