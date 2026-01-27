@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3001",
-    "dev:nologin": "set NEXT_PUBLIC_SKIP_AUTH=true&& next dev -p 3001",
+    "dev": "next dev -p 8112",
+    "dev:nologin": "set NEXT_PUBLIC_SKIP_AUTH=true&& next dev -p 8112",
     "build": "next build",
-    "start": "next start -p 3001",
+    "start": "next start -p 8112",
     "lint": "eslint"
   },
   "dependencies": {
