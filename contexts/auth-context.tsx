@@ -160,8 +160,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
         }
 
-        // Redirect to logout success page
-        window.location.href = "/auth/logout";
+        // Redirect to SSO logout to clear global session
+        const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
+        const returnUrl = window.location.origin;
+        window.location.href = `${ssoUrl}/#/logout?redirect_uri=${encodeURIComponent(returnUrl)}`;
     };
 
     const getAuthData = () => {
