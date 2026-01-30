@@ -171,8 +171,8 @@ function HomePageContent() {
 
                   <CardHeader className="pb-3">
                     <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                        <item.icon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                      <div className="p-2 bg-primary/10 dark:bg-primary/20 rounded-lg">
+                        <item.icon className="h-6 w-6 text-primary" />
                       </div>
                       <CardTitle className="text-lg">{item.title}</CardTitle>
                     </div>
@@ -202,7 +202,7 @@ export default function HomePage() {
       >
         <div className="min-h-full p-6 flex items-center justify-center">
           <div className="text-center space-y-4">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400 mx-auto" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
             <p className="text-sm text-gray-600 dark:text-gray-400">กำลังโหลด...</p>
           </div>
         </div>
