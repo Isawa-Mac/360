@@ -49,13 +49,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         window.location.href = url;
     };
 
+    function getCookie(name: string): string | null {
+        if (typeof document === "undefined") return null;
+        const match = document.cookie.match(new RegExp("(?:^|;\\s*)" + name.replace(/[\-.]/g, "\\$&") + "=([^;]*)"));
+        return match ? decodeURIComponent(match[1]) : null;
+    }
+
     useEffect(() => {
-        // Apply theme color as early as possible
-        const themeColor = localStorage.getItem('themeColor') || 'oklch(0.205 0 0)';
-        if (themeColor) {
-            document.documentElement.style.setProperty('--primary', themeColor);
-            document.documentElement.style.setProperty('--sidebar-primary', themeColor);
-            document.documentElement.style.setProperty('--ring', themeColor);
+        // อ่าน theme และ themeColor จาก shared cookie (SSO) แล้วนำไปใช้
+        if (typeof window !== "undefined") {
+            const sharedTheme = getCookie("nexus_shared_theme");
+            const sharedThemeColor = getCookie("nexus_shared_theme_color");
+            
+            if (sharedTheme === "dark" || sharedTheme === "light") {
+                localStorage.setItem("nexus_theme", sharedTheme);
+                localStorage.setItem("theme", sharedTheme); // next-themes
+                document.documentElement.classList.toggle("dark", sharedTheme === "dark");
+            }
+            
+            if (sharedThemeColor) {
+                localStorage.setItem("themeColor", sharedThemeColor);
+                document.documentElement.style.setProperty('--primary', sharedThemeColor);
+                document.documentElement.style.setProperty('--sidebar-primary', sharedThemeColor);
+                document.documentElement.style.setProperty('--ring', sharedThemeColor);
+            } else {
+                // Apply theme color from localStorage if no shared cookie
+                const themeColor = localStorage.getItem('themeColor') || 'oklch(0.205 0 0)';
+                if (themeColor) {
+                    document.documentElement.style.setProperty('--primary', themeColor);
+                    document.documentElement.style.setProperty('--sidebar-primary', themeColor);
+                    document.documentElement.style.setProperty('--ring', themeColor);
+                }
+            }
         }
     }, []);
 
@@ -203,7 +228,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     localStorage.setItem("nexus_permissions", JSON.stringify(permissions));
                     document.cookie = `permissions=${encodeURIComponent(JSON.stringify(permissions))}; path=/`;
                 }
-                if (settings?.primaryColor) localStorage.setItem("themeColor", settings.primaryColor);
+                
+                // นำ theme และ themeColor จาก shared cookie หรือ settings
+                const sharedTheme = getCookie("nexus_shared_theme");
+                const sharedThemeColor = getCookie("nexus_shared_theme_color");
+                
+                if (sharedTheme === "dark" || sharedTheme === "light") {
+                    localStorage.setItem("nexus_theme", sharedTheme);
+                    localStorage.setItem("theme", sharedTheme);
+                    document.documentElement.classList.toggle("dark", sharedTheme === "dark");
+                }
+                
+                const themeColor = sharedThemeColor || settings?.primaryColor;
+                if (themeColor) {
+                    localStorage.setItem("themeColor", themeColor);
+                    document.documentElement.style.setProperty('--primary', themeColor);
+                    document.documentElement.style.setProperty('--sidebar-primary', themeColor);
+                    document.documentElement.style.setProperty('--ring', themeColor);
+                }
 
                 document.cookie = `auth_token=${token}; path=/`;
 

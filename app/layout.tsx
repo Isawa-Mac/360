@@ -45,15 +45,31 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+  const sharedTheme = cookieStore.get("nexus_shared_theme")?.value;
+  const defaultTheme = sharedTheme === "dark" || sharedTheme === "light" ? sharedTheme : "system";
+  const sharedThemeColor = cookieStore.get("nexus_shared_theme_color")?.value;
 
   return (
     <html lang="th" className={`${inter.variable} ${sarabun.variable}`} suppressHydrationWarning>
+      <head>
+        {sharedThemeColor && (
+          <style dangerouslySetInnerHTML={{
+            __html: `
+              :root {
+                --primary: ${sharedThemeColor};
+                --sidebar-primary: ${sharedThemeColor};
+                --ring: ${sharedThemeColor};
+              }
+            `
+          }} />
+        )}
+      </head>
       <body
         className={`${sarabun.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme={defaultTheme}
           enableSystem
           disableTransitionOnChange
         >
