@@ -74,7 +74,7 @@ function HomePageContent() {
   const menuItems = [
     {
       title: "ERP 360 Online",
-      description: "ERP 360 Online (Lobbey) - ระบบวางแผนทรัพยากรองค์กร",
+      description: "ERP 360 Online (Lobby) - ระบบวางแผนทรัพยากรองค์กร",
       icon: Globe,
       url: getLobbeyBaseURL(),
       isExternal: true,
