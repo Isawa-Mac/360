@@ -3,11 +3,9 @@
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { useHeaderControl } from "@/contexts/header-control-context"
-import { HeaderFilters } from "@/components/header-filters"
 import { cn } from "@/lib/utils"
 import { UserMenu } from "@/components/user-menu"
 import { useAuth } from "@/contexts/auth-context"
-import { DashboardControl } from "@/components/dashboard-control"
 import { useDashboardScale } from "@/contexts/dashboard-scale-context"
 import { usePathname } from "next/navigation"
 import { Separator } from "@/components/ui/separator"
@@ -43,14 +41,6 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
 
   const {
     isGlobalHeaderHidden,
-    showFilters,
-    disableDepartment,
-    disableEmployee,
-    hideYear,
-    hideMonth,
-    hideQuarter,
-    hideYtd,
-    customYears,
     pageTitle,
     pageSubtitle
   } = headerControl
@@ -113,28 +103,6 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
         </Breadcrumb>
 
 
-        <div className="ml-auto flex items-center gap-3">
-          <HeaderFilters
-            showFilters={showFilters}
-            disableDepartment={disableDepartment}
-            disableEmployee={disableEmployee}
-            hideYear={hideYear}
-            hideMonth={hideMonth}
-            hideQuarter={hideQuarter}
-            hideYtd={hideYtd}
-            customYears={customYears}
-          />
-
-
-
-          <div className="flex items-center gap-1">
-            <DashboardControl
-              scaleValue={scaleMode}
-              onScaleChange={setScaleMode}
-            />
-          </div>
-
-        </div>
       </header>
 
       <div className="flex-1" style={containerStyle}>
