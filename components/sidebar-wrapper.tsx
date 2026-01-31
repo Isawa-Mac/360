@@ -6,7 +6,6 @@ import { useHeaderControl } from "@/contexts/header-control-context"
 import { cn } from "@/lib/utils"
 import { UserMenu } from "@/components/user-menu"
 import { useAuth } from "@/contexts/auth-context"
-import { DashboardControl } from "@/components/dashboard-control"
 import { useDashboardScale } from "@/contexts/dashboard-scale-context"
 import { usePathname } from "next/navigation"
 import { Separator } from "@/components/ui/separator"
@@ -19,13 +18,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { useState, useEffect } from "react"
 
 export function SidebarWrapper({ children }: { children: React.ReactNode }) {
@@ -46,15 +38,13 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
     pageSubtitle
   } = headerControl
 
-  const { scaleMode, setScaleMode, containerStyle, contentStyle, contentRef } = dashboardScale
+  const { scaleMode, containerStyle, contentStyle, contentRef } = dashboardScale
 
   const isAuthPage = pathname?.startsWith('/auth/')
 
   if (isAuthPage) {
     return <div className="h-screen w-full">{children}</div>
   }
-
-
 
   return (
     <SidebarInset
@@ -102,8 +92,6 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-
-
       </header>
 
       <div className="flex-1" style={containerStyle}>
