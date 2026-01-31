@@ -37,6 +37,7 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { UserMenu } from "@/components/user-menu"
 import { SystemSwitcher } from "@/components/system-switcher"
+import { DashboardControl } from "@/components/dashboard-control"
 import { useAuth } from "@/contexts/auth-context"
 import { useDashboardScale } from "@/contexts/dashboard-scale-context"
 import { usePermission } from "@/hooks/use-permission"
@@ -189,6 +190,13 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <div className="flex flex-col gap-2 px-2">
+          <div className="flex justify-center">
+            <DashboardControl
+              scaleValue={scaleMode}
+              onScaleChange={setScaleMode}
+              direction={state === "collapsed" ? "column" : "row"}
+            />
+          </div>
           <UserMenu
             name={user?.username || "Guest"}
             email={user?.email || ""}
