@@ -141,7 +141,7 @@ export function AppSidebar() {
                       <Collapsible key={item.title} asChild defaultOpen={isCurrentPageInSubItems}>
                         <SidebarMenuItem>
                           <CollapsibleTrigger asChild>
-                            <SidebarMenuButton tooltip={item.title} onClick={() => state === "collapsed" && setOpen(true)}>
+                            <SidebarMenuButton variant="ghost" tooltip={item.title} onClick={() => state === "collapsed" && setOpen(true)}>
                               <item.icon />
                               <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
                               <ChevronRight className="ml-auto transition-transform duration-200 data-[state=open]:rotate-90 group-data-[collapsible=icon]:hidden" />
@@ -174,7 +174,7 @@ export function AppSidebar() {
                   const isActive = pathname === item.url
                   return (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild tooltip={item.title} isActive={isActive} onClick={() => isMobile ? setOpenMobile(false) : setOpen(false)}>
+                      <SidebarMenuButton variant="ghost" asChild tooltip={item.title} isActive={isActive} onClick={() => isMobile ? setOpenMobile(false) : setOpen(false)}>
                         <Link href={item.url}>
                           <item.icon />
                           <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
