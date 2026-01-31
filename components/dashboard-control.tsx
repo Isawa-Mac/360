@@ -10,12 +10,15 @@ import { useEffect, useState } from "react";
 export type DashboardControlProps = {
     scaleValue?: "normal" | "fit";
     onScaleChange?: (mode: "normal" | "fit") => void;
+    /** แนวตั้งเมื่อ sidebar ปิด, แนวนอนเมื่อ sidebar เปิด */
+    direction?: "row" | "column";
     className?: string;
 };
 
 export function DashboardControl({
     scaleValue = "normal",
     onScaleChange,
+    direction = "row",
     className,
 }: DashboardControlProps) {
     const { setTheme, resolvedTheme } = useTheme();
@@ -31,9 +34,11 @@ export function DashboardControl({
         setTheme(isDark ? 'light' : 'dark');
     };
 
+    const isColumn = direction === "column";
+
     if (!mounted) {
         return (
-            <div className={cn("flex items-center bg-accent/40 rounded-lg p-0.5 border border-border/50 opacity-50", className)}>
+            <div className={cn("flex items-center bg-accent/40 rounded-lg p-0.5 border border-border/50 opacity-50", isColumn && "flex-col", className)}>
                 <div className="h-7 w-7" />
                 <div className="h-7 w-7" />
                 <div className="h-7 w-7" />
@@ -42,7 +47,7 @@ export function DashboardControl({
     }
 
     return (
-        <div className={cn("flex items-center bg-accent/40 rounded-lg p-0.5 border border-border/50", className)}>
+        <div className={cn("flex items-center bg-accent/40 rounded-lg p-0.5 border border-border/50", isColumn ? "flex-col" : "flex-row", className)}>
             <Button
                 variant="ghost"
                 size="icon"
@@ -72,7 +77,7 @@ export function DashboardControl({
                 <Monitor size={14} />
             </Button>
 
-            <div className="w-[1px] h-7 bg-border mx-0.5" />
+            <div className={cn(isColumn ? "h-px w-7 bg-border my-0.5" : "w-px h-7 bg-border mx-0.5")} />
 
             <Button
                 variant="ghost"

@@ -40,7 +40,7 @@ import { SystemSwitcher } from "@/components/system-switcher"
 import { DashboardControl } from "@/components/dashboard-control"
 import { useAuth } from "@/contexts/auth-context"
 import { useDashboardScale } from "@/contexts/dashboard-scale-context"
-import { checkPermission } from "@/lib/utils"
+import { usePermission } from "@/hooks/use-permission"
 
 const menuItems = [
   {
@@ -96,8 +96,7 @@ export function AppSidebar() {
   const { user } = useAuth()
   const { scaleMode, setScaleMode } = useDashboardScale()
   const { state, setOpen, setOpenMobile, isMobile } = useSidebar()
-
-  const hasPermission = (permission: string) => checkPermission(user?.permissions, permission)
+  const { hasPermission } = usePermission()
 
   // Hide sidebar on auth pages
   if (pathname?.startsWith("/auth/")) {
@@ -195,6 +194,7 @@ export function AppSidebar() {
             <DashboardControl
               scaleValue={scaleMode}
               onScaleChange={setScaleMode}
+              direction={state === "collapsed" ? "column" : "row"}
             />
           </div>
           <UserMenu
