@@ -26,6 +26,25 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const SHARED_COOKIE_NAMES = ["nexus_shared_token", "nexus_shared_user"] as const;
+const SHARED_COOKIE_MAX_AGE_DAYS = 7;
+
+/** Returns domain for shared cookie (e.g. ".trirex.cloud") so all subdomains can read; null for localhost/single host. */
+function getSharedCookieDomain(): string | null {
+    if (typeof window === "undefined") return null;
+    // ใช้ env บังคับ domain ได้ (เช่น .trirex.cloud)
+    const envDomain = process.env.NEXT_PUBLIC_SHARED_COOKIE_DOMAIN;
+    if (envDomain && envDomain.trim()) {
+        const d = envDomain.trim();
+        return d.startsWith(".") ? d : "." + d;
+    }
+    const hostname = window.location.hostname;
+    if (hostname === "localhost" || hostname === "127.0.0.1" || hostname.indexOf(".") === -1) return null;
+    const parts = hostname.split(".");
+    if (parts.length >= 2) return "." + parts.slice(-2).join(".");
+    return null;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | undefined>(undefined);
@@ -147,6 +166,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setIsLoading(false);
                 }
             } else {
+                // Cross-subdomain: if no local token but shared cookie exists (login from another app), bootstrap
+                const sharedToken = getCookie("nexus_shared_token");
+                const sharedUser = getCookie("nexus_shared_user");
+                if (sharedToken && sharedUser && !isCallbackPage && !isLogoutPage) {
+                    try {
+                        const userObj = JSON.parse(sharedUser);
+                        let userPermissions: string[] = [];
+                        try {
+                            const perms = getCookie("nexus_shared_permissions");
+                            if (perms) userPermissions = JSON.parse(perms);
+                        } catch (_) { }
+                        localStorage.setItem("nexus_token", sharedToken);
+                        localStorage.setItem("nexus_user", sharedUser);
+                        if (userPermissions.length) {
+                            localStorage.setItem("nexus_permissions", JSON.stringify(userPermissions));
+                        }
+                        // นำ theme, themeColor จาก shared cookie ไปใช้
+                        const sharedTheme = getCookie("nexus_shared_theme");
+                        const sharedThemeColor = getCookie("nexus_shared_theme_color");
+                        if (sharedTheme === "dark" || sharedTheme === "light") {
+                            localStorage.setItem("nexus_theme", sharedTheme);
+                            localStorage.setItem("theme", sharedTheme);
+                            document.documentElement.classList.toggle("dark", sharedTheme === "dark");
+                        }
+                        if (sharedThemeColor) {
+                            localStorage.setItem("themeColor", sharedThemeColor);
+                            document.documentElement.style.setProperty("--primary", sharedThemeColor);
+                            document.documentElement.style.setProperty("--sidebar-primary", sharedThemeColor);
+                            document.documentElement.style.setProperty("--ring", sharedThemeColor);
+                        }
+                        const nexusInsightUser: User = {
+                            username: userObj.username || userObj.email,
+                            email: userObj.email,
+                            avatarUrl: userObj.avatarUrl || userObj.avatar_url,
+                            roles: [],
+                            permissions: userPermissions,
+                            isSuperAdmin: userObj.username === "admin",
+                        };
+                        setUser(nexusInsightUser);
+                        setIsAuthenticated(true);
+                        setIsLoading(false);
+                        return;
+                    } catch (e) {
+                        console.error("Failed to bootstrap from shared cookie", e);
+                    }
+                }
                 // If no user is found and not on callback page, redirect to SSO
                 if (!isCallbackPage && !isLogoutPage) {
                     redirectToSSO();
@@ -173,15 +238,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.clear();
             sessionStorage.clear();
 
-            // 2. Clear all Cookies
+            // 2. Clear all Cookies with enhanced domain coverage
             const cookies = document.cookie.split(";");
+            
+            const deleteCookie = (name: string, path: string, domain?: string) => {
+                let cookieString = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}`;
+                if (domain) {
+                    cookieString += `; domain=${domain}`;
+                }
+                document.cookie = cookieString;
+            };
+
+            const hostname = window.location.hostname;
+            const domainsToCheck = [undefined, hostname, `.${hostname}`];
+            
+            // Try parent domains for cross-subdomain cookie clearing
+            const parts = hostname.split('.');
+            if (parts.length > 2) {
+                let currentParts = [...parts];
+                while (currentParts.length > 2) {
+                    currentParts.shift();
+                    const parentDomain = currentParts.join('.');
+                    domainsToCheck.push(parentDomain);
+                    domainsToCheck.push(`.${parentDomain}`);
+                }
+            }
+
             for (let i = 0; i < cookies.length; i++) {
                 const cookie = cookies[i];
                 const eqPos = cookie.indexOf("=");
                 const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-                // Clear for current path, root path, and common permutations
-                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
-                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname};`;
+                domainsToCheck.forEach(domain => {
+                    deleteCookie(name, '/', domain);
+                });
+            }
+
+            // Explicitly clear shared cross-subdomain cookies so all apps log out
+            const sharedDomain = getSharedCookieDomain();
+            if (sharedDomain) {
+                [...SHARED_COOKIE_NAMES, "nexus_shared_permissions", "nexus_shared_theme", "nexus_shared_theme_color"].forEach(name => {
+                    deleteCookie(name, '/', sharedDomain);
+                });
             }
         }
 
@@ -248,6 +345,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 }
 
                 document.cookie = `auth_token=${token}; path=/`;
+
+                // Shared cookies across subdomains (e.g. *.trirex.cloud) so login once works for all apps
+                const sharedDomain = getSharedCookieDomain();
+                if (sharedDomain && typeof window !== "undefined") {
+                    const maxAge = SHARED_COOKIE_MAX_AGE_DAYS * 24 * 60 * 60;
+                    const isSecure = window.location.protocol === "https:";
+                    const opts = `path=/; domain=${sharedDomain}; max-age=${maxAge}; SameSite=Lax${isSecure ? "; Secure" : ""}`;
+                    document.cookie = `nexus_shared_token=${encodeURIComponent(token)}; ${opts}`;
+                    document.cookie = `nexus_shared_user=${encodeURIComponent(JSON.stringify(user))}; ${opts}`;
+                    if (permissions) {
+                        document.cookie = `nexus_shared_permissions=${encodeURIComponent(JSON.stringify(permissions))}; ${opts}`;
+                    }
+                }
 
                 // อัปเดต State
                 const nexusUser: User = {
