@@ -30,9 +30,25 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <SystemSwitcher />
+        <div className="flex flex-col gap-2 p-2">
+          <div className="flex items-center gap-2 px-2 py-1">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <span className="text-sm font-bold">360</span>
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-bold leading-none truncate">
+                Acme Inc
+              </span>
+              <span className="text-xs text-muted-foreground leading-none truncate">
+                Enterprise System
+              </span>
+            </div>
+          </div>
+        </div>
       </SidebarHeader>
-      <SidebarContent className="h-full w-full" />
+      <SidebarContent className="h-full w-full">
+        <SystemSwitcher />
+      </SidebarContent>
       <SidebarFooter>
         <div className="flex flex-col gap-2 px-2">
           <div className="flex justify-center">
