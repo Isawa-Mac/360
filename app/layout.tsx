@@ -48,6 +48,8 @@ export default async function RootLayout({
   const sharedTheme = cookieStore.get("nexus_shared_theme")?.value;
   const defaultTheme = sharedTheme === "dark" || sharedTheme === "light" ? sharedTheme : "system";
   const sharedThemeColor = cookieStore.get("nexus_shared_theme_color")?.value;
+  const sharedScale = cookieStore.get("nexus_shared_scale")?.value;
+  const fontScale = sharedScale ? parseInt(sharedScale) : 100;
 
   return (
     <html lang="th" className={`${inter.variable} ${sarabun.variable}`} suppressHydrationWarning>
@@ -59,6 +61,16 @@ export default async function RootLayout({
                 --primary: ${sharedThemeColor};
                 --sidebar-primary: ${sharedThemeColor};
                 --ring: ${sharedThemeColor};
+                font-size: ${fontScale}%;
+              }
+            `
+          }} />
+        )}
+        {!sharedThemeColor && sharedScale && (
+          <style dangerouslySetInnerHTML={{
+            __html: `
+              :root {
+                font-size: ${fontScale}%;
               }
             `
           }} />
