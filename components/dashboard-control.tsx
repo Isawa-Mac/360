@@ -38,7 +38,7 @@ export function DashboardControl({
 
     if (!mounted) {
         return (
-            <div className={cn("flex items-center bg-accent/40 rounded-lg p-0.5 border border-border/50 opacity-50", isColumn && "flex-col", className)}>
+            <div className={cn("flex items-center bg-transparent rounded-lg p-0.5 border border-border/50 opacity-50", isColumn && "flex-col", className)}>
                 <div className="h-7 w-7" />
                 <div className="h-7 w-7" />
                 <div className="h-7 w-7" />
@@ -47,7 +47,7 @@ export function DashboardControl({
     }
 
     return (
-        <div className={cn("flex items-center bg-accent/40 rounded-lg p-0.5 border border-border/50", isColumn ? "flex-col" : "flex-row", className)}>
+        <div className={cn("flex items-center bg-transparent rounded-lg p-0.5 border border-border/50", isColumn ? "flex-col" : "flex-row", className)}>
             <Button
                 variant="ghost"
                 size="icon"

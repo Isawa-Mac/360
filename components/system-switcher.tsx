@@ -12,12 +12,42 @@ import {
 import { cn } from "@/lib/utils"
 import { usePermission } from "@/hooks/use-permission"
 
+// Custom 3x3 Grid Icon
+const Grid3x3Icon = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    className={className}
+  >
+    <rect x="1" y="1" width="3" height="3" fill="currentColor" />
+    <rect x="6.5" y="1" width="3" height="3" fill="currentColor" />
+    <rect x="12" y="1" width="3" height="3" fill="currentColor" />
+    <rect x="1" y="6.5" width="3" height="3" fill="currentColor" />
+    <rect x="6.5" y="6.5" width="3" height="3" fill="currentColor" />
+    <rect x="12" y="6.5" width="3" height="3" fill="currentColor" />
+    <rect x="1" y="12" width="3" height="3" fill="currentColor" />
+    <rect x="6.5" y="12" width="3" height="3" fill="currentColor" />
+    <rect x="12" y="12" width="3" height="3" fill="currentColor" />
+  </svg>
+)
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
+
 const projects = [
   {
     name: "ERP 360 Online",
     url: "https://360.trirex.cloud",
     icon: Globe,
-    active: true,
+    active: false,
     permission: "erp360.erp",
     clientId: "cli_1mkd41fz"
   },
@@ -25,6 +55,7 @@ const projects = [
     name: "Business Intelligence 360",
     url: "https://bi360.trirex.cloud",
     icon: BarChart3,
+    active: true,
     permission: "erp360.bi",
   },
   {
@@ -49,7 +80,7 @@ const projects = [
 
 export function SystemSwitcher({ className }: { className?: string }) {
   // Use user permissions
-  const { permissions, hasPermission } = usePermission();
+  const { hasPermission } = usePermission();
 
   // Filter projects based on permission
   const visibleProjects = projects.filter(project =>
@@ -73,10 +104,6 @@ export function SystemSwitcher({ className }: { className?: string }) {
 
     // Smart Redirect via SSO Login with Callback URL
     if (project.clientId) {
-      // Ensure we redirect to the callback handler, not the root, to avoid loops
-      const callbackUrl = `${effectiveUrl}/auth/sso-callback`;
-      // Remove redirect_uri to let SSO use the default callback URL registered for the client
-      // This helps avoid potential mismatch errors or loops if the registered redirect URI is strictly enforced
       return `${process.env.NEXT_PUBLIC_SSO_URL || 'https://sso360.trirex.cloud'}/#/login?client_id=${project.clientId}&response_type=code`;
     }
 
@@ -84,40 +111,79 @@ export function SystemSwitcher({ className }: { className?: string }) {
   }
 
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
-      <div className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/60 px-2 py-1.5">
-        Menu
-      </div>
-      <div className="flex flex-col gap-1">
-        {visibleProjects.map((project) => {
-          const isActive = project.active
-          return (
-            <a
-              key={project.name}
-              href={getAppUrl(project)}
-              className={cn(
-                "flex items-center gap-3 px-2 py-2 cursor-pointer rounded-md transition-colors",
-                isActive ? "bg-accent text-primary" : "hover:bg-accent/50"
-              )}
+    <SidebarMenu className={className}>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-lg border bg-background transition-colors",
-                isActive ? "border-primary/50 bg-primary/10" : "border-border"
-              )}>
-                <project.icon className={cn("h-4 w-4", isActive ? "text-primary" : "text-muted-foreground")} />
+              <div className="flex aspect-square size-8 items-center justify-center rounded-full bg-sidebar-accent text-sidebar-accent-foreground">
+                <Grid3x3Icon className="size-4" />
               </div>
-              <div className="flex flex-col flex-1 min-w-0">
-                <span className="text-sm font-medium leading-none truncate">
-                  {project.name}
-                </span>
-              </div>
-              {isActive && (
-                <Check className="h-3.5 w-3.5 text-primary" />
-              )}
-            </a>
-          )
-        })}
-      </div>
-    </div>
+        
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-80 min-w-56 rounded-2xl p-2 bg-[#121212] border-none shadow-2xl"
+            side="right"
+            align="start"
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="text-[11px] uppercase font-bold tracking-widest text-muted-foreground/50 px-3 py-4">
+              Select System
+            </DropdownMenuLabel>
+            <div className="flex flex-col gap-1.5">
+              {visibleProjects.map((project) => {
+                const isActive = project.active
+                const isBI = project.name === "Business Intelligence 360"
+
+                return (
+                  <DropdownMenuItem
+                    key={project.name}
+                    className={cn(
+                      "flex items-center gap-4 px-3 py-3.5 cursor-pointer rounded-2xl transition-all duration-200",
+                      isActive && !isBI ? "bg-accent/50 text-primary" : "hover:bg-accent/30",
+                      isActive && isBI ? "bg-[#1E1515] text-[#FF4D4D]" : ""
+                    )}
+                    onClick={() => {
+                      window.location.href = getAppUrl(project)
+                    }}
+                  >
+                    <div className={cn(
+                      "flex h-10 w-10 items-center justify-center rounded-xl border transition-colors",
+                      isActive && !isBI ? "border-primary/50 bg-primary/10" : "border-[#262626] bg-[#1A1A1A]",
+                      isActive && isBI ? "border-[#4A1D1D] bg-[#2D1616]" : ""
+                    )}>
+                      <project.icon className={cn(
+                        "h-5 w-5",
+                        isActive && !isBI ? "text-primary" : "text-muted-foreground",
+                        isActive && isBI ? "text-[#FF4D4D]" : ""
+                      )} />
+                    </div>
+                    <div className="flex flex-col flex-1 min-w-0">
+                      <span className={cn(
+                        "text-[15px] font-semibold truncate",
+                        isActive && isBI ? "text-[#FF4D4D]" : "text-white"
+                      )}>
+                        {project.name}
+                      </span>
+                    </div>
+                    {isActive && (
+                      <Check className={cn(
+                        "h-4 w-4",
+                        isBI ? "text-[#FF4D4D]" : "text-primary"
+                      )} />
+                    )}
+                  </DropdownMenuItem>
+                )
+              })}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
   )
 }
+
