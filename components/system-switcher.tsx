@@ -126,7 +126,7 @@ export function SystemSwitcher({ className }: { className?: string }) {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-80 min-w-56 rounded-2xl p-2 bg-[#121212] border-none shadow-2xl"
+            className="w-80 min-w-56 rounded-2xl p-2 bg-popover border shadow-2xl"
             side="right"
             align="start"
             sideOffset={4}
@@ -144,8 +144,8 @@ export function SystemSwitcher({ className }: { className?: string }) {
                     key={project.name}
                     className={cn(
                       "flex items-center gap-4 px-3 py-3.5 cursor-pointer rounded-2xl transition-all duration-200",
-                      isActive && !isBI ? "bg-accent/50 text-primary" : "hover:bg-accent/30",
-                      isActive && isBI ? "bg-[#1E1515] text-[#FF4D4D]" : ""
+                      isActive && !isBI ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
+                      isActive && isBI ? "bg-destructive/10 text-destructive" : ""
                     )}
                     onClick={() => {
                       window.location.href = getAppUrl(project)
@@ -153,19 +153,19 @@ export function SystemSwitcher({ className }: { className?: string }) {
                   >
                     <div className={cn(
                       "flex h-10 w-10 items-center justify-center rounded-xl border transition-colors",
-                      isActive && !isBI ? "border-primary/50 bg-primary/10" : "border-[#262626] bg-[#1A1A1A]",
-                      isActive && isBI ? "border-[#4A1D1D] bg-[#2D1616]" : ""
+                      isActive && !isBI ? "border-primary/20 bg-primary/5" : "border-border bg-muted",
+                      isActive && isBI ? "border-destructive/20 bg-destructive/5" : ""
                     )}>
                       <project.icon className={cn(
                         "h-5 w-5",
                         isActive && !isBI ? "text-primary" : "text-muted-foreground",
-                        isActive && isBI ? "text-[#FF4D4D]" : ""
+                        isActive && isBI ? "text-destructive" : ""
                       )} />
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
                       <span className={cn(
                         "text-[15px] font-semibold truncate",
-                        isActive && isBI ? "text-[#FF4D4D]" : "text-white"
+                        isActive && isBI ? "text-destructive" : "text-foreground"
                       )}>
                         {project.name}
                       </span>
@@ -173,7 +173,7 @@ export function SystemSwitcher({ className }: { className?: string }) {
                     {isActive && (
                       <Check className={cn(
                         "h-4 w-4",
-                        isBI ? "text-[#FF4D4D]" : "text-primary"
+                        isBI ? "text-destructive" : "text-primary"
                       )} />
                     )}
                   </DropdownMenuItem>
