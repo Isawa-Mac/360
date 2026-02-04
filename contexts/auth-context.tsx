@@ -222,6 +222,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, []);
 
+    // Passive Cookie Monitor - ตรวจสอบ shared cookie เป็นระยะเพื่อทำ global logout
+    useEffect(() => {
+        if (!isAuthenticated) return;
+
+        let intervalId: number | undefined;
+
+        // รอ 3 วินาทีหลังจาก login ก่อนเริ่มตรวจสอบ (กันกรณี cookie เพิ่งถูกเขียน)
+        const monitorStartDelay = window.setTimeout(() => {
+            intervalId = window.setInterval(() => {
+                const hasSharedToken = !!getCookie("nexus_shared_token");
+
+                // ถ้า state ยังบอกว่า login อยู่ แต่ shared cookie หายไป ให้ logout จาก 360 ด้วย
+                if (isAuthenticated && !hasSharedToken) {
+                    console.log("Shared SSO cookie not found, logging out from 360...");
+                    logout();
+                }
+            }, 2000); // ตรวจทุก 2 วินาที
+        }, 3000);
+
+        // เคลียร์ timeout และ interval ตอน dependency เปลี่ยนหรือ component unmount
+        return () => {
+            window.clearTimeout(monitorStartDelay);
+            if (intervalId !== undefined) {
+                window.clearInterval(intervalId);
+            }
+        };
+    }, [isAuthenticated]);
+
     const login = (username: string) => {
         // This is the old local login, we can keep it or make it call redirectToSSO
         redirectToSSO();
