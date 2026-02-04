@@ -20,14 +20,12 @@ import { UserMenu } from "@/components/user-menu"
 import { SystemSwitcher } from "@/components/system-switcher"
 import { DashboardControl } from "@/components/dashboard-control"
 import { useAuth } from "@/contexts/auth-context"
-import { useDashboardScale } from "@/contexts/dashboard-scale-context"
 import { usePermission } from "@/hooks/use-permission"
 import { navItems, filterNavItemsByPermission } from "@/lib/navigation"
 
 export function AppSidebar() {
   const pathname = usePathname()
   const { user } = useAuth()
-  const { scaleMode, setScaleMode } = useDashboardScale()
   const { state, setOpen, setOpenMobile, isMobile } = useSidebar()
   const { hasPermission, isSuperAdmin } = usePermission()
 
@@ -86,8 +84,6 @@ export function AppSidebar() {
         <div className="flex flex-col gap-2 px-2">
           <div className="flex justify-center">
             <DashboardControl
-              scaleValue={scaleMode}
-              onScaleChange={setScaleMode}
               direction={state === "collapsed" ? "column" : "row"}
             />
           </div>
