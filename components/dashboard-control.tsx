@@ -6,6 +6,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/auth-context";
 
 export type DashboardControlProps = {
     /** แนวตั้งเมื่อ sidebar ปิด, แนวนอนเมื่อ sidebar เปิด */
@@ -18,6 +19,7 @@ export function DashboardControl({
     className,
 }: DashboardControlProps) {
     const { setTheme, resolvedTheme } = useTheme();
+    const { syncThemeToCookie } = useAuth();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -27,7 +29,10 @@ export function DashboardControl({
     const isDark = resolvedTheme === 'dark';
 
     const toggleTheme = () => {
-        setTheme(isDark ? 'light' : 'dark');
+        const next = isDark ? 'light' : 'dark';
+        setTheme(next);
+        const themeColor = typeof localStorage !== "undefined" ? localStorage.getItem("themeColor") : undefined;
+        syncThemeToCookie(next, themeColor ?? undefined);
     };
 
     const isColumn = direction === "column";

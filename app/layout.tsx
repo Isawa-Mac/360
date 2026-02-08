@@ -45,28 +45,31 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+  const appTheme = cookieStore.get("bi360_theme")?.value;
   const sharedTheme = cookieStore.get("nexus_shared_theme")?.value;
-  const defaultTheme = sharedTheme === "dark" || sharedTheme === "light" ? sharedTheme : "system";
+  const defaultTheme = appTheme === "dark" || appTheme === "light" ? appTheme : (sharedTheme === "dark" || sharedTheme === "light" ? sharedTheme : "system");
+  const appThemeColor = cookieStore.get("bi360_theme_color")?.value;
   const sharedThemeColor = cookieStore.get("nexus_shared_theme_color")?.value;
+  const themeColor = appThemeColor || sharedThemeColor;
   const sharedScale = cookieStore.get("nexus_shared_scale")?.value;
   const fontScale = sharedScale ? parseInt(sharedScale) : 100;
 
   return (
     <html lang="th" className={`${inter.variable} ${sarabun.variable}`} suppressHydrationWarning>
       <head>
-        {sharedThemeColor && (
+        {themeColor && (
           <style dangerouslySetInnerHTML={{
             __html: `
               :root {
-                --primary: ${sharedThemeColor};
-                --sidebar-primary: ${sharedThemeColor};
-                --ring: ${sharedThemeColor};
+                --primary: ${themeColor};
+                --sidebar-primary: ${themeColor};
+                --ring: ${themeColor};
                 font-size: ${fontScale}%;
               }
             `
           }} />
         )}
-        {!sharedThemeColor && sharedScale && (
+        {!themeColor && sharedScale && (
           <style dangerouslySetInnerHTML={{
             __html: `
               :root {
