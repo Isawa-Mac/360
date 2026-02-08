@@ -318,12 +318,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
         })();
 
-        const validateInterval = window.setInterval(async () => {
+        const runValidate = async () => {
             try {
+                const t = localStorage.getItem("nexus_token");
+                if (!t) return;
                 const res = await fetch(`${ssoOrigin}/api/sso/validate-token`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ token }),
+                    body: JSON.stringify({ token: t }),
                 });
                 const data = await res.json();
                 if (data.valid === false) {
@@ -331,7 +333,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     logout();
                 }
             } catch (_) {}
-        }, SESSION_VALIDATE_INTERVAL_MS);
+        };
+
+        runValidate(); // เช็คครั้งแรกทันที (ข้าม browser)
+        const validateInterval = window.setInterval(runValidate, SESSION_VALIDATE_INTERVAL_MS);
 
         return () => window.clearInterval(validateInterval);
     }, [isAuthenticated]);
