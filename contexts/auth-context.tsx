@@ -226,9 +226,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setIsLoading(false);
                 }
             } else {
-                // Cross-subdomain: if no local token but shared cookie exists (login from SSO or another app), bootstrap
-                const shared = getSharedAuthFromCookie();
-                if (shared && !isCallbackPage && !isLogoutPage) {
+                const bootstrapFromShared = (): boolean => {
+                    const shared = getSharedAuthFromCookie();
+                    if (!shared || isCallbackPage || isLogoutPage) return false;
                     try {
                         const userObj = JSON.parse(shared.user);
                         let userPermissions: string[] = [];
@@ -268,17 +268,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         setUser(nexusInsightUser);
                         setIsAuthenticated(true);
                         setIsLoading(false);
-                        return;
+                        return true;
                     } catch (e) {
                         console.error("Failed to bootstrap from shared cookie", e);
+                        return false;
                     }
-                }
-                // If no user is found and not on callback page, redirect to SSO
-                if (!isCallbackPage && !isLogoutPage) {
-                    redirectToSSO();
-                } else {
-                    setIsLoading(false);
-                }
+                };
+
+                if (bootstrapFromShared()) return;
+
+                // ลองอ่าน shared cookie อีกครั้งหลังหน่วงสั้น (กรณี cookie ยังไม่โหลดทัน)
+                const timeoutId = window.setTimeout(() => {
+                    if (bootstrapFromShared()) return;
+                    if (!isCallbackPage && !isLogoutPage) {
+                        redirectToSSO();
+                    } else {
+                        setIsLoading(false);
+                    }
+                }, 300);
+
+                return () => window.clearTimeout(timeoutId);
             }
         }
     }, []);
