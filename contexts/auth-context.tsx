@@ -30,6 +30,8 @@ const SHARED_COOKIE_NAMES = ["nexus_shared_token", "nexus_shared_user"] as const
 const SHARED_COOKIE_MAX_AGE_DAYS = 7;
 /** อายุสัญญาณ logout (ms) - ต้องตรงกับ SHARED_LOGOUT_COOKIE_MAX_AGE_SEC ใน nexusSSO */
 const SHARED_LOGOUT_MAX_AGE_MS = 120 * 1000;
+/** โพล์ validate session ทุกกี่ ms (แบบ Microsoft 365 — logout ทุก device) */
+const SESSION_VALIDATE_INTERVAL_MS = 45 * 1000;
 
 /** Returns domain for shared cookie (e.g. ".trirex.cloud") so all subdomains can read; null for localhost/single host. */
 function getSharedCookieDomain(): string | null {
@@ -271,6 +273,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 window.clearInterval(intervalId);
             }
         };
+    }, [isAuthenticated]);
+
+    // โพล์ validate-token เป็นระยะ — ถ้า session ถูก revoke (logout จาก device อื่น) ให้ออกระบบที่นี่ด้วย (แบบ Microsoft 365)
+    useEffect(() => {
+        if (!isAuthenticated) return;
+        const token = typeof window !== "undefined" ? localStorage.getItem("nexus_token") : null;
+        if (!token) return;
+
+        const ssoOrigin = (() => {
+            const u = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
+            try {
+                return new URL(u).origin;
+            } catch {
+                return u.replace(/#.*$/, "").replace(/\/$/, "");
+            }
+        })();
+
+        const validateInterval = window.setInterval(async () => {
+            try {
+                const res = await fetch(`${ssoOrigin}/api/sso/validate-token`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token }),
+                });
+                const data = await res.json();
+                if (data.valid === false) {
+                    console.log("Session revoked (logout from another device), logging out from 360...");
+                    logout();
+                }
+            } catch (_) {}
+        }, SESSION_VALIDATE_INTERVAL_MS);
+
+        return () => window.clearInterval(validateInterval);
     }, [isAuthenticated]);
 
     const login = (username: string) => {
