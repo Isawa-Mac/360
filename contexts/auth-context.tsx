@@ -28,6 +28,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const SHARED_COOKIE_NAMES = ["nexus_shared_token", "nexus_shared_user"] as const;
 const SHARED_COOKIE_MAX_AGE_DAYS = 7;
+/** อายุสัญญาณ logout (ms) - ต้องตรงกับ SHARED_LOGOUT_COOKIE_MAX_AGE_SEC ใน nexusSSO */
+const SHARED_LOGOUT_MAX_AGE_MS = 120 * 1000;
 
 /** Returns domain for shared cookie (e.g. ".trirex.cloud") so all subdomains can read; null for localhost/single host. */
 function getSharedCookieDomain(): string | null {
@@ -228,9 +230,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         let intervalId: number | undefined;
 
+        const checkLogoutSignal = (): boolean => {
+            if (typeof document === "undefined") return false;
+            const now = Date.now();
+            const cookies = document.cookie.split(";");
+            for (const c of cookies) {
+                const trimmed = c.trim();
+                if (!trimmed.startsWith("nexus_shared_logout")) continue;
+                const eq = trimmed.indexOf("=");
+                if (eq === -1) continue;
+                const value = decodeURIComponent(trimmed.slice(eq + 1).trim());
+                const ts = parseInt(value, 10);
+                if (!Number.isNaN(ts) && now - ts < SHARED_LOGOUT_MAX_AGE_MS) return true;
+            }
+            return false;
+        };
+
         // รอ 3 วินาทีหลังจาก login ก่อนเริ่มตรวจสอบ (กันกรณี cookie เพิ่งถูกเขียน)
         const monitorStartDelay = window.setTimeout(() => {
             intervalId = window.setInterval(() => {
+                if (checkLogoutSignal()) {
+                    console.log("Shared SSO logout signal found, logging out from 360...");
+                    logout();
+                    return;
+                }
                 const hasSharedToken = !!getCookie("nexus_shared_token");
 
                 // ถ้า state ยังบอกว่า login อยู่ แต่ shared cookie หายไป ให้ logout จาก 360 ด้วย
