@@ -85,6 +85,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return match ? decodeURIComponent(match[1]) : null;
     }
 
+    /** อ่าน shared token/user จาก cookie (รองรับทั้งแบบไม่มี suffix และแบบมี _tenantId ตาม nexusSSO) */
+    function getSharedAuthFromCookie(): { token: string; user: string; permissions?: string; suffix: string } | null {
+        if (typeof document === "undefined") return null;
+        // 1) ลองแบบไม่มี suffix ก่อน (single-tenant / legacy)
+        let token = getCookie("nexus_shared_token");
+        let user = token ? getCookie("nexus_shared_user") : null;
+        let suffix = "";
+        if (token && user) return { token, user, permissions: getCookie("nexus_shared_permissions") || undefined, suffix };
+
+        // 2) วนหา cookie ที่ขึ้นต้นด้วย nexus_shared_token_ (multi-tenant)
+        const cookies = document.cookie.split(";");
+        for (const c of cookies) {
+            const trimmed = c.trim();
+            if (!trimmed.startsWith("nexus_shared_token")) continue;
+            const eq = trimmed.indexOf("=");
+            if (eq === -1) continue;
+            const namePart = trimmed.slice(0, eq).trim();
+            token = decodeURIComponent(trimmed.slice(eq + 1).trim());
+            if (namePart === "nexus_shared_token") continue; // already tried
+            const parts = namePart.split("_");
+            if (parts.length >= 4) suffix = "_" + parts.slice(3).join("_");
+            user = getCookie("nexus_shared_user" + suffix);
+            if (token && user) return { token, user, permissions: getCookie("nexus_shared_permissions" + suffix) || undefined, suffix };
+        }
+        return null;
+    }
+
+    function hasAnySharedToken(): boolean {
+        if (typeof document === "undefined") return false;
+        return document.cookie.includes("nexus_shared_token");
+    }
+
     function setCookie(name: string, value: string, maxAgeDays: number = THEME_COOKIE_MAX_AGE_DAYS) {
         if (typeof document === "undefined") return;
         const maxAge = maxAgeDays * 24 * 60 * 60;
@@ -194,27 +226,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setIsLoading(false);
                 }
             } else {
-                // Cross-subdomain: if no local token but shared cookie exists (login from another app), bootstrap
-                const sharedToken = getCookie("nexus_shared_token");
-                const sharedUser = getCookie("nexus_shared_user");
-                if (sharedToken && sharedUser && !isCallbackPage && !isLogoutPage) {
+                // Cross-subdomain: if no local token but shared cookie exists (login from SSO or another app), bootstrap
+                const shared = getSharedAuthFromCookie();
+                if (shared && !isCallbackPage && !isLogoutPage) {
                     try {
-                        const userObj = JSON.parse(sharedUser);
+                        const userObj = JSON.parse(shared.user);
                         let userPermissions: string[] = [];
                         try {
-                            const perms = getCookie("nexus_shared_permissions");
-                            if (perms) userPermissions = JSON.parse(perms);
+                            if (shared.permissions) userPermissions = JSON.parse(shared.permissions);
                         } catch (_) { }
-                        localStorage.setItem("nexus_token", sharedToken);
-                        localStorage.setItem("nexus_user", sharedUser);
+                        localStorage.setItem("nexus_token", shared.token);
+                        localStorage.setItem("nexus_user", shared.user);
                         if (userPermissions.length) {
                             localStorage.setItem("nexus_permissions", JSON.stringify(userPermissions));
                         }
-                        // นำ theme: ใช้ของแอป 360 ก่อน แล้วค่อย shared
                         const appTheme = getCookie(APP_THEME_COOKIE);
                         const appThemeColor = getCookie(APP_THEME_COLOR_COOKIE);
-                        const sharedTheme = getCookie("nexus_shared_theme");
-                        const sharedThemeColor = getCookie("nexus_shared_theme_color");
+                        const sharedTheme = getCookie("nexus_shared_theme" + shared.suffix);
+                        const sharedThemeColor = getCookie("nexus_shared_theme_color" + shared.suffix);
                         const theme = appTheme === "dark" || appTheme === "light" ? appTheme : (sharedTheme === "dark" || sharedTheme === "light" ? sharedTheme : null);
                         const themeColor = appThemeColor || sharedThemeColor;
                         if (theme) {
@@ -284,7 +313,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     logout();
                     return;
                 }
-                const hasSharedToken = !!getCookie("nexus_shared_token");
+                const hasSharedToken = hasAnySharedToken();
 
                 // ถ้า state ยังบอกว่า login อยู่ แต่ shared cookie หายไป ให้ logout จาก 360 ด้วย
                 if (isAuthenticated && !hasSharedToken) {
