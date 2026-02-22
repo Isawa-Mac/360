@@ -139,16 +139,22 @@ function HomePageContent() {
       showFilters={false}
       pageTitle="Nexus Smart CRM 360"
     >
-      <div className="min-h-full p-6">
+      <div className="min-h-full p-6 relative">
+        {/* Background Decorative Elements for better see-through effect */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full" />
+          <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[30%] bg-indigo-500/10 blur-[100px] rounded-full" />
+        </div>
+
         <div className="max-w-7xl mx-auto">
-
-
           {/* Main Menu Section */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-6">
+          <div className="mb-8 bg-white/10 dark:bg-slate-900/40 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-12 border border-white/20 dark:border-white/5 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2" />
+
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 tracking-tight">
               Nexus Smart CRM 360
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {menuItems.filter(item => {
                 if (!item.requiredPermission) return true
                 return hasPermission(item.requiredPermission)

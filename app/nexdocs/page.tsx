@@ -13,7 +13,8 @@ import {
     X,
     Target,
     Rocket,
-    ArrowRight
+    ArrowRight,
+    Play
 } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -22,6 +23,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 
 export default function NexDocsLandingPage() {
     const [isOpen, setIsOpen] = useState(false)
+    const [isSlideshowOpen, setIsSlideshowOpen] = useState(false)
 
     const features = [
         {
@@ -115,6 +117,15 @@ export default function NexDocsLandingPage() {
                                     <Expand className="w-5 h-5 mr-2" />
                                     เปิด NexDocs 360
                                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                                <Button
+                                    size="lg"
+                                    variant="outline"
+                                    className="border-slate-700 hover:bg-slate-800 text-white px-8 h-14 rounded-full text-lg font-semibold group transition-all"
+                                    onClick={() => setIsSlideshowOpen(true)}
+                                >
+                                    <Play className="w-5 h-5 mr-2 fill-current" />
+                                    แสดง Slide Show
                                 </Button>
                                 <p className="text-sm text-slate-500 italic">พร้อมลดระยะเวลาการทำงานลงถึง 90%</p>
                             </div>
@@ -260,6 +271,62 @@ export default function NexDocsLandingPage() {
                                                     variant="outline"
                                                     size="icon"
                                                     className="absolute top-2 right-2 md:top-4 md:right-4 rounded-full bg-white text-black hover:bg-slate-200 transition-colors"
+                                                >
+                                                    <X className="w-6 h-6" />
+                                                </Button>
+                                            </Dialog.Close>
+                                        </div>
+                                    </motion.div>
+                                </Dialog.Content>
+                            </Dialog.Portal>
+                        )}
+                    </AnimatePresence>
+                </Dialog.Root>
+
+                {/* Slide Show Modal */}
+                <Dialog.Root open={isSlideshowOpen} onOpenChange={setIsSlideshowOpen}>
+                    <AnimatePresence>
+                        {isSlideshowOpen && (
+                            <Dialog.Portal forceMount>
+                                <Dialog.Overlay asChild>
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        className="fixed inset-0 bg-black/95 z-[100] backdrop-blur-sm"
+                                    />
+                                </Dialog.Overlay>
+                                <Dialog.Content asChild>
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.9 }}
+                                        className="fixed inset-0 z-[101] outline-none flex items-center justify-center p-4"
+                                    >
+                                        <div className="relative w-full max-w-5xl aspect-video bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-800">
+                                            {/* Placeholder for Slide Show Content */}
+                                            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-900/20 to-slate-900">
+                                                <div className="text-center p-8">
+                                                    <div className="w-20 h-20 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-6">
+                                                        <Play className="w-10 h-10 text-blue-400 fill-current" />
+                                                    </div>
+                                                    <h2 className="text-3xl font-bold mb-4">NexDocs 360 Presentation</h2>
+                                                    <p className="text-slate-400 max-w-md mx-auto mb-8">
+                                                        Slide Show กำลังเตรียมความพร้อมเพื่อนำเสนอระบบการจัดการเอกสารยุคใหม่ที่สมบูรณ์แบบที่สุด
+                                                    </p>
+                                                    <div className="flex justify-center gap-2">
+                                                        {[1, 2, 3, 4].map(i => (
+                                                            <div key={i} className={`w-3 h-3 rounded-full ${i === 1 ? 'bg-blue-500' : 'bg-slate-700'}`} />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <Dialog.Close asChild>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="absolute top-4 right-4 rounded-full bg-black/50 text-white hover:bg-black/80 transition-colors z-50"
                                                 >
                                                     <X className="w-6 h-6" />
                                                 </Button>
