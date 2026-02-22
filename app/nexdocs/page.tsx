@@ -222,7 +222,7 @@ export default function NexDocsLandingPage() {
                             <FileText className="w-6 h-6 text-blue-500" />
                             <span className="text-xl font-bold tracking-tighter">NexDocs 360</span>
                         </div>
-                        <p className="text-slate-500 text-sm">© 2026 Nexus 360. All rights reserved.</p>
+                        <p className="text-slate-500 text-sm">© 2026 Nexus Smart CRM 360. All rights reserved.</p>
                     </div>
                 </footer>
 

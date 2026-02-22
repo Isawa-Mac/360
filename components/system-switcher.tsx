@@ -44,7 +44,7 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui
 
 const projects = [
   {
-    name: "CRM 360 Online",
+    name: "Nexus Smart CRM 360",
     url: "https://360.trirex.cloud",
     icon: Globe,
     active: false,
@@ -90,7 +90,7 @@ export function SystemSwitcher({ className }: { className?: string }) {
   const getAppUrl = (project: typeof projects[0]) => {
     // Override via Environment Variables for local dev
     let overrideUrl: string | undefined;
-    if (project.name === "CRM 360 Online") overrideUrl = process.env.NEXT_PUBLIC_CRM360_URL;
+    if (project.name === "Nexus Smart CRM 360") overrideUrl = process.env.NEXT_PUBLIC_CRM360_URL;
     if (project.name === "Business Intelligence 360") overrideUrl = process.env.NEXT_PUBLIC_BI360_URL;
     if (project.name === "NexDocs 360") overrideUrl = process.env.NEXT_PUBLIC_NEXDOCS_URL;
     if (project.name === "Point of Sale 360 Online") overrideUrl = process.env.NEXT_PUBLIC_POS_URL;

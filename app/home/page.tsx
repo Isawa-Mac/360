@@ -73,8 +73,8 @@ function HomePageContent() {
   // Main menu items
   const menuItems = [
     {
-      title: "CRM 360 Online",
-      description: "CRM 360 Online - ระบบบริหารความสัมพันธ์ลูกค้า",
+      title: "Nexus Smart CRM 360",
+      description: "Nexus Smart CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้า",
       icon: Globe,
       url: getLobbeyBaseURL(),
       isExternal: true,
@@ -137,7 +137,7 @@ function HomePageContent() {
   return (
     <Layout
       showFilters={false}
-      pageTitle="Nexus 360"
+      pageTitle="Nexus Smart CRM 360"
     >
       <div className="min-h-full p-6">
         <div className="max-w-7xl mx-auto">
@@ -146,7 +146,7 @@ function HomePageContent() {
           {/* Main Menu Section */}
           <div className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-6">
-              Nexus 360
+              Nexus Smart CRM 360
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {menuItems.filter(item => {
@@ -198,7 +198,7 @@ export default function HomePage() {
     <Suspense fallback={
       <Layout
         showFilters={false}
-        pageTitle="Nexus 360"
+        pageTitle="Nexus Smart CRM 360"
       >
         <div className="min-h-full p-6 flex items-center justify-center">
           <div className="text-center space-y-4">
