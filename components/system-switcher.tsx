@@ -131,10 +131,10 @@ export function SystemSwitcher({ className }: { className?: string }) {
             align="start"
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-[11px] uppercase font-bold tracking-widest text-muted-foreground/50 px-3 py-4">
+            <DropdownMenuLabel className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/40 px-3 py-2">
               Select System
             </DropdownMenuLabel>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1">
               {visibleProjects.map((project) => {
                 const isActive = project.active
                 const isBI = project.name === "Business Intelligence 360"
@@ -143,7 +143,7 @@ export function SystemSwitcher({ className }: { className?: string }) {
                   <DropdownMenuItem
                     key={project.name}
                     className={cn(
-                      "flex items-center gap-4 px-3 py-3.5 cursor-pointer rounded-2xl transition-all duration-200",
+                      "flex items-center gap-3 px-3 py-1.5 cursor-pointer rounded-xl transition-all duration-200",
                       isActive && !isBI ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
                       isActive && isBI ? "bg-destructive/10 text-destructive" : ""
                     )}
@@ -152,19 +152,19 @@ export function SystemSwitcher({ className }: { className?: string }) {
                     }}
                   >
                     <div className={cn(
-                      "flex h-10 w-10 items-center justify-center rounded-xl border transition-colors",
+                      "flex h-8 w-8 items-center justify-center rounded-lg border transition-colors",
                       isActive && !isBI ? "border-primary/20 bg-primary/5" : "border-border bg-muted",
                       isActive && isBI ? "border-destructive/20 bg-destructive/5" : ""
                     )}>
                       <project.icon className={cn(
-                        "h-5 w-5",
+                        "h-4 w-4",
                         isActive && !isBI ? "text-primary" : "text-muted-foreground",
                         isActive && isBI ? "text-destructive" : ""
                       )} />
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
                       <span className={cn(
-                        "text-[15px] font-semibold truncate",
+                        "text-[14px] font-semibold truncate",
                         isActive && isBI ? "text-destructive" : "text-foreground"
                       )}>
                         {project.name}
