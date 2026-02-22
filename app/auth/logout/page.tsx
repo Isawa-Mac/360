@@ -57,7 +57,7 @@ export default function LogoutPage() {
                         ออกจากระบบสำเร็จ
                     </h1>
                     <p className="text-slate-400 max-w-[320px] mx-auto text-lg">
-                        คุณได้ทำการออกจากระบบ Nexus ERP 360 เรียบร้อยแล้ว ขอบคุณที่ใช้งาน
+                        คุณได้ทำการออกจากระบบ Nexus CRM 360 เรียบร้อยแล้ว ขอบคุณที่ใช้งาน
                     </p>
                 </div>
 
@@ -77,7 +77,7 @@ export default function LogoutPage() {
             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 opacity-30 select-none">
                 <div className="h-px w-8 bg-slate-500" />
                 <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-slate-300">
-                    Nexus ERP 360 Enterprise System
+                    Nexus CRM 360 Enterprise System
                 </span>
                 <div className="h-px w-8 bg-slate-500" />
             </div>

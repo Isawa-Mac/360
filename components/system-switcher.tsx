@@ -44,11 +44,11 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui
 
 const projects = [
   {
-    name: "360 Online",
+    name: "CRM 360 Online",
     url: "https://360.trirex.cloud",
     icon: Globe,
     active: false,
-    permission: "erp360.erp",
+    permission: "crm360.erp",
     clientId: "cli_1mkd41fz"
   },
   {
@@ -56,25 +56,25 @@ const projects = [
     url: "https://bi360.trirex.cloud",
     icon: BarChart3,
     active: true,
-    permission: "erp360.bi",
+    permission: "crm360.bi",
   },
   {
     name: "NexDocs 360",
     url: "https://nexdocs.trirex.cloud",
     icon: FileText,
-    permission: "erp360.docs"
+    permission: "crm360.docs"
   },
   {
     name: "Point of Sale 360 Online",
     url: "https://pos360.trirex.cloud",
     icon: ShoppingCart,
-    permission: "erp360.pos"
+    permission: "crm360.pos"
   },
   {
     name: "Single Sign-On 360",
     url: "https://sso360.trirex.cloud",
     icon: Key,
-    permission: "erp360.admin"
+    permission: "crm360.admin"
   },
 ]
 
@@ -90,7 +90,7 @@ export function SystemSwitcher({ className }: { className?: string }) {
   const getAppUrl = (project: typeof projects[0]) => {
     // Override via Environment Variables for local dev
     let overrideUrl: string | undefined;
-    if (project.name === "360 Online") overrideUrl = process.env.NEXT_PUBLIC_ERP360_URL;
+    if (project.name === "CRM 360 Online") overrideUrl = process.env.NEXT_PUBLIC_CRM360_URL;
     if (project.name === "Business Intelligence 360") overrideUrl = process.env.NEXT_PUBLIC_BI360_URL;
     if (project.name === "NexDocs 360") overrideUrl = process.env.NEXT_PUBLIC_NEXDOCS_URL;
     if (project.name === "Point of Sale 360 Online") overrideUrl = process.env.NEXT_PUBLIC_POS_URL;

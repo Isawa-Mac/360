@@ -34,7 +34,7 @@ const sarabun = Sarabun({
 });
 
 export const metadata: Metadata = {
-  title: "Nexus ERP 360",
+  title: "Nexus CRM 360",
   description: "Enterprise Resource Planning 360 Online",
 };
 

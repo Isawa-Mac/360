@@ -73,12 +73,12 @@ function HomePageContent() {
   // Main menu items
   const menuItems = [
     {
-      title: "ERP 360 Online",
-      description: "ERP 360 Online (Lobby) - ระบบวางแผนทรัพยากรองค์กร",
+      title: "CRM 360 Online",
+      description: "CRM 360 Online (Lobby) - ระบบบริหารความสัมพันธ์ลูกค้า",
       icon: Globe,
       url: getLobbeyBaseURL(),
       isExternal: true,
-      requiredPermission: ['erp360.erp'],
+      requiredPermission: ['crm360.erp'],
     },
     {
       title: "Business Intelligence 360",
@@ -86,7 +86,7 @@ function HomePageContent() {
       icon: BarChart3,
       url: getBIBaseURL(),
       isExternal: true,
-      requiredPermission: ['erp360.bi'],
+      requiredPermission: ['crm360.bi'],
     },
     {
       title: "NexDocs 360",
@@ -94,7 +94,7 @@ function HomePageContent() {
       icon: FileText,
       url: getNexDocsBaseURL(),
       isExternal: true,
-      requiredPermission: ['erp360.docs'],
+      requiredPermission: ['crm360.docs'],
     },
     {
       title: "Point of Sale 360 Online",
@@ -102,15 +102,15 @@ function HomePageContent() {
       icon: ShoppingCart,
       url: getPOSBaseURL(),
       isExternal: true,
-      requiredPermission: ['erp360.pos'],
+      requiredPermission: ['crm360.pos'],
     },
     {
       title: "Single Sign-On 360",
-      description: "Single Sign-On 360 (SSO) - ระบบเข้าสู่ระบบแบบรวมศูนย์ด้วยบัญชีเดียว",
+      description: "Single Sign-On 360 (SS) - ระบบเข้าสู่ระบบแบบรวมศูนย์ด้วยบัญชีเดียว",
       icon: Key,
       url: getSSOBaseURL(),
       isExternal: true,
-      requiredPermission: ['erp360.admin'],
+      requiredPermission: ['crm360.admin'],
     }
   ]
 
@@ -137,7 +137,7 @@ function HomePageContent() {
   return (
     <Layout
       showFilters={false}
-      pageTitle="Nexus ERP 360"
+      pageTitle="Nexus CRM 360"
     >
       <div className="min-h-full p-6">
         <div className="max-w-7xl mx-auto">
@@ -146,7 +146,7 @@ function HomePageContent() {
           {/* Main Menu Section */}
           <div className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-6">
-              Nexus ERP 360
+              Nexus CRM 360
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {menuItems.filter(item => {
@@ -198,7 +198,7 @@ export default function HomePage() {
     <Suspense fallback={
       <Layout
         showFilters={false}
-        pageTitle="Nexus ERP 360"
+        pageTitle="Nexus CRM 360"
       >
         <div className="min-h-full p-6 flex items-center justify-center">
           <div className="text-center space-y-4">

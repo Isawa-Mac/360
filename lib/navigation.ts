@@ -23,7 +23,7 @@ export interface NavSubItem {
 // Navigation data structure - ใช้เมนูจาก team-switcher.tsx
 export const navItems: NavItem[] = [
   {
-    title: "ERP 360 Online",
+    title: "CRM 360 Online",
     url: "/home",
     icon: Globe,
     requiredPermission: 'dashboard',
