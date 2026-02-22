@@ -53,7 +53,7 @@ function getSSOBaseURL(): string {
  */
 function getPOSBaseURL(): string {
   if (process.env.NEXT_PUBLIC_POS_URL) return process.env.NEXT_PUBLIC_POS_URL;
-  return 'https://pos.trirex.cloud';
+  return 'https://pos360.trirex.cloud';
 }
 
 /**

@@ -47,7 +47,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Point of Sale 360 Online",
-    url: process.env.NEXT_PUBLIC_POS_URL || "https://pos.trirex.cloud",
+    url: process.env.NEXT_PUBLIC_POS_URL || "https://pos360.trirex.cloud",
     icon: ShoppingCart,
     requiredPermission: ['lobbey:pos:menu', 'LOBBEY:pos:menu', 'lobbey:pos:read', 'LOBBEY:pos:read'],
   },
