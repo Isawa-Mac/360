@@ -60,10 +60,12 @@ export default async function RootLayout({
         {themeColor && (
           <style dangerouslySetInnerHTML={{
             __html: `
-              :root {
+              :root, .dark {
                 --primary: ${themeColor};
                 --sidebar-primary: ${themeColor};
                 --ring: ${themeColor};
+              }
+              :root {
                 font-size: ${fontScale}%;
               }
             `

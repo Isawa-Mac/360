@@ -72,170 +72,59 @@ export default function NexDocsLandingPage() {
 
     return (
         <Layout showFilters={false} pageTitle="NexDocs 360">
-            <div className="min-h-screen bg-slate-950 text-white overflow-hidden relative">
+            <div className="min-h-[calc(100vh-48px)] flex flex-col items-center justify-center bg-transparent text-slate-900 overflow-y-auto relative">
 
-                {/* Hero Section */}
-                <section className="relative pt-20 pb-16 md:pt-32 md:pb-24">
+                {/* Hero Section - Centered and Scaling */}
+                <section className="relative w-full flex-1 flex items-center justify-center">
                     <div
-                        className="absolute inset-0 z-0 opacity-40 bg-cover bg-center"
+                        className="absolute inset-0 z-0 opacity-20 bg-cover bg-center"
                         style={{ backgroundImage: "url('/nexdocs-hero-bg.png')" }}
                     />
-                    {/* Updated gradients to be fully opaque at the top/bottom to hide the background grid */}
-                    <div className="absolute inset-0 z-0 bg-slate-950/40" />
-                    <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-950 via-transparent to-slate-950" />
+                    {/* Updated gradients for maximum transparency */}
+                    <div className="absolute inset-0 z-0 bg-slate-50/5 backdrop-blur-[1px]" />
+                    <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-50/10 via-transparent to-transparent" />
 
                     <div className="container mx-auto px-6 relative z-10">
+                        {/* Wrapper for 20% zoom out (scale 0.8) and dynamic scaling */}
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0, scale: 0.75 }}
+                            animate={{ opacity: 1, scale: 0.8 }}
                             transition={{ duration: 0.8 }}
-                            className="max-w-4xl mx-auto text-center"
+                            className="max-w-4xl mx-auto text-center origin-center"
                         >
-                            <motion.div
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 0.2, duration: 0.5 }}
-                                className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-sm font-medium mb-6"
-                            >
-                                <Rocket className="w-4 h-4 mr-2" />
-                                DMS แห่งปี 2026
-                            </motion.div>
-
-                            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight">
-                                NexDocs 360: <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">ปฏิวัติการจัดการเอกสาร</span> ด้วย AI อัจฉริยะ
+                            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 tracking-tight leading-tight text-slate-900 drop-shadow-sm">
+                                NexDocs 360: <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">ปฏิวัติการจัดการเอกสาร</span> ด้วย AI อัจฉริยะ
                             </h1>
-                            <p className="text-lg md:text-xl text-slate-400 mb-10 leading-relaxed max-w-2xl mx-auto text-balance">
+                            <p className="text-xl md:text-2xl text-slate-600 mb-12 leading-relaxed max-w-2xl mx-auto text-balance">
                                 ที่ผสานพลัง Multimodal AI (Gemini 2.5) เข้ากับระบบจัดเก็บข้อมูลแบบ Dual Storage เพื่อให้องค์กรสามารถวิเคราะห์ ค้นหา และเป็นเจ้าของข้อมูลได้ 100%
                             </p>
 
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                                 <Button
                                     size="lg"
-                                    className="bg-blue-600 hover:bg-blue-500 text-white px-8 h-14 rounded-full text-lg font-semibold group shadow-lg shadow-blue-600/20 scale-100 active:scale-95 transition-all"
+                                    className="bg-blue-600 hover:bg-blue-500 text-white px-10 h-16 rounded-full text-xl font-semibold group shadow-xl shadow-blue-600/20 scale-100 active:scale-95 transition-all"
                                     onClick={() => setIsOpen(true)}
                                 >
-                                    <Expand className="w-5 h-5 mr-2" />
+                                    <Expand className="w-6 h-6 mr-3" />
                                     เปิด NexDocs 360
-                                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                                    <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
                                 </Button>
                                 <Button
                                     size="lg"
                                     variant="outline"
-                                    className="border-slate-700 hover:bg-slate-800 text-white px-8 h-14 rounded-full text-lg font-semibold group transition-all"
+                                    className="border-slate-200 bg-white/50 backdrop-blur-md hover:bg-white/80 text-slate-900 px-10 h-16 rounded-full text-xl font-semibold group transition-all"
                                     onClick={() => setIsSlideshowOpen(true)}
                                 >
-                                    <Play className="w-5 h-5 mr-2 fill-current" />
+                                    <Play className="w-6 h-6 mr-3 fill-blue-600 text-blue-600" />
                                     แสดง Slide Show
                                 </Button>
-                                <p className="text-sm text-slate-500 italic">พร้อมลดระยะเวลาการทำงานลงถึง 90%</p>
                             </div>
+                            <p className="mt-8 text-base text-slate-400 italic">พร้อมลดระยะเวลาการทำงานลงถึง 90%</p>
                         </motion.div>
                     </div>
                 </section>
 
-                {/* Features Section - Solid Background */}
-                <section className="py-20 bg-slate-900 relative">
-                    <div className="container mx-auto px-6">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-4">กระบวนการจัดการเอกสารอัจฉริยะ</h2>
-                            <p className="text-slate-400">The Smart Workflow</p>
-                        </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {features.map((feature, index) => (
-                                <motion.div
-                                    key={index}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: index * 0.2 }}
-                                >
-                                    <Card className="bg-slate-950 border-slate-800 hover:border-blue-500/50 transition-all group overflow-hidden">
-                                        <CardContent className="p-8">
-                                            <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 shadow-lg shadow-blue-500/10 group-hover:scale-110 transition-transform`}>
-                                                <feature.icon className="w-7 h-7 text-white" />
-                                            </div>
-                                            <h3 className="text-xl font-bold mb-4 text-white group-hover:text-blue-400 transition-colors uppercase tracking-wider">{feature.title}</h3>
-                                            <p className="text-slate-400 line-clamp-3 leading-relaxed">
-                                                {feature.description}
-                                            </p>
-                                        </CardContent>
-                                    </Card>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Benefits Section - Solid Container */}
-                <section className="py-20 relative bg-slate-950">
-                    <div className="container mx-auto px-6">
-                        <div className="max-w-5xl mx-auto rounded-3xl bg-slate-900 border border-slate-800 p-8 md:p-12 overflow-hidden relative shadow-2xl">
-                            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-blue-500/5 blur-[100px] rounded-full" />
-
-                            <div className="text-center mb-16">
-                                <h2 className="text-3xl md:text-4xl font-bold mb-4">ประโยชน์หลักและความคุ้มค่า</h2>
-                                <p className="text-blue-400 font-medium">Core Benefits & Values</p>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-                                {benefits.map((benefit, index) => (
-                                    <div key={index} className="flex flex-col items-center">
-                                        <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-6 border border-blue-500/20 shadow-inner">
-                                            <benefit.icon className="w-8 h-8 text-blue-400" />
-                                        </div>
-                                        <h4 className="text-xl font-bold mb-3">{benefit.title}</h4>
-                                        <p className="text-slate-400 text-sm leading-relaxed">{benefit.description}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Roadmap Section - Solid Background */}
-                <section className="py-20 bg-slate-950">
-                    <div className="container mx-auto px-6">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">แผนการดำเนินงาน 6 เดือน</h2>
-                            <p className="text-slate-400">Roadmap 2026</p>
-                        </div>
-
-                        <div className="max-w-4xl mx-auto">
-                            <div className="relative border-l-2 border-blue-500/30 ml-4 md:ml-0 md:before:absolute md:before:left-1/2 md:before:h-full md:before:w-0.5 md:before:bg-blue-500/30 md:border-l-0">
-                                {roadmap.map((item, index) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        viewport={{ once: true }}
-                                        className={`relative mb-12 flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
-                                    >
-                                        <div className="flex-1 md:px-8">
-                                            <div className={`p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/30 transition-colors shadow-xl ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
-                                                <span className="text-blue-400 font-bold mb-2 block">{item.month}</span>
-                                                <p className="text-slate-300 font-medium">{item.task}</p>
-                                            </div>
-                                        </div>
-                                        <div className="absolute left-0 -translate-x-1/2 top-4 w-4 h-4 rounded-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)] md:left-1/2" />
-                                        <div className="flex-1" />
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Footer info - Solid Background */}
-                <footer className="py-12 border-t border-slate-900 bg-slate-950">
-                    <div className="container mx-auto px-6 text-center">
-                        <div className="flex items-center justify-center space-x-2 mb-4">
-                            <FileText className="w-6 h-6 text-blue-500" />
-                            <span className="text-xl font-bold tracking-tighter">NexDocs 360</span>
-                        </div>
-                        <p className="text-slate-500 text-sm">© 2026 Nexus Smart CRM 360. All rights reserved.</p>
-                    </div>
-                </footer>
 
                 {/* Infographic Modal */}
                 <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -247,7 +136,7 @@ export default function NexDocsLandingPage() {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="fixed inset-0 bg-black/90 z-[100]"
+                                        className="fixed inset-0 bg-white/80 backdrop-blur-lg z-[100]"
                                     />
                                 </Dialog.Overlay>
                                 <Dialog.Content asChild>
@@ -257,11 +146,15 @@ export default function NexDocsLandingPage() {
                                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
                                         className="fixed inset-4 md:inset-10 z-[101] outline-none flex items-center justify-center"
                                     >
+                                        <Dialog.Title className="sr-only">NexDocs 360 Infographic</Dialog.Title>
+                                        <Dialog.Description className="sr-only">
+                                            รายละเอียดโครงสร้างและการทำงานของระบบ NexDocs 360
+                                        </Dialog.Description>
                                         <div className="relative w-full h-full flex items-center justify-center p-4">
                                             <motion.img
                                                 src="/nexdocs-infographic.png"
                                                 alt="NexDocs 360 Infographic"
-                                                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                                                className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl border border-white/40"
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 transition={{ delay: 0.2 }}
@@ -270,7 +163,7 @@ export default function NexDocsLandingPage() {
                                                 <Button
                                                     variant="outline"
                                                     size="icon"
-                                                    className="absolute top-2 right-2 md:top-4 md:right-4 rounded-full bg-white text-black hover:bg-slate-200 transition-colors"
+                                                    className="absolute top-2 right-2 md:top-4 md:right-4 rounded-full bg-slate-900 text-white hover:bg-slate-800 transition-colors shadow-xl"
                                                 >
                                                     <X className="w-6 h-6" />
                                                 </Button>
@@ -283,7 +176,7 @@ export default function NexDocsLandingPage() {
                     </AnimatePresence>
                 </Dialog.Root>
 
-                {/* Slide Show Modal */}
+                {/* Slide Show Modal - Glass Effect */}
                 <Dialog.Root open={isSlideshowOpen} onOpenChange={setIsSlideshowOpen}>
                     <AnimatePresence>
                         {isSlideshowOpen && (
@@ -293,7 +186,7 @@ export default function NexDocsLandingPage() {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="fixed inset-0 bg-black/95 z-[100] backdrop-blur-sm"
+                                        className="fixed inset-0 bg-white/90 z-[100] backdrop-blur-md"
                                     />
                                 </Dialog.Overlay>
                                 <Dialog.Content asChild>
@@ -303,30 +196,25 @@ export default function NexDocsLandingPage() {
                                         exit={{ opacity: 0, scale: 0.9 }}
                                         className="fixed inset-0 z-[101] outline-none flex items-center justify-center p-4"
                                     >
-                                        <div className="relative w-full max-w-5xl aspect-video bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-800">
-                                            {/* Placeholder for Slide Show Content */}
-                                            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-900/20 to-slate-900">
-                                                <div className="text-center p-8">
-                                                    <div className="w-20 h-20 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-6">
-                                                        <Play className="w-10 h-10 text-blue-400 fill-current" />
-                                                    </div>
-                                                    <h2 className="text-3xl font-bold mb-4">NexDocs 360 Presentation</h2>
-                                                    <p className="text-slate-400 max-w-md mx-auto mb-8">
-                                                        Slide Show กำลังเตรียมความพร้อมเพื่อนำเสนอระบบการจัดการเอกสารยุคใหม่ที่สมบูรณ์แบบที่สุด
-                                                    </p>
-                                                    <div className="flex justify-center gap-2">
-                                                        {[1, 2, 3, 4].map(i => (
-                                                            <div key={i} className={`w-3 h-3 rounded-full ${i === 1 ? 'bg-blue-500' : 'bg-slate-700'}`} />
-                                                        ))}
-                                                    </div>
-                                                </div>
+                                        <Dialog.Title className="sr-only">NexDocs 360 Slide Show</Dialog.Title>
+                                        <Dialog.Description className="sr-only">
+                                            การนำเสนอภาพรวมของ NexDocs 360 ในรูปแบบสไลด์
+                                        </Dialog.Description>
+                                        <div className="relative w-full max-w-6xl h-[85vh] bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/80">
+                                            {/* PDF Slide Show View */}
+                                            <div className="w-full h-full">
+                                                <iframe
+                                                    src="/NEXDOCS_360.pdf#view=FitH"
+                                                    className="w-full h-full border-none"
+                                                    title="NexDocs 360 Slide Show"
+                                                />
                                             </div>
 
                                             <Dialog.Close asChild>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="absolute top-4 right-4 rounded-full bg-black/50 text-white hover:bg-black/80 transition-colors z-50"
+                                                    className="absolute top-4 right-4 rounded-full bg-slate-900/10 text-slate-900 hover:bg-slate-900/20 transition-colors z-50 shadow-sm"
                                                 >
                                                     <X className="w-6 h-6" />
                                                 </Button>

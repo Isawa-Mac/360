@@ -137,7 +137,7 @@ function HomePageContent() {
   return (
     <Layout
       showFilters={false}
-      pageTitle="Nexus Smart CRM 360"
+      pageTitle="Nexus 360"
     >
       <div className="min-h-full p-6 relative">
         {/* Background Decorative Elements for better see-through effect */}
@@ -148,27 +148,25 @@ function HomePageContent() {
 
         <div className="max-w-7xl mx-auto">
           {/* Main Menu Section */}
-          <div className="mb-8 bg-white/10 light:bg-slate-900/40 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-12 border border-white/20 dark:border-white/5 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2" />
-
+          <div className="mb-8 relative">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 tracking-tight">
-              Nexus Smart CRM 360
+              Nexus 360
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {menuItems.filter(item => {
                 if (!item.requiredPermission) return true
                 return hasPermission(item.requiredPermission)
               }).map((item, index) => (
                 <Card
                   key={index}
-                  className={`relative hover:shadow-xl hover:bg-white/90 hover:light:bg-gray-800/90 hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer bg-white/50 light:bg-gray-900/50 backdrop-blur-md border-0 ${loadingItem === item.title ? 'opacity-75 pointer-events-none' : ''
+                  className={`relative hover:shadow-xl hover:bg-white/90 hover:dark:bg-gray-800/90 hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer bg-white/50 dark:bg-gray-900/50 backdrop-blur-md border-0 ${loadingItem === item.title ? 'opacity-75 pointer-events-none' : ''
                     }`}
                   onClick={() => handleItemClick(item)}
                 >
                   {/* Loading indicator in top-right corner */}
                   {loadingItem === item.title && (
                     <div className="absolute top-4 right-4 z-10">
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-700 light:bg-blue-900 dark:text-blue-300">
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
                         <Loader2 className="w-3 h-3 mr-1 animate-spin" />
                         กำลังโหลด...
                       </Badge>
@@ -177,8 +175,8 @@ function HomePageContent() {
 
                   <CardHeader className="pb-3">
                     <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-primary/10 light:bg-primary/20 rounded-lg">
-                        <item.icon className="h-6 w-6 text-primary" />
+                      <div className="p-2 bg-primary/10 dark:bg-primary/30 rounded-lg">
+                        <item.icon className="h-6 w-6 text-primary dark:text-white" />
                       </div>
                       <CardTitle className="text-lg">{item.title}</CardTitle>
                     </div>
@@ -204,7 +202,7 @@ export default function HomePage() {
     <Suspense fallback={
       <Layout
         showFilters={false}
-        pageTitle="Nexus Smart CRM 360"
+        pageTitle="Nexus 360"
       >
         <div className="min-h-full p-6 flex items-center justify-center">
           <div className="text-center space-y-4">

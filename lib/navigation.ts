@@ -1,4 +1,4 @@
-import { BarChart3, Key, Globe, Shield, FileText, ShoppingCart } from "lucide-react"
+import { Home, BarChart3, Key, Globe, Shield, FileText, ShoppingCart } from "lucide-react"
 
 export interface NavItem {
   title: string
@@ -22,6 +22,11 @@ export interface NavSubItem {
 
 // Navigation data structure - ใช้เมนูจาก team-switcher.tsx
 export const navItems: NavItem[] = [
+  {
+    title: "Home",
+    url: "/home",
+    icon: Home,
+  },
   {
     title: "Nexus Smart CRM 360",
     url: "/home",
