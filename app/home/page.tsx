@@ -92,8 +92,8 @@ function HomePageContent() {
       title: "NexDocs 360",
       description: "NexDocs 360 DMS - ระบบจัดการเอกสารดิจิทัลอัจฉริยะที่มุ่งเน้นการเพิ่มประสิทธิภาพการทำงานด้วย AI",
       icon: FileText,
-      url: getNexDocsBaseURL(),
-      isExternal: true,
+      url: "/nexdocs",
+      isExternal: false,
       requiredPermission: ['crm360.docs'],
     },
     {
