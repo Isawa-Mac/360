@@ -70,7 +70,7 @@ export default function NexDocsLandingPage() {
 
     return (
         <Layout showFilters={false} pageTitle="NexDocs 360">
-            <div className="min-h-screen bg-slate-950 text-white overflow-hidden">
+            <div className="min-h-screen bg-slate-950 text-white overflow-hidden relative">
 
                 {/* Hero Section */}
                 <section className="relative pt-20 pb-16 md:pt-32 md:pb-24">
@@ -78,7 +78,9 @@ export default function NexDocsLandingPage() {
                         className="absolute inset-0 z-0 opacity-40 bg-cover bg-center"
                         style={{ backgroundImage: "url('/nexdocs-hero-bg.png')" }}
                     />
-                    <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-950/20 via-slate-950/80 to-slate-950" />
+                    {/* Updated gradients to be fully opaque at the top/bottom to hide the background grid */}
+                    <div className="absolute inset-0 z-0 bg-slate-950/40" />
+                    <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-950 via-transparent to-slate-950" />
 
                     <div className="container mx-auto px-6 relative z-10">
                         <motion.div
@@ -120,8 +122,8 @@ export default function NexDocsLandingPage() {
                     </div>
                 </section>
 
-                {/* Features Section */}
-                <section className="py-20 bg-slate-950/50 relative">
+                {/* Features Section - Solid Background */}
+                <section className="py-20 bg-slate-900 relative">
                     <div className="container mx-auto px-6">
                         <div className="text-center mb-16">
                             <h2 className="text-3xl md:text-4xl font-bold mb-4">กระบวนการจัดการเอกสารอัจฉริยะ</h2>
@@ -137,7 +139,7 @@ export default function NexDocsLandingPage() {
                                     viewport={{ once: true }}
                                     transition={{ delay: index * 0.2 }}
                                 >
-                                    <Card className="bg-slate-900/50 border-slate-800 hover:border-blue-500/50 transition-all group overflow-hidden">
+                                    <Card className="bg-slate-950 border-slate-800 hover:border-blue-500/50 transition-all group overflow-hidden">
                                         <CardContent className="p-8">
                                             <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 shadow-lg shadow-blue-500/10 group-hover:scale-110 transition-transform`}>
                                                 <feature.icon className="w-7 h-7 text-white" />
@@ -154,11 +156,11 @@ export default function NexDocsLandingPage() {
                     </div>
                 </section>
 
-                {/* Benefits Section */}
-                <section className="py-20 relative">
+                {/* Benefits Section - Solid Container */}
+                <section className="py-20 relative bg-slate-950">
                     <div className="container mx-auto px-6">
-                        <div className="max-w-5xl mx-auto rounded-3xl bg-gradient-to-br from-blue-600/20 to-indigo-600/5 border border-blue-500/20 p-8 md:p-12 overflow-hidden relative">
-                            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-blue-500/10 blur-[100px] rounded-full" />
+                        <div className="max-w-5xl mx-auto rounded-3xl bg-slate-900 border border-slate-800 p-8 md:p-12 overflow-hidden relative shadow-2xl">
+                            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-blue-500/5 blur-[100px] rounded-full" />
 
                             <div className="text-center mb-16">
                                 <h2 className="text-3xl md:text-4xl font-bold mb-4">ประโยชน์หลักและความคุ้มค่า</h2>
@@ -180,7 +182,7 @@ export default function NexDocsLandingPage() {
                     </div>
                 </section>
 
-                {/* Roadmap Section */}
+                {/* Roadmap Section - Solid Background */}
                 <section className="py-20 bg-slate-950">
                     <div className="container mx-auto px-6">
                         <div className="text-center mb-16">
@@ -199,7 +201,7 @@ export default function NexDocsLandingPage() {
                                         className={`relative mb-12 flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
                                     >
                                         <div className="flex-1 md:px-8">
-                                            <div className={`p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-blue-500/30 transition-colors shadow-xl ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
+                                            <div className={`p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/30 transition-colors shadow-xl ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
                                                 <span className="text-blue-400 font-bold mb-2 block">{item.month}</span>
                                                 <p className="text-slate-300 font-medium">{item.task}</p>
                                             </div>
@@ -213,8 +215,8 @@ export default function NexDocsLandingPage() {
                     </div>
                 </section>
 
-                {/* Footer info */}
-                <footer className="py-12 border-t border-slate-900 bg-slate-950/80">
+                {/* Footer info - Solid Background */}
+                <footer className="py-12 border-t border-slate-900 bg-slate-950">
                     <div className="container mx-auto px-6 text-center">
                         <div className="flex items-center justify-center space-x-2 mb-4">
                             <FileText className="w-6 h-6 text-blue-500" />
@@ -234,7 +236,7 @@ export default function NexDocsLandingPage() {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100]"
+                                        className="fixed inset-0 bg-black/90 z-[100]"
                                     />
                                 </Dialog.Overlay>
                                 <Dialog.Content asChild>
@@ -257,7 +259,7 @@ export default function NexDocsLandingPage() {
                                                 <Button
                                                     variant="outline"
                                                     size="icon"
-                                                    className="absolute top-2 right-2 md:top-4 md:right-4 rounded-full bg-white/10 border-white/20 text-white hover:bg-white/20 transition-colors"
+                                                    className="absolute top-2 right-2 md:top-4 md:right-4 rounded-full bg-white text-black hover:bg-slate-200 transition-colors"
                                                 >
                                                     <X className="w-6 h-6" />
                                                 </Button>
