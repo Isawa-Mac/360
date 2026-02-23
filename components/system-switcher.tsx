@@ -11,8 +11,14 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePermission } from "@/hooks/use-permission"
-
-import { SystemSwitcher as SharedSystemSwitcher } from "@nexus360/shared"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 
 // Custom 3x3 Grid Icon
@@ -37,27 +43,95 @@ const Grid3x3Icon = ({ className }: { className?: string }) => (
   </svg>
 )
 
+const SYSTEMS = [
+  {
+    name: "CRM 360",
+    url: "https://crm360.trirex.cloud",
+    icon: Globe,
+    permission: null,
+  },
+  {
+    name: "Business Intelligence 360",
+    url: "https://bi360.trirex.cloud",
+    icon: BarChart3,
+    permission: "bi.access",
+  },
+  {
+    name: "POS 360",
+    url: "https://pos360.trirex.cloud",
+    icon: ShoppingCart,
+    permission: "pos.access",
+  },
+  {
+    name: "NexDocs 360",
+    url: "https://nexdocs360.trirex.cloud",
+    icon: FileText,
+    permission: null,
+  },
+  {
+    name: "Nexus SSO",
+    url: "https://sso360.trirex.cloud",
+    icon: Key,
+    permission: "sso.access",
+  },
+]
+
+const CURRENT_SYSTEM = "CRM 360"
+
 export function SystemSwitcher({ className }: { className?: string }) {
-  const { hasPermission } = usePermission();
+  const { hasPermission } = usePermission()
+
+  const visibleSystems = SYSTEMS.filter(
+    (s) => s.permission === null || hasPermission(s.permission)
+  )
 
   return (
     <SidebarMenu className={className}>
       <SidebarMenuItem>
-        <SharedSystemSwitcher
-          currentProjectName="Business Intelligence 360" // or get from config
-          hasPermission={hasPermission}
-        >
-          <SidebarMenuButton
-            size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <div className="flex aspect-square size-8 items-center justify-center rounded-full bg-sidebar-accent text-sidebar-accent-foreground">
+                <Grid3x3Icon className="size-4" />
+              </div>
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-56 rounded-lg"
+            align="start"
+            side="right"
+            sideOffset={4}
           >
-            <div className="flex aspect-square size-8 items-center justify-center rounded-full bg-sidebar-accent text-sidebar-accent-foreground">
-              <Grid3x3Icon className="size-4" />
-            </div>
-          </SidebarMenuButton>
-        </SharedSystemSwitcher>
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Switch System
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {visibleSystems.map((system) => (
+              <DropdownMenuItem
+                key={system.name}
+                asChild
+                className={cn(
+                  "gap-2 p-2",
+                  system.name === CURRENT_SYSTEM && "bg-accent"
+                )}
+              >
+                <a href={system.url} target={system.name === CURRENT_SYSTEM ? undefined : "_blank"} rel="noreferrer">
+                  <div className="flex size-6 items-center justify-center rounded-sm border">
+                    <system.icon className="size-4 shrink-0" />
+                  </div>
+                  {system.name}
+                  {system.name === CURRENT_SYSTEM && (
+                    <Check className="ml-auto size-4" />
+                  )}
+                </a>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
   )
 }
-
