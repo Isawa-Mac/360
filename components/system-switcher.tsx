@@ -48,31 +48,31 @@ const SYSTEMS = [
     name: "CRM 360",
     url: "https://crm360.trirex.cloud",
     icon: Globe,
-    permission: null,
+    permission: "erp360.erp.read",
   },
   {
     name: "Business Intelligence 360",
     url: "https://bi360.trirex.cloud",
     icon: BarChart3,
-    permission: "bi.access",
+    permission: "erp360.bi.read",
   },
   {
     name: "POS 360",
     url: "https://pos360.trirex.cloud",
     icon: ShoppingCart,
-    permission: "pos.access",
+    permission: "erp360.pos.read",
   },
   {
     name: "NexDocs 360",
     url: "https://nexdocs360.trirex.cloud",
     icon: FileText,
-    permission: null,
+    permission: "erp360.docs.read",
   },
   {
     name: "Nexus SSO",
     url: "https://sso360.trirex.cloud",
     icon: Key,
-    permission: "sso.access",
+    permission: "erp360.admin.read",
   },
 ]
 
@@ -82,7 +82,7 @@ export function SystemSwitcher({ className }: { className?: string }) {
   const { hasPermission } = usePermission()
 
   const visibleSystems = SYSTEMS.filter(
-    (s) => s.permission === null || hasPermission(s.permission)
+    (s) => !s.permission || hasPermission(s.permission)
   )
 
   return (
