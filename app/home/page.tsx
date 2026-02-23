@@ -78,6 +78,7 @@ function HomePageContent() {
       icon: Globe,
       url: "/nexus-smart-crm",
       isExternal: false,
+      enabled: false, // ปิดชั่วคราว
       requiredPermission: ['erp360.erp.read'],
     },
     {
@@ -86,6 +87,7 @@ function HomePageContent() {
       icon: BarChart3,
       url: getBIBaseURL(),
       isExternal: true,
+      enabled: true,
       requiredPermission: ['erp360.bi.read'],
     },
     {
@@ -94,6 +96,7 @@ function HomePageContent() {
       icon: FileText,
       url: "/nexdocs",
       isExternal: false,
+      enabled: true,
       requiredPermission: ['erp360.docs.read'],
     },
     {
@@ -102,6 +105,7 @@ function HomePageContent() {
       icon: ShoppingCart,
       url: getPOSBaseURL(),
       isExternal: true,
+      enabled: true,
       requiredPermission: ['erp360.pos.read'],
     },
     {
@@ -110,6 +114,7 @@ function HomePageContent() {
       icon: Key,
       url: getSSOBaseURL(),
       isExternal: true,
+      enabled: true,
       requiredPermission: ['erp360.admin.read'],
     }
   ]
@@ -154,6 +159,7 @@ function HomePageContent() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {menuItems.filter(item => {
+                if (item.enabled === false) return false
                 if (!item.requiredPermission) return true
                 return hasPermission(item.requiredPermission)
               }).map((item, index) => (
