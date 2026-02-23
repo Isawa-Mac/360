@@ -31,31 +31,31 @@ export const navItems: NavItem[] = [
     title: "Nexus Smart CRM 360",
     url: "/nexus-smart-crm",
     icon: Globe,
-    requiredPermission: 'crm360.erp',
+    requiredPermission: 'erp360.erp.read',
   },
   {
     title: "Business Intelligence 360",
     url: process.env.NEXT_PUBLIC_BI_URL || "https://bi360.trirex.cloud",
     icon: BarChart3,
-    requiredPermission: 'crm360.bi',
+    requiredPermission: 'erp360.bi.read',
   },
   {
     title: "NexDocs 360",
     url: "/nexdocs",
     icon: FileText,
-    requiredPermission: 'crm360.docs',
+    requiredPermission: 'erp360.docs.read',
   },
   {
     title: "Point of Sale 360 Online",
     url: process.env.NEXT_PUBLIC_POS_URL || "https://pos360.trirex.cloud",
     icon: ShoppingCart,
-    requiredPermission: 'crm360.pos',
+    requiredPermission: 'erp360.pos.read',
   },
   {
     title: "Single Sign-On 360",
     url: process.env.NEXT_PUBLIC_SSO_BASE_URL || "https://sso360.trirex.cloud",
     icon: Key,
-    requiredPermission: 'crm360.admin',
+    requiredPermission: 'erp360.admin.read',
   },
 ]
 
