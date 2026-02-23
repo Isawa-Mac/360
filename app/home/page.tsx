@@ -70,7 +70,7 @@ function HomePageContent() {
   const { hasPermission } = usePermission()
 
 
-  // Main menu items
+  // Main menu items — requiredPermission ใช้ permission string จาก SSO จริง
   const menuItems = [
     {
       title: "Nexus Smart CRM 360",
@@ -78,7 +78,7 @@ function HomePageContent() {
       icon: Globe,
       url: "/nexus-smart-crm",
       isExternal: false,
-      requiredPermission: ['crm360.erp'],
+      requiredPermission: ['erp360.erp.read'],
     },
     {
       title: "Business Intelligence 360",
@@ -86,7 +86,7 @@ function HomePageContent() {
       icon: BarChart3,
       url: getBIBaseURL(),
       isExternal: true,
-      requiredPermission: ['crm360.bi'],
+      requiredPermission: ['erp360.bi.read'],
     },
     {
       title: "NexDocs 360",
@@ -94,7 +94,7 @@ function HomePageContent() {
       icon: FileText,
       url: "/nexdocs",
       isExternal: false,
-      requiredPermission: ['crm360.docs'],
+      requiredPermission: ['erp360.docs.read'],
     },
     {
       title: "Point of Sale 360 Online",
@@ -102,7 +102,7 @@ function HomePageContent() {
       icon: ShoppingCart,
       url: getPOSBaseURL(),
       isExternal: true,
-      requiredPermission: ['crm360.pos'],
+      requiredPermission: ['erp360.pos.read'],
     },
     {
       title: "Single Sign-On 360",
@@ -110,7 +110,7 @@ function HomePageContent() {
       icon: Key,
       url: getSSOBaseURL(),
       isExternal: true,
-      requiredPermission: ['crm360.admin'],
+      requiredPermission: ['erp360.admin.read'],
     }
   ]
 
