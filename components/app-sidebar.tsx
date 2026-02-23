@@ -49,8 +49,15 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <SystemSwitcher />
+      <SidebarHeader className="h-12 border-b flex justify-center p-0">
+        <div className="px-2 flex items-center h-full w-full">
+          <UserMenu
+            name={user?.username || "Guest"}
+            email={user?.email || ""}
+            avatarSrc={user?.avatarUrl}
+            className="group-data-[collapsible=icon]:justify-center"
+          />
+        </div>
       </SidebarHeader>
       <SidebarContent className="h-full w-full [&>[data-orientation=horizontal]]:hidden">
         <SidebarGroup>
@@ -81,18 +88,12 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="flex flex-col gap-2 px-2">
+        <div className="flex flex-col gap-2 px-2 pb-4">
           <div className="flex justify-center">
             <DashboardControl
               direction={state === "collapsed" ? "column" : "row"}
             />
           </div>
-          <UserMenu
-            name={user?.username || "Guest"}
-            email={user?.email || ""}
-            avatarSrc={user?.avatarUrl}
-            className="group-data-[collapsible=icon]:justify-center"
-          />
         </div>
       </SidebarFooter>
       <SidebarRail />

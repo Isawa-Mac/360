@@ -76,8 +76,8 @@ function HomePageContent() {
       title: "Nexus Smart CRM 360",
       description: "Nexus Smart CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้า",
       icon: Globe,
-      url: getLobbeyBaseURL(),
-      isExternal: true,
+      url: "/nexus-smart-crm",
+      isExternal: false,
       requiredPermission: ['crm360.erp'],
     },
     {

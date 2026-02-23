@@ -29,33 +29,33 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Nexus Smart CRM 360",
-    url: "/home",
+    url: "/nexus-smart-crm",
     icon: Globe,
-    requiredPermission: 'dashboard',
+    requiredPermission: 'crm360.erp',
   },
   {
     title: "Business Intelligence 360",
-    url: process.env.NEXT_PUBLIC_BI360_URL || "https://bi360.trirex.cloud",
+    url: process.env.NEXT_PUBLIC_BI_URL || "https://bi360.trirex.cloud",
     icon: BarChart3,
-    requiredPermission: ['lobbey:dashboard:menu', 'LOBBEY:dashboard:menu', 'lobbey:dashboard:read', 'LOBBEY:dashboard:read'],
+    requiredPermission: 'crm360.bi',
   },
   {
     title: "NexDocs 360",
-    url: process.env.NEXT_PUBLIC_NEXDOCS_URL || "https://nexdocs.trirex.cloud",
+    url: "/nexdocs",
     icon: FileText,
-    requiredPermission: ['lobbey:nexdocs:menu', 'LOBBEY:nexdocs:menu', 'lobbey:nexdocs:read', 'LOBBEY:nexdocs:read'],
+    requiredPermission: 'crm360.docs',
   },
   {
     title: "Point of Sale 360 Online",
     url: process.env.NEXT_PUBLIC_POS_URL || "https://pos360.trirex.cloud",
     icon: ShoppingCart,
-    requiredPermission: ['lobbey:pos:menu', 'LOBBEY:pos:menu', 'lobbey:pos:read', 'LOBBEY:pos:read'],
+    requiredPermission: 'crm360.pos',
   },
   {
     title: "Single Sign-On 360",
-    url: process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud",
+    url: process.env.NEXT_PUBLIC_SSO_BASE_URL || "https://sso360.trirex.cloud",
     icon: Key,
-    requiredPermission: ['lobbey:sso:menu', 'LOBBEY:sso:menu', 'lobbey:sso:read', 'LOBBEY:sso:read'],
+    requiredPermission: 'crm360.admin',
   },
 ]
 
