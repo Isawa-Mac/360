@@ -119,7 +119,9 @@ function HomePageContent() {
     }
   ]
 
-  const handleItemClick = async (item: typeof menuItems[0] & { isExternal?: boolean }) => {
+  const handleItemClick = async (item: typeof menuItems[0] & { isExternal?: boolean, enabled?: boolean }) => {
+    if (item.enabled === false) return // ไม่ให้กดถ้าโดน disable
+
     setLoadingItem(item.title || null)
     try {
       // เพิ่ม delay เล็กน้อยเพื่อให้เห็น loading state
@@ -159,14 +161,17 @@ function HomePageContent() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {menuItems.filter(item => {
-                if (item.enabled === false) return false
                 if (!item.requiredPermission) return true
                 return hasPermission(item.requiredPermission)
               }).map((item, index) => (
                 <Card
                   key={index}
-                  className={`relative hover:shadow-xl hover:bg-white/90 hover:dark:bg-gray-800/90 hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer bg-white/50 dark:bg-gray-900/50 backdrop-blur-md border-0 ${loadingItem === item.title ? 'opacity-75 pointer-events-none' : ''
-                    }`}
+                  className={`relative transition-all duration-300 bg-white/50 dark:bg-gray-900/50 backdrop-blur-md border-0 
+                    ${item.enabled === false
+                      ? 'opacity-50 grayscale cursor-not-allowed pointer-events-none'
+                      : 'hover:shadow-xl hover:bg-white/90 hover:dark:bg-gray-800/90 hover:scale-105 hover:-translate-y-2 cursor-pointer'
+                    } 
+                    ${loadingItem === item.title ? 'opacity-75 pointer-events-none' : ''}`}
                   onClick={() => handleItemClick(item)}
                 >
                   {/* Loading indicator in top-right corner */}
@@ -184,7 +189,14 @@ function HomePageContent() {
                       <div className="p-2 bg-primary/10 dark:bg-primary/30 rounded-lg">
                         <item.icon className="h-6 w-6 text-primary dark:text-white" />
                       </div>
-                      <CardTitle className="text-lg">{item.title}</CardTitle>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        {item.title}
+                        {item.enabled === false && (
+                          <Badge variant="outline" className="text-[10px] py-0 h-4 bg-gray-100 dark:bg-gray-800">
+                            Coming Soon
+                          </Badge>
+                        )}
+                      </CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent>

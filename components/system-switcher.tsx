@@ -49,6 +49,7 @@ const SYSTEMS = [
     url: "https://crm360.trirex.cloud",
     icon: Globe,
     permission: "erp360.erp.read",
+    disabled: true,
   },
   {
     name: "Business Intelligence 360",
@@ -113,16 +114,26 @@ export function SystemSwitcher({ className }: { className?: string }) {
               <DropdownMenuItem
                 key={system.name}
                 asChild
+                disabled={system.disabled}
                 className={cn(
                   "gap-2 p-2",
-                  system.name === CURRENT_SYSTEM && "bg-accent"
+                  system.name === CURRENT_SYSTEM && "bg-accent",
+                  system.disabled && "opacity-50 grayscale cursor-not-allowed pointer-events-none"
                 )}
               >
-                <a href={system.url} target={system.name === CURRENT_SYSTEM ? undefined : "_blank"} rel="noreferrer">
+                <a
+                  href={system.disabled ? "#" : system.url}
+                  target={(system.name === CURRENT_SYSTEM || system.disabled) ? undefined : "_blank"}
+                  rel="noreferrer"
+                  onClick={(e) => system.disabled && e.preventDefault()}
+                >
                   <div className="flex size-6 items-center justify-center rounded-sm border">
                     <system.icon className="size-4 shrink-0" />
                   </div>
-                  {system.name}
+                  <span className="flex-1">{system.name}</span>
+                  {system.disabled && (
+                    <span className="text-[10px] bg-muted px-1 rounded uppercase font-medium">Coming Soon</span>
+                  )}
                   {system.name === CURRENT_SYSTEM && (
                     <Check className="ml-auto size-4" />
                   )}
