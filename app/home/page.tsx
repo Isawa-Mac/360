@@ -61,7 +61,7 @@ function getPOSBaseURL(): string {
  */
 function getNexDocsBaseURL(): string {
   if (process.env.NEXT_PUBLIC_NEXDOCS_URL) return process.env.NEXT_PUBLIC_NEXDOCS_URL;
-  return 'https://nexdocs.trirex.cloud';
+  return 'https://nexdocs360.trirex.cloud';
 }
 
 function HomePageContent() {
