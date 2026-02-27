@@ -50,7 +50,8 @@ export default async function RootLayout({
   const defaultTheme = appTheme === "dark" || appTheme === "light" ? appTheme : (sharedTheme === "dark" || sharedTheme === "light" ? sharedTheme : "system");
   const appThemeColor = cookieStore.get("bi360_theme_color")?.value;
   const sharedThemeColor = cookieStore.get("nexus_shared_theme_color")?.value;
-  const themeColor = appThemeColor || sharedThemeColor;
+  // Accent color: ให้ sharedThemeColor จาก SSO มาก่อน แล้วค่อย fallback สีของแอปเอง
+  const themeColor = sharedThemeColor || appThemeColor;
   const sharedScale = cookieStore.get("nexus_shared_scale")?.value;
   const fontScale = sharedScale ? parseInt(sharedScale) : 100;
 
