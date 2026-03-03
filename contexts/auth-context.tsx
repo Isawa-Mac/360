@@ -96,18 +96,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [pollSharedCookie, setPollSharedCookie] = useState(false);
 
-    const redirectToSSO = (forceLogin: boolean = false) => {
+    /** forceLogin = บังคับแสดงหน้า login, silent = ลอง silent auth (prompt=none) ถ้ามี session อยู่แล้วจะ redirect กลับทันที */
+    const redirectToSSO = (forceLogin: boolean = false, silent: boolean = false) => {
         if (typeof window === "undefined") return;
 
         const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
         const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
 
-        // Construct callback URL dynamically to support both localhost and production
         const callbackUrl = `${window.location.origin}/auth/sso-callback`;
-
         let url = `${ssoUrl}/#/login?client_id=${clientId}&redirect_uri=${encodeURIComponent(callbackUrl)}`;
         if (forceLogin) {
             url += "&prompt=login";
+        } else if (silent) {
+            // ลอง silent auth ก่อน - ถ้า user login ที่ SSO แล้วจะ redirect กลับทันทีโดยไม่แสดงหน้า login
+            url += "&prompt=none";
         }
 
         window.location.href = url;
@@ -316,7 +318,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (count >= SHARED_COOKIE_POLL_MAX) {
                 clearInterval(id);
                 setPollSharedCookie(false);
-                redirectToSSO();
+                redirectToSSO(false, true); // silent: ถ้า login ที่ SSO แล้วจะ redirect กลับทันที
             }
         }, SHARED_COOKIE_POLL_MS);
         return () => clearInterval(id);

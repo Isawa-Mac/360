@@ -15,14 +15,23 @@ function SSOCallbackContent() {
     useEffect(() => {
         if (hasExchanged.current) return;
 
-        // 1. ลองอ่านจาก Query Params (?code=...)
         let code = searchParams.get("code");
+        let errorParam = searchParams.get("error");
 
-        // 2. ลองอ่านจาก Hash Fragment (#code=...) - เทคนิค Client Callback
         if (!code && typeof window !== "undefined") {
             const hash = window.location.hash.substring(1);
             const params = new URLSearchParams(hash);
-            code = params.get("code");
+            code = code || params.get("code");
+            errorParam = errorParam || params.get("error");
+        }
+
+        // กรณี SSO ส่ง error กลับ (เช่น prompt=none แต่ user ยังไม่มี session)
+        if (errorParam && (errorParam === "login_required" || errorParam === "interaction_required")) {
+            const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
+            const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
+            const callbackUrl = `${window.location.origin}/auth/sso-callback`;
+            window.location.href = `${ssoUrl}/#/login?client_id=${clientId}&redirect_uri=${encodeURIComponent(callbackUrl)}&prompt=login`;
+            return;
         }
 
         if (code) {
