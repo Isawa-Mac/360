@@ -325,14 +325,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // ให้ shared cookie จาก SSO มีลำดับความสำคัญสูงกว่า localStorage เดิม
         // เพื่อกันเคส user เปลี่ยนบัญชีที่ SSO แต่ 360 ยังถือ user เก่า
         if (!isCallbackPage && !isLogoutPage && hasAnySharedToken()) {
+            // ลอง bootstrap ถ้าสำเร็จก็จบ
             if (tryBootstrapFromSharedCookie()) return;
-            // ถ้ามี shared cookie แต่ bootstrap ไม่ผ่าน ห้ามใช้ localStorage เก่าต่อ
-            // เพราะมักเป็น user คนก่อนหน้า ทำให้แสดง user ผิดคน
-            localStorage.removeItem("nexus_user");
-            localStorage.removeItem("nexus_token");
-            localStorage.removeItem("nexus_permissions");
-            nexusUser = null;
-            nexusToken = null;
+            
+            // ถ้า bootstrap ไม่สำเร็จ (เช่น คุกกี้ user หาย) แต่เรามี session ใน localStorage อยู่แล้ว 
+            // ให้ตรวจสอบว่า token ตรงกันไหม ถ้าตรงกันก็ยังไม่ต้องล้าง เพื่อป้องกันการเด้งไปหน้า login
+            if (nexusUser && nexusToken) {
+                const shared = getSharedAuthFromCookie();
+                if (shared && shared.token === nexusToken) {
+                    console.log("ℹ️ [Auth] Shared cookie matches local token, keeping session");
+                    // ข้ามการล้างข้อมูลไปก่อน
+                } else if (shared) {
+                    // ถ้า shared token ต่างออกไปจริงๆ ค่อยล้าง
+                    console.warn("⚠️ [Auth] Shared token changed, clearing local session");
+                    localStorage.removeItem("nexus_user");
+                    localStorage.removeItem("nexus_token");
+                    localStorage.removeItem("nexus_permissions");
+                    nexusUser = null;
+                    nexusToken = null;
+                }
+            }
         }
 
         if (nexusUser && nexusToken) {
@@ -519,6 +531,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 localStorage.setItem("nexus_token", token);
                 setToken(token);
                 localStorage.setItem("nexus_user", JSON.stringify(user));
+                
+                // Save Tenant ID
+                const resolvedTenantId = user.tenantId || 'default_tenant';
+                localStorage.setItem("tenantId", resolvedTenantId);
+
                 if (permissions) {
                     localStorage.setItem("nexus_permissions", JSON.stringify(permissions));
                     document.cookie = `permissions=${encodeURIComponent(JSON.stringify(permissions))}; path=/`;
@@ -551,10 +568,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     const maxAge = SHARED_COOKIE_MAX_AGE_DAYS * 24 * 60 * 60;
                     const isSecure = window.location.protocol === "https:";
                     const opts = `path=/; domain=${sharedDomain}; max-age=${maxAge}; SameSite=Lax${isSecure ? "; Secure" : ""}`;
-                    document.cookie = `nexus_shared_token=${encodeURIComponent(token)}; ${opts}`;
-                    document.cookie = `nexus_shared_user=${encodeURIComponent(JSON.stringify(user))}; ${opts}`;
+                    
+                    const tenantSuffix = resolvedTenantId && resolvedTenantId !== 'default_tenant' ? `_${resolvedTenantId}` : '';
+
+                    document.cookie = `nexus_shared_token${tenantSuffix}=${encodeURIComponent(token)}; ${opts}`;
+                    document.cookie = `nexus_shared_user${tenantSuffix}=${encodeURIComponent(JSON.stringify(user))}; ${opts}`;
                     if (permissions) {
-                        document.cookie = `nexus_shared_permissions=${encodeURIComponent(JSON.stringify(permissions))}; ${opts}`;
+                        document.cookie = `nexus_shared_permissions${tenantSuffix}=${encodeURIComponent(JSON.stringify(permissions))}; ${opts}`;
                     }
                 }
 
