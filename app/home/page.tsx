@@ -52,8 +52,8 @@ function getSSOBaseURL(): string {
  * ดึง POS Base URL ตาม environment (client-side)
  */
 function getPOSBaseURL(): string {
-  if (process.env.NEXT_PUBLIC_POS_URL) return process.env.NEXT_PUBLIC_POS_URL;
-  return 'https://pos360.trirex.cloud';
+  const url = process.env.NEXT_PUBLIC_POS_URL || 'https://pos360.trirex.cloud';
+  return url.startsWith('http://') || url.startsWith('https://') ? url : 'https://pos360.trirex.cloud';
 }
 
 /**

@@ -47,7 +47,10 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Point of Sale 360 Online",
-    url: process.env.NEXT_PUBLIC_POS_URL || "https://pos360.trirex.cloud",
+    url: (() => {
+      const u = process.env.NEXT_PUBLIC_POS_URL || "https://pos360.trirex.cloud";
+      return u.startsWith("http") ? u : "https://pos360.trirex.cloud";
+    })(),
     icon: ShoppingCart,
     requiredPermission: 'erp360.pos.read',
   },
