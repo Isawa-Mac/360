@@ -205,9 +205,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             let userObj: any = null;
             if (shared.user) {
                 userObj = JSON.parse(shared.user);
+                console.log("🔑 [Auth] Bootstrapping from SHARED COOKIE user:", userObj.username);
             } else {
                 userObj = buildUserFromToken(shared.token);
-                console.warn("Using token fallback user because shared user cookie is missing");
+                console.warn("⚠️ [Auth] Shared user cookie MISSING, using token fallback:", userObj.username);
             }
             let userPermissions: string[] = [];
             try {
