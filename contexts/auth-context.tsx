@@ -66,27 +66,75 @@ function getCookie(name: string): string | null {
 }
 
 /** อ่าน shared token/user จาก cookie (รองรับทั้งแบบไม่มี suffix และแบบมี _tenantId ตาม nexusSSO) */
-function getSharedAuthFromCookie(): { token: string; user: string; permissions?: string; suffix: string } | null {
+function getSharedAuthFromCookie(): { token: string; user?: string; permissions?: string; suffix: string } | null {
     if (typeof document === "undefined") return null;
-    let token = getCookie("nexus_shared_token");
-    let user = token ? getCookie("nexus_shared_user") : null;
-    let suffix = "";
-    if (token && user) return { token, user, permissions: getCookie("nexus_shared_permissions") || undefined, suffix };
+
+    let fallback: { token: string; user?: string; permissions?: string; suffix: string } | null = null;
+
+    // 1) ลองแบบไม่มี suffix ก่อน
+    const baseToken = getCookie("nexus_shared_token");
+    if (baseToken) {
+        const candidate = {
+            token: baseToken,
+            user: getCookie("nexus_shared_user") || undefined,
+            permissions: getCookie("nexus_shared_permissions") || undefined,
+            suffix: "",
+        };
+        if (candidate.user) return candidate;
+        fallback = candidate;
+    }
+
+    // 2) วนหาแบบมี tenant suffix
     const cookies = document.cookie.split(";");
     for (const c of cookies) {
         const trimmed = c.trim();
-        if (!trimmed.startsWith("nexus_shared_token")) continue;
+        if (!trimmed.startsWith("nexus_shared_token_")) continue;
         const eq = trimmed.indexOf("=");
         if (eq === -1) continue;
         const namePart = trimmed.slice(0, eq).trim();
-        token = decodeURIComponent(trimmed.slice(eq + 1).trim());
-        if (namePart === "nexus_shared_token") continue;
+        const token = decodeURIComponent(trimmed.slice(eq + 1).trim());
+        if (!token) continue;
+
         const parts = namePart.split("_");
-        if (parts.length >= 4) suffix = "_" + parts.slice(3).join("_");
-        user = getCookie("nexus_shared_user" + suffix);
-        if (token && user) return { token, user, permissions: getCookie("nexus_shared_permissions" + suffix) || undefined, suffix };
+        if (parts.length < 4) continue;
+        const suffix = "_" + parts.slice(3).join("_");
+        const candidate = {
+            token,
+            user: getCookie("nexus_shared_user" + suffix) || undefined,
+            permissions: getCookie("nexus_shared_permissions" + suffix) || undefined,
+            suffix,
+        };
+        if (candidate.user) return candidate;
+        if (!fallback) fallback = candidate;
     }
-    return null;
+
+    return fallback;
+}
+
+/** กรณีไม่มี nexus_shared_user ให้พยายามดึงข้อมูลผู้ใช้จาก JWT payload แทน */
+function buildUserFromJwtToken(token: string): User | null {
+    try {
+        const parts = token.split(".");
+        if (parts.length < 2) return null;
+        const payloadBase64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+        const padded = payloadBase64 + "=".repeat((4 - (payloadBase64.length % 4)) % 4);
+        const payload = JSON.parse(atob(padded));
+
+        const username = payload.username || payload.preferred_username || payload.email || payload.sub;
+        if (!username) return null;
+
+        return {
+            id: payload.id || payload.userId || payload.sub,
+            username,
+            email: payload.email || undefined,
+            avatarUrl: payload.avatarUrl || payload.avatar_url || undefined,
+            roles: Array.isArray(payload.roles) ? payload.roles : [],
+            permissions: Array.isArray(payload.permissions) ? payload.permissions : [],
+            isSuperAdmin: username === "admin" || payload.isSuperAdmin === true,
+        };
+    } catch {
+        return null;
+    }
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -125,13 +173,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const shared = getSharedAuthFromCookie();
         if (!shared || isCallbackPage || isLogoutPage) return false;
         try {
-            const userObj = JSON.parse(shared.user);
+            let userObj: any = null;
+            if (shared.user) {
+                userObj = JSON.parse(shared.user);
+            } else {
+                userObj = buildUserFromJwtToken(shared.token);
+                if (!userObj) {
+                    console.warn("Found shared token but missing/invalid shared user cookie");
+                    return false;
+                }
+            }
             let userPermissions: string[] = [];
             try {
                 if (shared.permissions) userPermissions = JSON.parse(shared.permissions);
             } catch (_) { }
+            if (!userPermissions.length && Array.isArray(userObj.permissions)) {
+                userPermissions = userObj.permissions;
+            }
             localStorage.setItem("nexus_token", shared.token);
-            localStorage.setItem("nexus_user", shared.user);
+            setToken(shared.token);
+            localStorage.setItem("nexus_user", JSON.stringify(userObj));
+            if (shared.suffix) {
+                localStorage.setItem("tenantId", shared.suffix.replace(/^_/, ""));
+            }
             if (userPermissions.length) {
                 localStorage.setItem("nexus_permissions", JSON.stringify(userPermissions));
             }
