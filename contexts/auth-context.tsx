@@ -325,6 +325,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         console.log("Auth Check - SKIP_AUTH:", process.env.NEXT_PUBLIC_SKIP_AUTH);
 
+        // ให้ shared cookie จาก SSO มีลำดับความสำคัญสูงกว่า localStorage เดิม
+        // เพื่อกันเคส user เปลี่ยนบัญชีที่ SSO แต่ 360 ยังถือ user เก่า
+        if (!isCallbackPage && !isLogoutPage && hasAnySharedToken()) {
+            if (tryBootstrapFromSharedCookie()) return;
+        }
+
         if (nexusUser && nexusToken) {
             try {
                 const userObj = JSON.parse(nexusUser);
