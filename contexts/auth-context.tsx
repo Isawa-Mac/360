@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { SpinnerCustom } from "@/components/ui/spinner-custom";
 
 interface User {
@@ -39,6 +39,9 @@ const SHARED_COOKIE_MAX_AGE_DAYS = 7;
 const SHARED_LOGOUT_MAX_AGE_MS = 120 * 1000;
 /** โพล์ validate session ทุกกี่ ms (แบบ Microsoft 365 — logout ทุก device) */
 const SESSION_VALIDATE_INTERVAL_MS = 45 * 1000;
+/** โพล์ shared cookie ก่อน redirect SSO (รอ login จาก app อื่น) — ครั้งละ ms, สูงสุดกี่ครั้ง */
+const SHARED_COOKIE_POLL_MS = 1500;
+const SHARED_COOKIE_POLL_MAX = 6;
 
 /** Returns domain for shared cookie (e.g. ".trirex.cloud") so all subdomains can read; null for localhost/single host. */
 function getSharedCookieDomain(): string | null {
@@ -56,11 +59,42 @@ function getSharedCookieDomain(): string | null {
     return null;
 }
 
+function getCookie(name: string): string | null {
+    if (typeof document === "undefined") return null;
+    const match = document.cookie.match(new RegExp("(?:^|;\\s*)" + name.replace(/[\-.]/g, "\\$&") + "=([^;]*)"));
+    return match ? decodeURIComponent(match[1]) : null;
+}
+
+/** อ่าน shared token/user จาก cookie (รองรับทั้งแบบไม่มี suffix และแบบมี _tenantId ตาม nexusSSO) */
+function getSharedAuthFromCookie(): { token: string; user: string; permissions?: string; suffix: string } | null {
+    if (typeof document === "undefined") return null;
+    let token = getCookie("nexus_shared_token");
+    let user = token ? getCookie("nexus_shared_user") : null;
+    let suffix = "";
+    if (token && user) return { token, user, permissions: getCookie("nexus_shared_permissions") || undefined, suffix };
+    const cookies = document.cookie.split(";");
+    for (const c of cookies) {
+        const trimmed = c.trim();
+        if (!trimmed.startsWith("nexus_shared_token")) continue;
+        const eq = trimmed.indexOf("=");
+        if (eq === -1) continue;
+        const namePart = trimmed.slice(0, eq).trim();
+        token = decodeURIComponent(trimmed.slice(eq + 1).trim());
+        if (namePart === "nexus_shared_token") continue;
+        const parts = namePart.split("_");
+        if (parts.length >= 4) suffix = "_" + parts.slice(3).join("_");
+        user = getCookie("nexus_shared_user" + suffix);
+        if (token && user) return { token, user, permissions: getCookie("nexus_shared_permissions" + suffix) || undefined, suffix };
+    }
+    return null;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | undefined>(undefined);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [pollSharedCookie, setPollSharedCookie] = useState(false);
 
     const redirectToSSO = (forceLogin: boolean = false) => {
         if (typeof window === "undefined") return;
@@ -79,38 +113,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         window.location.href = url;
     };
 
-    function getCookie(name: string): string | null {
-        if (typeof document === "undefined") return null;
-        const match = document.cookie.match(new RegExp("(?:^|;\\s*)" + name.replace(/[\-.]/g, "\\$&") + "=([^;]*)"));
-        return match ? decodeURIComponent(match[1]) : null;
-    }
-
-    /** อ่าน shared token/user จาก cookie (รองรับทั้งแบบไม่มี suffix และแบบมี _tenantId ตาม nexusSSO) */
-    function getSharedAuthFromCookie(): { token: string; user: string; permissions?: string; suffix: string } | null {
-        if (typeof document === "undefined") return null;
-        // 1) ลองแบบไม่มี suffix ก่อน (single-tenant / legacy)
-        let token = getCookie("nexus_shared_token");
-        let user = token ? getCookie("nexus_shared_user") : null;
-        let suffix = "";
-        if (token && user) return { token, user, permissions: getCookie("nexus_shared_permissions") || undefined, suffix };
-
-        // 2) วนหา cookie ที่ขึ้นต้นด้วย nexus_shared_token_ (multi-tenant)
-        const cookies = document.cookie.split(";");
-        for (const c of cookies) {
-            const trimmed = c.trim();
-            if (!trimmed.startsWith("nexus_shared_token")) continue;
-            const eq = trimmed.indexOf("=");
-            if (eq === -1) continue;
-            const namePart = trimmed.slice(0, eq).trim();
-            token = decodeURIComponent(trimmed.slice(eq + 1).trim());
-            if (namePart === "nexus_shared_token") continue; // already tried
-            const parts = namePart.split("_");
-            if (parts.length >= 4) suffix = "_" + parts.slice(3).join("_");
-            user = getCookie("nexus_shared_user" + suffix);
-            if (token && user) return { token, user, permissions: getCookie("nexus_shared_permissions" + suffix) || undefined, suffix };
+    /** ลอง bootstrap จาก shared cookie (รองรับ tenant suffix). คืน true ถ้าสำเร็จ */
+    const tryBootstrapFromSharedCookie = useCallback((): boolean => {
+        const isCallbackPage = typeof window !== "undefined" && (
+            window.location.pathname.includes("/auth/sso-callback") ||
+            window.location.search.includes("code=")
+        );
+        const isLogoutPage = typeof window !== "undefined" && window.location.pathname.includes("/auth/logout");
+        const shared = getSharedAuthFromCookie();
+        if (!shared || isCallbackPage || isLogoutPage) return false;
+        try {
+            const userObj = JSON.parse(shared.user);
+            let userPermissions: string[] = [];
+            try {
+                if (shared.permissions) userPermissions = JSON.parse(shared.permissions);
+            } catch (_) { }
+            localStorage.setItem("nexus_token", shared.token);
+            localStorage.setItem("nexus_user", shared.user);
+            if (userPermissions.length) {
+                localStorage.setItem("nexus_permissions", JSON.stringify(userPermissions));
+            }
+            const appTheme = getCookie(APP_THEME_COOKIE);
+            const appThemeColor = getCookie(APP_THEME_COLOR_COOKIE);
+            const sharedTheme = getCookie("nexus_shared_theme" + shared.suffix);
+            const sharedThemeColor = getCookie("nexus_shared_theme_color" + shared.suffix);
+            const theme =
+                (sharedTheme === "dark" || sharedTheme === "light")
+                    ? sharedTheme
+                    : (appTheme === "dark" || appTheme === "light" ? appTheme : null);
+            const themeColor = sharedThemeColor || appThemeColor;
+            if (theme) {
+                localStorage.setItem("nexus_theme", theme);
+                localStorage.setItem("theme", theme);
+                document.documentElement.classList.toggle("dark", theme === "dark");
+            }
+            if (themeColor) {
+                localStorage.setItem("themeColor", themeColor);
+                document.documentElement.style.setProperty("--primary", themeColor);
+                document.documentElement.style.setProperty("--sidebar-primary", themeColor);
+                document.documentElement.style.setProperty("--ring", themeColor);
+            }
+            const nexusInsightUser: User = {
+                username: userObj.username || userObj.email,
+                email: userObj.email,
+                avatarUrl: userObj.avatarUrl || userObj.avatar_url,
+                roles: [],
+                permissions: userPermissions,
+                isSuperAdmin: userObj.username === "admin",
+            };
+            setUser(nexusInsightUser);
+            setIsAuthenticated(true);
+            setIsLoading(false);
+            return true;
+        } catch (e) {
+            console.error("Failed to bootstrap from shared cookie", e);
+            return false;
         }
-        return null;
-    }
+    }, []);
 
     function hasAnySharedToken(): boolean {
         if (typeof document === "undefined") return false;
@@ -231,74 +290,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setIsLoading(false);
                 }
             } else {
-                const bootstrapFromShared = (): boolean => {
-                    const shared = getSharedAuthFromCookie();
-                    if (!shared || isCallbackPage || isLogoutPage) return false;
-                    try {
-                        const userObj = JSON.parse(shared.user);
-                        let userPermissions: string[] = [];
-                        try {
-                            if (shared.permissions) userPermissions = JSON.parse(shared.permissions);
-                        } catch (_) { }
-                        localStorage.setItem("nexus_token", shared.token);
-                        localStorage.setItem("nexus_user", shared.user);
-                        if (userPermissions.length) {
-                            localStorage.setItem("nexus_permissions", JSON.stringify(userPermissions));
-                        }
-                        const appTheme = getCookie(APP_THEME_COOKIE);
-                        const appThemeColor = getCookie(APP_THEME_COLOR_COOKIE);
-                        const sharedTheme = getCookie("nexus_shared_theme" + shared.suffix);
-                        const sharedThemeColor = getCookie("nexus_shared_theme_color" + shared.suffix);
-                        const theme =
-                            (sharedTheme === "dark" || sharedTheme === "light")
-                                ? sharedTheme
-                                : (appTheme === "dark" || appTheme === "light" ? appTheme : null);
-                        const themeColor = sharedThemeColor || appThemeColor;
-                        if (theme) {
-                            localStorage.setItem("nexus_theme", theme);
-                            localStorage.setItem("theme", theme);
-                            document.documentElement.classList.toggle("dark", theme === "dark");
-                        }
-                        if (themeColor) {
-                            localStorage.setItem("themeColor", themeColor);
-                            document.documentElement.style.setProperty("--primary", themeColor);
-                            document.documentElement.style.setProperty("--sidebar-primary", themeColor);
-                            document.documentElement.style.setProperty("--ring", themeColor);
-                        }
-                        const nexusInsightUser: User = {
-                            username: userObj.username || userObj.email,
-                            email: userObj.email,
-                            avatarUrl: userObj.avatarUrl || userObj.avatar_url,
-                            roles: [],
-                            permissions: userPermissions,
-                            isSuperAdmin: userObj.username === "admin",
-                        };
-                        setUser(nexusInsightUser);
-                        setIsAuthenticated(true);
-                        setIsLoading(false);
-                        return true;
-                    } catch (e) {
-                        console.error("Failed to bootstrap from shared cookie", e);
-                        return false;
-                    }
-                };
-
-                if (bootstrapFromShared()) return;
-
-                // ลองอ่าน shared cookie อีกครั้งหลังหน่วงสั้น (กรณี cookie ยังไม่โหลดทัน)
-                const timeoutId = window.setTimeout(() => {
-                    if (bootstrapFromShared()) return;
-                    if (!isCallbackPage && !isLogoutPage) {
-                        redirectToSSO();
-                    } else {
-                        setIsLoading(false);
-                    }
-                }, 300);
-
-                return () => window.clearTimeout(timeoutId);
+                // Cross-subdomain: ถ้ามี shared cookie (login จาก app อื่น) ให้ bootstrap
+                if (tryBootstrapFromSharedCookie()) return;
+                // ยังไม่มี shared cookie — โพล์สักครู่ (รอ auto login เมื่อมีการ login ที่ระบบอื่น)
+                if (!isCallbackPage && !isLogoutPage) {
+                    setPollSharedCookie(true);
+                } else {
+                    setIsLoading(false);
+                }
             }
         }
-    }, []);
+    }, [tryBootstrapFromSharedCookie]);
+
+    // โพล์ shared cookie ก่อน redirect ไป SSO (auto login เมื่อมีการ login ที่ระบบอื่น)
+    useEffect(() => {
+        if (!pollSharedCookie || typeof window === "undefined") return;
+        let count = 0;
+        const id = setInterval(() => {
+            if (tryBootstrapFromSharedCookie()) {
+                clearInterval(id);
+                setPollSharedCookie(false);
+                return;
+            }
+            count += 1;
+            if (count >= SHARED_COOKIE_POLL_MAX) {
+                clearInterval(id);
+                setPollSharedCookie(false);
+                redirectToSSO();
+            }
+        }, SHARED_COOKIE_POLL_MS);
+        return () => clearInterval(id);
+    }, [pollSharedCookie, tryBootstrapFromSharedCookie]);
 
     // เดิมมี Passive Cookie Monitor และการโพล์ validate-token เพื่อตรวจจับ global logout อัตโนมัติ
     // ถูกนำออกตาม requirement เพื่อให้ 360 logout แค่ตอนผู้ใช้กด logout เองเท่านั้น
