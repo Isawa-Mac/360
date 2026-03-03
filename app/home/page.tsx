@@ -127,8 +127,7 @@ function HomePageContent() {
       // เพิ่ม delay เล็กน้อยเพื่อให้เห็น loading state
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      // ถ้าเป็น external link ให้เปิดในหน้าต่างใหม่
-      if (item.isExternal) {
+      if (item.isExternal || item.url.startsWith('http')) {
         window.location.href = item.url
       } else {
         router.push(item.url)

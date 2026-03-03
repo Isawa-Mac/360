@@ -64,7 +64,8 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {filteredNavItems.map((item) => {
-                const isActive = pathname === item.url
+                const isExternal = item.url.startsWith('http')
+                const isActive = !isExternal && pathname === item.url
                 const Icon = item.icon
                 return (
                   <SidebarMenuItem key={item.title}>
@@ -75,10 +76,17 @@ export function AppSidebar() {
                       isActive={isActive}
                       onClick={() => isMobile ? setOpenMobile(false) : setOpen(false)}
                     >
-                      <Link href={item.url}>
-                        {Icon && <Icon />}
-                        <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
-                      </Link>
+                      {isExternal ? (
+                        <a href={item.url}>
+                          {Icon && <Icon />}
+                          <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                        </a>
+                      ) : (
+                        <Link href={item.url}>
+                          {Icon && <Icon />}
+                          <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                        </Link>
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
