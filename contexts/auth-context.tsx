@@ -119,17 +119,11 @@ function getSharedAuthFromCookie(): { token: string; user?: string; permissions?
 }
 
 /** กรณีไม่มี nexus_shared_user ให้พยายามดึงข้อมูลผู้ใช้จาก token */
-function buildUserFromToken(token: string): User {
+function buildUserFromToken(token: string): User | null {
     try {
         const parts = token.split(".");
         if (parts.length < 2) {
-            return {
-                id: token.slice(0, 16),
-                username: "sso-user",
-                roles: [],
-                permissions: [],
-                isSuperAdmin: false,
-            };
+            return null;
         }
         const payloadBase64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
         const padded = payloadBase64 + "=".repeat((4 - (payloadBase64.length % 4)) % 4);
@@ -137,13 +131,7 @@ function buildUserFromToken(token: string): User {
 
         const username = payload.username || payload.preferred_username || payload.email || payload.sub;
         if (!username) {
-            return {
-                id: payload.id || payload.userId || payload.sub || token.slice(0, 16),
-                username: "sso-user",
-                roles: Array.isArray(payload.roles) ? payload.roles : [],
-                permissions: Array.isArray(payload.permissions) ? payload.permissions : [],
-                isSuperAdmin: payload.isSuperAdmin === true,
-            };
+            return null;
         }
 
         return {
@@ -156,13 +144,7 @@ function buildUserFromToken(token: string): User {
             isSuperAdmin: username === "admin" || payload.isSuperAdmin === true,
         };
     } catch {
-        return {
-            id: token.slice(0, 16),
-            username: "sso-user",
-            roles: [],
-            permissions: [],
-            isSuperAdmin: false,
-        };
+        return null;
     }
 }
 
@@ -208,7 +190,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 console.log("🔑 [Auth] Bootstrapping from SHARED COOKIE user:", userObj.username);
             } else {
                 userObj = buildUserFromToken(shared.token);
-                console.warn("⚠️ [Auth] Shared user cookie MISSING, using token fallback:", userObj.username);
+                if (userObj) {
+                    console.warn("⚠️ [Auth] Shared user cookie MISSING, using token fallback:", userObj.username);
+                }
+            }
+
+            if (!userObj) {
+                console.warn("❌ [Auth] Bootstrap failed: No user info in cookie or token");
+                return false;
             }
             let userPermissions: string[] = [];
             try {
