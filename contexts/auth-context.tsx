@@ -106,33 +106,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         let sharedUser: string | null = null;
         let suffix = "";
 
-        // 1. หา token ก่อน (ลองหาแบบมี tenant suffix ก่อน)
+        // 1. หา token ก่อน — ใช้วิธีเดียวกับ bi360-project (วนหา nexus_shared_token ทั้งแบบมีและไม่มี suffix)
         for (const cookie of cookies) {
             const trimmed = cookie.trim();
-            if (trimmed.startsWith("nexus_shared_token_")) {
-                const parts = trimmed.split("=");
-                const namePart = parts[0];
-                const tokenVal = decodeURIComponent(parts[1]);
-                
+            if (trimmed.startsWith("nexus_shared_token")) {
+                const eqIdx = trimmed.indexOf("=");
+                if (eqIdx === -1) continue;
+                const namePart = trimmed.slice(0, eqIdx);
+                const tokenVal = decodeURIComponent(trimmed.slice(eqIdx + 1));
+                if (!tokenVal) continue;
+
                 const nameParts = namePart.split("_");
-                const tid = nameParts.slice(3).join("_");
-                const userVal = getCookie(`nexus_shared_user_${tid}`);
-                
-                if (tokenVal && userVal) {
+                const tid = nameParts.length >= 4 ? nameParts.slice(3).join("_") : null;
+                const userSuffix = tid ? `_${tid}` : "";
+                const userVal = getCookie(`nexus_shared_user${userSuffix}`);
+
+                if (userVal) {
                     sharedToken = tokenVal;
                     sharedUser = userVal;
                     foundTenantId = tid;
-                    suffix = `_${tid}`;
+                    suffix = userSuffix;
                     break;
                 }
             }
-        }
-
-        // 2. ถ้ายังไม่ได้ ให้ลองหาแบบไม่มี suffix
-        if (!sharedToken) {
-            sharedToken = getCookie("nexus_shared_token");
-            sharedUser = getCookie("nexus_shared_user");
-            suffix = "";
         }
 
         if (!sharedToken || !sharedUser) return false;
@@ -203,11 +199,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, []);
 
-    function hasAnySharedToken(): boolean {
-        if (typeof document === "undefined") return false;
-        return document.cookie.includes("nexus_shared_token");
-    }
-
     function setCookie(name: string, value: string, maxAgeDays: number = THEME_COOKIE_MAX_AGE_DAYS) {
         if (typeof document === "undefined") return;
         const maxAge = maxAgeDays * 24 * 60 * 60;
@@ -272,42 +263,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         console.log("Auth Check - SKIP_AUTH:", process.env.NEXT_PUBLIC_SKIP_AUTH);
 
-        // ให้ shared cookie จาก SSO มีลำดับความสำคัญสูงกว่า localStorage เดิม
-        // เพื่อกันเคส user เปลี่ยนบัญชีที่ SSO แต่ 360 ยังถือ user เก่า
-        if (!isCallbackPage && !isLogoutPage && hasAnySharedToken()) {
-            // ลอง bootstrap ถ้าสำเร็จก็จบ
+        // ลอง bootstrap จาก shared cookie ก่อน (สำหรับ cross-subdomain auto-login)
+        if (!isCallbackPage && !isLogoutPage) {
             if (tryBootstrapFromSharedCookie()) return;
-            
-            // ถ้า bootstrap ไม่สำเร็จ (เช่น คุกกี้ user หาย) แต่เรามี session ใน localStorage อยู่แล้ว 
-            // ให้ตรวจสอบว่า token ตรงกันไหม ถ้าตรงกันก็ยังไม่ต้องล้าง เพื่อป้องกันการเด้งไปหน้า login
-            if (nexusUser && nexusToken) {
-                // เช็คว่า token ใน localStorage ยังตรงกับใน cookie สักตัวไหม
-                const cookies = document.cookie.split(";");
-                let tokenFound = false;
-                for (const c of cookies) {
-                    const trimmed = c.trim();
-                    if (trimmed.startsWith("nexus_shared_token")) {
-                        const val = decodeURIComponent(trimmed.split("=")[1]);
-                        if (val === nexusToken) {
-                            tokenFound = true;
-                            break;
-                        }
-                    }
-                }
-                
-                if (tokenFound) {
-                    console.log("ℹ️ [Auth] Shared cookie matches local token, keeping session");
-                    // ข้ามการล้างข้อมูลไปก่อน
-                } else {
-                    // ถ้ามี cookie ตัวอื่นแต่ไม่ตรงกับของเราเลย ค่อยล้าง
-                    console.warn("⚠️ [Auth] Shared token changed or missing, clearing local session");
-                    localStorage.removeItem("nexus_user");
-                    localStorage.removeItem("nexus_token");
-                    localStorage.removeItem("nexus_permissions");
-                    nexusUser = null;
-                    nexusToken = null;
-                }
-            }
         }
 
         if (nexusUser && nexusToken) {
