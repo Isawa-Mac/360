@@ -35,7 +35,10 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Business Intelligence 360",
-    url: process.env.NEXT_PUBLIC_BI_URL || "https://bi360.trirex.cloud",
+    url: (() => {
+      const u = process.env.NEXT_PUBLIC_BI_URL || "https://bi360.trirex.cloud";
+      return /^https?:\/\//.test(u) ? u : "https://bi360.trirex.cloud";
+    })(),
     icon: BarChart3,
     requiredPermission: 'erp360.bi.read',
   },
@@ -49,14 +52,17 @@ export const navItems: NavItem[] = [
     title: "Point of Sale 360 Online",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_POS_URL || "https://pos360.trirex.cloud";
-      return u.startsWith("http") ? u : "https://pos360.trirex.cloud";
+      return /^https?:\/\//.test(u) ? u : "https://pos360.trirex.cloud";
     })(),
     icon: ShoppingCart,
     requiredPermission: 'erp360.pos.read',
   },
   {
     title: "Single Sign-On 360",
-    url: process.env.NEXT_PUBLIC_SSO_BASE_URL || "https://sso360.trirex.cloud",
+    url: (() => {
+      const u = process.env.NEXT_PUBLIC_SSO_BASE_URL || "https://sso360.trirex.cloud";
+      return /^https?:\/\//.test(u) ? u : "https://sso360.trirex.cloud";
+    })(),
     icon: Key,
     requiredPermission: 'erp360.admin.read',
   },

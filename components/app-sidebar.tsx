@@ -23,6 +23,14 @@ import { useAuth } from "@/contexts/auth-context"
 import { usePermission } from "@/hooks/use-permission"
 import { navItems, filterNavItemsByPermission } from "@/lib/navigation"
 
+/** แก้ URL ที่ขาด : ใน protocol (เช่น https// -> https://) */
+function ensureAbsoluteUrl(url: string): string {
+  if (/^https?:\/\//.test(url)) return url
+  if (url.startsWith("https//")) return "https://" + url.slice(6)
+  if (url.startsWith("http//")) return "http://" + url.slice(5)
+  return url
+}
+
 export function AppSidebar() {
   const pathname = usePathname()
   const { user } = useAuth()
@@ -64,7 +72,9 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {filteredNavItems.map((item) => {
-                const isExternal = item.url.startsWith('http')
+                const looksExternal = item.url.startsWith('http')
+                const isExternal = looksExternal
+                const externalHref = looksExternal ? ensureAbsoluteUrl(item.url) : item.url
                 const isActive = !isExternal && pathname === item.url
                 const Icon = item.icon
                 return (
@@ -77,7 +87,7 @@ export function AppSidebar() {
                       onClick={() => isMobile ? setOpenMobile(false) : setOpen(false)}
                     >
                       {isExternal ? (
-                        <a href={item.url} target="_blank" rel="noopener noreferrer">
+                        <a href={externalHref} target="_blank" rel="noopener noreferrer">
                           {Icon && <Icon />}
                           <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
                         </a>
