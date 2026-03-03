@@ -71,7 +71,20 @@ function getSharedAuthFromCookie(): { token: string; user?: string; permissions?
 
     let fallback: { token: string; user?: string; permissions?: string; suffix: string } | null = null;
 
-    // 1) วนหาแบบมี tenant suffix ก่อน (สำคัญ: กันหยิบ user เก่าจาก cookie แบบไม่มี suffix)
+    // 1) ใช้แบบไม่มี suffix ก่อน (SSO จะ overwrite ตัวนี้ทุกครั้งที่ login ล่าสุด)
+    const baseToken = getCookie("nexus_shared_token");
+    if (baseToken) {
+        const candidate = {
+            token: baseToken,
+            user: getCookie("nexus_shared_user") || undefined,
+            permissions: getCookie("nexus_shared_permissions") || undefined,
+            suffix: "",
+        };
+        if (candidate.user) return candidate;
+        fallback = candidate;
+    }
+
+    // 2) ค่อยวนหาแบบมี tenant suffix (fallback)
     const suffixedCandidates: { token: string; user?: string; permissions?: string; suffix: string }[] = [];
     const cookies = document.cookie.split(";");
     for (const c of cookies) {
@@ -100,19 +113,6 @@ function getSharedAuthFromCookie(): { token: string; user?: string; permissions?
     if (withUser) return withUser;
     if (suffixedCandidates.length > 0) {
         fallback = suffixedCandidates[0];
-    }
-
-    // 2) ค่อยลองแบบไม่มี suffix
-    const baseToken = getCookie("nexus_shared_token");
-    if (baseToken) {
-        const candidate = {
-            token: baseToken,
-            user: getCookie("nexus_shared_user") || undefined,
-            permissions: getCookie("nexus_shared_permissions") || undefined,
-            suffix: "",
-        };
-        if (candidate.user) return candidate;
-        if (!fallback) fallback = candidate;
     }
 
     return fallback;
