@@ -111,17 +111,33 @@ function getSharedAuthFromCookie(): { token: string; user?: string; permissions?
     return fallback;
 }
 
-/** กรณีไม่มี nexus_shared_user ให้พยายามดึงข้อมูลผู้ใช้จาก JWT payload แทน */
-function buildUserFromJwtToken(token: string): User | null {
+/** กรณีไม่มี nexus_shared_user ให้พยายามดึงข้อมูลผู้ใช้จาก token */
+function buildUserFromToken(token: string): User {
     try {
         const parts = token.split(".");
-        if (parts.length < 2) return null;
+        if (parts.length < 2) {
+            return {
+                id: token.slice(0, 16),
+                username: "sso-user",
+                roles: [],
+                permissions: [],
+                isSuperAdmin: false,
+            };
+        }
         const payloadBase64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
         const padded = payloadBase64 + "=".repeat((4 - (payloadBase64.length % 4)) % 4);
         const payload = JSON.parse(atob(padded));
 
         const username = payload.username || payload.preferred_username || payload.email || payload.sub;
-        if (!username) return null;
+        if (!username) {
+            return {
+                id: payload.id || payload.userId || payload.sub || token.slice(0, 16),
+                username: "sso-user",
+                roles: Array.isArray(payload.roles) ? payload.roles : [],
+                permissions: Array.isArray(payload.permissions) ? payload.permissions : [],
+                isSuperAdmin: payload.isSuperAdmin === true,
+            };
+        }
 
         return {
             id: payload.id || payload.userId || payload.sub,
@@ -133,7 +149,13 @@ function buildUserFromJwtToken(token: string): User | null {
             isSuperAdmin: username === "admin" || payload.isSuperAdmin === true,
         };
     } catch {
-        return null;
+        return {
+            id: token.slice(0, 16),
+            username: "sso-user",
+            roles: [],
+            permissions: [],
+            isSuperAdmin: false,
+        };
     }
 }
 
@@ -177,11 +199,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (shared.user) {
                 userObj = JSON.parse(shared.user);
             } else {
-                userObj = buildUserFromJwtToken(shared.token);
-                if (!userObj) {
-                    console.warn("Found shared token but missing/invalid shared user cookie");
-                    return false;
-                }
+                userObj = buildUserFromToken(shared.token);
+                console.warn("Using token fallback user because shared user cookie is missing");
             }
             let userPermissions: string[] = [];
             try {
