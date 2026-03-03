@@ -321,8 +321,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         // Check local storage for Nexus SSO user first
-        const nexusUser = localStorage.getItem("nexus_user");
-        const nexusToken = localStorage.getItem("nexus_token");
+        let nexusUser = localStorage.getItem("nexus_user");
+        let nexusToken = localStorage.getItem("nexus_token");
 
         const isCallbackPage = typeof window !== "undefined" && (
             window.location.pathname.includes("/auth/sso-callback") ||
@@ -336,6 +336,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // เพื่อกันเคส user เปลี่ยนบัญชีที่ SSO แต่ 360 ยังถือ user เก่า
         if (!isCallbackPage && !isLogoutPage && hasAnySharedToken()) {
             if (tryBootstrapFromSharedCookie()) return;
+            // ถ้ามี shared cookie แต่ bootstrap ไม่ผ่าน ห้ามใช้ localStorage เก่าต่อ
+            // เพราะมักเป็น user คนก่อนหน้า ทำให้แสดง user ผิดคน
+            localStorage.removeItem("nexus_user");
+            localStorage.removeItem("nexus_token");
+            localStorage.removeItem("nexus_permissions");
+            nexusUser = null;
+            nexusToken = null;
         }
 
         if (nexusUser && nexusToken) {
