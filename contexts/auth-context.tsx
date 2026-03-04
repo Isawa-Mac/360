@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { SpinnerCustom } from "@/components/ui/spinner-custom";
+import { checkSSOSession } from "@/lib/sso-utils";
 
 interface User {
     id?: string;
@@ -74,14 +75,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [pollSharedCookie, setPollSharedCookie] = useState(false);
 
     /** forceLogin = บังคับแสดงหน้า login, silent = ลอง silent auth (prompt=none) ถ้ามี session อยู่แล้วจะ redirect กลับทันที */
-    const redirectToSSO = (forceLogin: boolean = false, silent: boolean = false) => {
+    const redirectToSSO = useCallback((forceLogin: boolean = false, silent: boolean = false) => {
         if (typeof window === "undefined") return;
 
         const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
         const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
 
-        const callbackUrl = `${window.location.origin}/auth/sso-callback`;
-        let url = `${ssoUrl}/#/login?client_id=${clientId}&redirect_uri=${encodeURIComponent(callbackUrl)}`;
+        let url = `${ssoUrl}/#/login?client_id=${clientId}`;
         if (forceLogin) {
             url += "&prompt=login";
         } else if (silent) {
@@ -90,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         window.location.href = url;
-    };
+    }, []);
 
     /** ลอง bootstrap จาก shared cookie (รองรับ tenant suffix). คืน true ถ้าสำเร็จ */
     const tryBootstrapFromSharedCookie = useCallback((): boolean => {
@@ -350,8 +350,76 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return () => clearInterval(id);
     }, [pollSharedCookie, tryBootstrapFromSharedCookie]);
 
-    // เดิมมี Passive Cookie Monitor และการโพล์ validate-token เพื่อตรวจจับ global logout อัตโนมัติ
-    // ถูกนำออกตาม requirement เพื่อให้ 360 logout แค่ตอนผู้ใช้กด logout เองเท่านั้น
+    /** โพล์ validate-token และ shared cookie — sync ตาม SSO (logout/login ที่ SSO ส่งผลทุกแอป) */
+    useEffect(() => {
+        if (!isAuthenticated || typeof window === "undefined") return;
+        const isCallbackPage = window.location.pathname.includes("/auth/sso-callback");
+        const isLogoutPage = window.location.pathname.includes("/auth/logout");
+        if (isCallbackPage || isLogoutPage) return;
+
+        const getSharedTokenFromCookie = (): string | null => {
+            const cookies = document.cookie.split(";");
+            for (const cookie of cookies) {
+                const trimmed = cookie.trim();
+                if (trimmed.startsWith("nexus_shared_token")) {
+                    const eqIdx = trimmed.indexOf("=");
+                    if (eqIdx === -1) continue;
+                    try {
+                        return decodeURIComponent(trimmed.slice(eqIdx + 1));
+                    } catch { return trimmed.slice(eqIdx + 1); }
+                }
+            }
+            return null;
+        };
+
+        let lastSharedToken = getSharedTokenFromCookie();
+
+        const tick = async () => {
+            const currentSharedToken = getSharedTokenFromCookie();
+            if (!currentSharedToken && isAuthenticated) {
+                setUser(null);
+                setToken(undefined);
+                setIsAuthenticated(false);
+                redirectToSSO(false, true);
+                return;
+            }
+            if (currentSharedToken && currentSharedToken !== lastSharedToken) {
+                lastSharedToken = currentSharedToken;
+                const session = await checkSSOSession();
+                if (session?.authenticated && session.user) {
+                    const u = session.user;
+                    setUser({
+                        id: u.id,
+                        username: u.username || u.email,
+                        email: u.email,
+                        avatarUrl: u.avatarUrl,
+                        permissions: u.permissions,
+                        isSuperAdmin: u.permissions?.includes("*"),
+                    });
+                    setToken(currentSharedToken);
+                    localStorage.setItem("nexus_token", currentSharedToken);
+                    localStorage.setItem("nexus_user", JSON.stringify(u));
+                }
+                return;
+            }
+            const session = await checkSSOSession();
+            if (!session?.authenticated && isAuthenticated) {
+                setUser(null);
+                setToken(undefined);
+                setIsAuthenticated(false);
+                localStorage.removeItem("nexus_token");
+                localStorage.removeItem("nexus_user");
+                redirectToSSO(false, true);
+            }
+        };
+
+        const cookieInterval = setInterval(() => { tick().catch(() => {}); }, 2000);
+        const validateInterval = setInterval(() => { tick().catch(() => {}); }, SESSION_VALIDATE_INTERVAL_MS);
+        return () => {
+            clearInterval(cookieInterval);
+            clearInterval(validateInterval);
+        };
+    }, [isAuthenticated, redirectToSSO]);
 
     const login = (username: string) => {
         // This is the old local login, we can keep it or make it call redirectToSSO
@@ -415,8 +483,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Redirect to SSO logout to clear global session
         const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
-        const returnUrl = window.location.origin;
-        window.location.href = `${ssoUrl}/#/logout?redirect_uri=${encodeURIComponent(returnUrl)}`;
+        window.location.href = `${ssoUrl}/#/logout`;
     };
 
     const getAuthData = () => {

@@ -221,7 +221,7 @@ export async function checkSSOSession(): Promise<SSOSession | null> {
       // Client-side: ใช้ API route เพื่อหลีกเลี่ยง CORS
       // ดึง token จาก localStorage เพื่อส่งผ่าน Authorization header
       const token = typeof window !== 'undefined'
-        ? localStorage.getItem('bi_token') || null
+        ? localStorage.getItem('nexus_token') || null
         : null
 
       const headers: HeadersInit = {
@@ -233,7 +233,7 @@ export async function checkSSOSession(): Promise<SSOSession | null> {
         headers['Authorization'] = `Bearer ${token}`
         console.log('🔍 checkSSOSession - Sending token via Authorization header:', token.substring(0, 20) + '...')
       } else {
-        console.log('⚠️ checkSSOSession - No token found in localStorage (bi_token)')
+        console.log('⚠️ checkSSOSession - No token found in localStorage (nexus_token)')
         // ตรวจสอบ localStorage keys ทั้งหมดเพื่อ debug
         if (typeof window !== 'undefined') {
           const allKeys = Object.keys(localStorage)
