@@ -90,6 +90,7 @@ export interface SSOSession {
     firstName?: string
     lastName?: string
     tenantId?: string
+    avatarUrl?: string
     roles?: string[]
     permissions?: string[]
     isSuperAdmin?: boolean
