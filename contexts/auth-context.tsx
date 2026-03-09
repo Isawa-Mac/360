@@ -481,9 +481,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
         }
 
-        // Redirect to SSO logout to clear global session
+        // Redirect to SSO logout พร้อม client_id ของ ERP360
         const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
-        window.location.href = `${ssoUrl}/#/logout`;
+        const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
+        window.location.href = `${ssoUrl}/#/logout?client_id=${clientId}`;
     };
 
     const getAuthData = () => {
