@@ -44,7 +44,10 @@ export const navItems: NavItem[] = [
   },
   {
     title: "NexDocs 360",
-    url: "/nexdocs",
+    url: (() => {
+      const u = process.env.NEXT_PUBLIC_NEXDOCS_URL || "https://nexdocs360.trirex.cloud";
+      return /^https?:\/\//.test(u) ? u : "https://nexdocs360.trirex.cloud";
+    })(),
     icon: FileText,
     requiredPermission: 'erp360.docs.read',
   },
