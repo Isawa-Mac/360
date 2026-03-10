@@ -49,7 +49,7 @@ export const navItems: NavItem[] = [
       return /^https?:\/\//.test(u) ? u : "https://nexdocs360.trirex.cloud";
     })(),
     icon: FileText,
-    requiredPermission: 'erp360.docs.read',
+    requiredPermission: ['erp360.nexdocs.full', 'erp360.nexdocs.read'],
   },
   {
     title: "Point of Sale 360 Online",

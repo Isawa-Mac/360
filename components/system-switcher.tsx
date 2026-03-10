@@ -67,7 +67,7 @@ const SYSTEMS = [
     name: "NexDocs 360",
     url: "https://nexdocs360.trirex.cloud",
     icon: FileText,
-    permission: "erp360.docs.read",
+    permission: ["erp360.nexdocs.full", "erp360.nexdocs.read"],
   },
   {
     name: "Nexus SSO",

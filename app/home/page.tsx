@@ -97,7 +97,7 @@ function HomePageContent() {
       url: getNexDocsBaseURL(),
       isExternal: true,
       enabled: true,
-      requiredPermission: ['erp360.docs.read'],
+      requiredPermission: ['erp360.nexdocs.full', 'erp360.nexdocs.read'],
     },
     {
       title: "Point of Sale 360 Online",
