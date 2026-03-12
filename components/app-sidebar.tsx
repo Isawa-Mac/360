@@ -44,6 +44,7 @@ export function AppSidebar() {
 
   // ใช้รายการเมนูจาก system-switcher (navItems ใน lib/navigation) และเช็ค permission
   const filteredNavItems = navItems.filter(item => {
+    if (item.hidden) return false
     // เช็ค isSuperAdminOnly
     if (item.isSuperAdminOnly && !isSuperAdmin) {
       return false

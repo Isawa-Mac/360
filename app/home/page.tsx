@@ -72,15 +72,16 @@ function HomePageContent() {
 
   // Main menu items — requiredPermission ใช้ permission string จาก SSO จริง
   const menuItems = [
-    {
-      title: "Nexus Smart CRM 360",
-      description: "Nexus Smart CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้า",
-      icon: Globe,
-      url: "/nexus-smart-crm",
-      isExternal: false,
-      enabled: false, // ปิดชั่วคราว
-      requiredPermission: ['erp360.erp.read'],
-    },
+    // CRM card ปิดชั่วคราว — เอา hidden: false เพื่อแสดงอีกครั้ง
+    // {
+    //   title: "Nexus Smart CRM 360",
+    //   description: "Nexus Smart CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้า",
+    //   icon: Globe,
+    //   url: "/nexus-smart-crm",
+    //   isExternal: false,
+    //   enabled: false,
+    //   requiredPermission: ['erp360.erp.read'],
+    // },
     {
       title: "Business Intelligence 360",
       description: "Business Intelligence 360 (BI) - ระบบวิเคราะห์ข้อมูลทางธุรกิจเพื่อการตัดสินใจ",

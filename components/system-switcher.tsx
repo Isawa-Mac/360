@@ -44,13 +44,14 @@ const Grid3x3Icon = ({ className }: { className?: string }) => (
 )
 
 const SYSTEMS = [
-  {
-    name: "CRM 360",
-    url: "https://crm360.trirex.cloud",
-    icon: Globe,
-    permission: "erp360.erp.read",
-    disabled: true,
-  },
+  // CRM 360 ปิดชั่วคราว
+  // {
+  //   name: "CRM 360",
+  //   url: "https://crm360.trirex.cloud",
+  //   icon: Globe,
+  //   permission: "erp360.erp.read",
+  //   disabled: true,
+  // },
   {
     name: "Business Intelligence 360",
     url: "https://bi360.trirex.cloud",
@@ -77,7 +78,7 @@ const SYSTEMS = [
   },
 ]
 
-const CURRENT_SYSTEM = "CRM 360"
+const CURRENT_SYSTEM = "BI 360" // CRM ปิดแล้ว ใช้ BI เป็น default
 
 export function SystemSwitcher({ className }: { className?: string }) {
   const { hasPermission } = usePermission()

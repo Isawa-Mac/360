@@ -8,6 +8,7 @@ export interface NavItem {
   requiredPermission?: string | string[]
   resourceCheck?: { resource: string; actions: string[] }
   isSuperAdminOnly?: boolean
+  hidden?: boolean
 }
 
 export interface NavSubItem {
@@ -32,6 +33,7 @@ export const navItems: NavItem[] = [
     url: "/nexus-smart-crm",
     icon: Globe,
     requiredPermission: 'erp360.erp.read',
+    hidden: true, // ปิดชั่วคราว
   },
   {
     title: "Business Intelligence 360",
