@@ -17,7 +17,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { UserMenu } from "@/components/user-menu"
-import { SystemSwitcher } from "@/components/system-switcher"
+import { AppMenu } from "@/components/app-menu"
 import { DashboardControl } from "@/components/dashboard-control"
 import { useAuth } from "@/contexts/auth-context"
 import { usePermission } from "@/hooks/use-permission"
@@ -58,15 +58,8 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="h-12 border-b flex justify-center p-0">
-        <div className="px-2 flex items-center h-full w-full">
-          <UserMenu
-            name={user?.username || "Guest"}
-            email={user?.email || ""}
-            avatarSrc={user?.avatarUrl}
-            className="group-data-[collapsible=icon]:justify-center"
-          />
-        </div>
+      <SidebarHeader className="pb-3 flex flex-row justify-start group-data-[collapsible=icon]:justify-center">
+        <AppMenu className="flex items-center justify-center shrink-0" />
       </SidebarHeader>
       <SidebarContent className="h-full w-full [&>[data-orientation=horizontal]]:hidden">
         <SidebarGroup>
@@ -113,6 +106,18 @@ export function AppSidebar() {
               direction={state === "collapsed" ? "column" : "row"}
             />
           </div>
+          <UserMenu
+            name={user?.username || "Guest"}
+            email={user?.email || ""}
+            avatarSrc={user?.avatarUrl}
+            avatarFallback={(() => {
+              const n = user?.username || user?.email || ""
+              if (n.length >= 2) return n.slice(0, 2).toUpperCase()
+              if (n.length === 1) return n.toUpperCase()
+              return "?"
+            })()}
+            className="group-data-[collapsible=icon]:justify-center"
+          />
         </div>
       </SidebarFooter>
       <SidebarRail />
