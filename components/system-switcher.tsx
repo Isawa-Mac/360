@@ -43,7 +43,15 @@ const Grid3x3Icon = ({ className }: { className?: string }) => (
   </svg>
 )
 
-const SYSTEMS = [
+type SystemItem = {
+  name: string
+  url: string
+  icon: React.ComponentType<{ className?: string }>
+  permission: string | string[]
+  disabled?: boolean
+}
+
+const SYSTEMS: SystemItem[] = [
   // CRM 360 ปิดชั่วคราว
   // {
   //   name: "CRM 360",
@@ -57,24 +65,28 @@ const SYSTEMS = [
     url: "https://bi360.trirex.cloud",
     icon: BarChart3,
     permission: "erp360.bi.read",
+    disabled: false,
   },
   {
     name: "POS 360",
     url: "https://pos360.trirex.cloud",
     icon: ShoppingCart,
     permission: "erp360.pos.read",
+    disabled: false,
   },
   {
     name: "NexDocs 360",
     url: "https://nexdocs360.trirex.cloud",
     icon: FileText,
     permission: ["erp360.nexdocs.full", "erp360.nexdocs.read"],
+    disabled: false,
   },
   {
     name: "Nexus SSO",
     url: "https://sso360.trirex.cloud",
     icon: Key,
     permission: "erp360.admin.read",
+    disabled: false,
   },
 ]
 
@@ -111,28 +123,30 @@ export function SystemSwitcher({ className }: { className?: string }) {
               Switch System
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {visibleSystems.map((system) => (
-              <DropdownMenuItem
+            {visibleSystems.map((system) => {
+              const isDisabled = (system as SystemItem).disabled === true
+              return (
+                <DropdownMenuItem
                 key={system.name}
                 asChild
-                disabled={system.disabled}
+                disabled={isDisabled}
                 className={cn(
                   "gap-2 p-2",
                   system.name === CURRENT_SYSTEM && "bg-accent",
-                  system.disabled && "opacity-50 grayscale cursor-not-allowed pointer-events-none"
+                  isDisabled && "opacity-50 grayscale cursor-not-allowed pointer-events-none"
                 )}
               >
                 <a
-                  href={system.disabled ? "#" : system.url}
-                  target={(system.name === CURRENT_SYSTEM || system.disabled) ? undefined : "_blank"}
+                  href={isDisabled ? "#" : system.url}
+                  target={(system.name === CURRENT_SYSTEM || isDisabled) ? undefined : "_blank"}
                   rel="noreferrer"
-                  onClick={(e) => system.disabled && e.preventDefault()}
+                  onClick={(e) => isDisabled && e.preventDefault()}
                 >
                   <div className="flex size-6 items-center justify-center rounded-sm border">
                     <system.icon className="size-4 shrink-0" />
                   </div>
                   <span className="flex-1">{system.name}</span>
-                  {system.disabled && (
+                  {isDisabled && (
                     <span className="text-[10px] bg-muted px-1 rounded uppercase font-medium">Coming Soon</span>
                   )}
                   {system.name === CURRENT_SYSTEM && (
@@ -140,7 +154,8 @@ export function SystemSwitcher({ className }: { className?: string }) {
                   )}
                 </a>
               </DropdownMenuItem>
-            ))}
+            )
+            })}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
