@@ -281,6 +281,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setUser(nexusInsightUser);
                 setIsAuthenticated(true);
                 setIsLoading(false);
+                // ดึง session ทันทีเพื่ออัปเดต avatarUrl (แก้รูปหายตอน reload)
+                checkSSOSession().then((session) => {
+                    if (session?.authenticated && session.user) {
+                        const u = session.user;
+                        const fullUser: User = {
+                            id: u.id,
+                            username: u.username || u.email,
+                            email: u.email,
+                            avatarUrl: u.avatarUrl || userObj.avatarUrl || userObj.avatar_url,
+                            roles: [],
+                            permissions: u.permissions,
+                            isSuperAdmin: u.permissions?.includes("*"),
+                        };
+                        setUser(fullUser);
+                        localStorage.setItem("nexus_user", JSON.stringify(fullUser));
+                    }
+                }).catch(() => {});
             } catch (e) {
                 console.error("Failed to parse nexus user", e);
                 setIsLoading(false);
@@ -385,25 +402,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
             if (currentSharedToken && currentSharedToken !== lastSharedToken) {
                 lastSharedToken = currentSharedToken;
-                const session = await checkSSOSession();
-                if (session?.authenticated && session.user) {
-                    const u = session.user;
-                    setUser({
-                        id: u.id,
-                        username: u.username || u.email,
-                        email: u.email,
-                        avatarUrl: u.avatarUrl,
-                        permissions: u.permissions,
-                        isSuperAdmin: u.permissions?.includes("*"),
-                    });
-                    setToken(currentSharedToken);
-                    localStorage.setItem("nexus_token", currentSharedToken);
-                    localStorage.setItem("nexus_user", JSON.stringify(u));
-                }
-                return;
             }
             const session = await checkSSOSession();
-            if (!session?.authenticated && isAuthenticated) {
+            if (session?.authenticated && session.user) {
+                const u = session.user;
+                const fullUser = {
+                    id: u.id,
+                    username: u.username || u.email,
+                    email: u.email,
+                    avatarUrl: u.avatarUrl,
+                    permissions: u.permissions,
+                    isSuperAdmin: u.permissions?.includes("*"),
+                };
+                setUser(fullUser);
+                if (currentSharedToken && currentSharedToken !== lastSharedToken) {
+                    lastSharedToken = currentSharedToken;
+                    setToken(currentSharedToken);
+                    localStorage.setItem("nexus_token", currentSharedToken);
+                }
+                localStorage.setItem("nexus_user", JSON.stringify(fullUser));
+            } else if (!session?.authenticated && isAuthenticated) {
                 setUser(null);
                 setToken(undefined);
                 setIsAuthenticated(false);
