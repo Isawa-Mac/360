@@ -477,60 +477,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 if (preservedThemeUser) localStorage.setItem("theme_user", preservedThemeUser);
                 userPrefKeys.forEach(({ key, value }: { key: string; value: string }) => localStorage.setItem(key, value));
 
-                // 2. Clear all Cookies with enhanced domain coverage
-                console.log("[Logout] Clearing cookies...");
+                // 4. Force clear all cookies across ALL possible paths and domains
+                console.log("[Logout] Nuke clearing cookies...");
                 const cookies = document.cookie.split(";");
-                
-                const deleteCookie = (name: string, path: string, domain?: string) => {
-                    let cookieString = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}`;
-                    if (domain) {
-                        cookieString += `; domain=${domain}`;
-                    }
-                    document.cookie = cookieString;
-                };
 
-                const hostname = window.location.hostname;
-                // Generate list of domains to try clearing cookies for
-                // 1. Current domain and dot-prefixed (e.g. localhost, .localhost)
-                const domainsToCheck = [undefined, hostname, `.${hostname}`];
-                
-                // 2. Parent domains (e.g. if on app.example.com, try .example.com, example.com)
-                const parts = hostname.split('.');
-                // Simple heuristic: if we have more than 2 parts (e.g. a.b.com), try b.com
-                // Avoid doing this for localhost or simple IPs if possible, but trying won't hurt.
-                if (parts.length > 2) {
-                    let currentParts = [...parts];
-                    while (currentParts.length > 2) { // Stop before TLD (e.g. don't try .com)
-                        currentParts.shift();
-                        const parentDomain = currentParts.join('.');
-                        domainsToCheck.push(parentDomain);
-                        domainsToCheck.push(`.${parentDomain}`);
+                const nukeCookie = (name: string) => {
+                    const paths = ['/', '/auth', '/api'];
+                    const hostname = window.location.hostname;
+                    const domains = [undefined, hostname, `.${hostname}`];
+                    
+                    const parts = hostname.split('.');
+                    if (parts.length > 2) {
+                        let currentParts = [...parts];
+                        while (currentParts.length > 2) {
+                            currentParts.shift();
+                            const parentDomain = currentParts.join('.');
+                            domains.push(parentDomain);
+                            domains.push(`.${parentDomain}`);
+                        }
                     }
-                }
+                    
+                    // Also try common dev domains
+                    domains.push('trirex.cloud');
+                    domains.push('.trirex.cloud');
+
+                    paths.forEach(path => {
+                        domains.forEach(domain => {
+                            let cookieString = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}`;
+                            if (domain) cookieString += `; domain=${domain}`;
+                            document.cookie = cookieString;
+                        });
+                    });
+                };
 
                 for (let i = 0; i < cookies.length; i++) {
                     const cookie = cookies[i];
                     const eqPos = cookie.indexOf("=");
                     const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-
-                    // Try with different paths and domains
-                    domainsToCheck.forEach(domain => {
-                        deleteCookie(name, '/', domain);
-                    });
+                    nukeCookie(name);
                 }
 
-                // Explicitly clear shared cross-subdomain cookies so all apps log out (except theme cookies)
-                const sharedDomain = getSharedCookieDomain();
-                if (sharedDomain) {
-                    const tenantId = localStorage.getItem("tenantId");
-                    const suffix = tenantId ? `_${tenantId}` : '';
+                // Explicitly nuke shared cross-subdomain cookies
+                const sharedDomain = getSharedCookieDomain() || '.trirex.cloud';
+                const tenantId = localStorage.getItem("tenantId");
+                const suffix = tenantId ? `_${tenantId}` : '';
 
-                    [...SHARED_COOKIE_NAMES, "nexus_shared_permissions", "nexus_shared_language", "nexus_shared_theme", "nexus_shared_theme_color"].forEach(name => {
-                        deleteCookie(`${name}${suffix}`, '/', sharedDomain);
-                        // Also clear generic for safety
-                        deleteCookie(name, '/', sharedDomain);
-                    });
-                }
+                [...SHARED_COOKIE_NAMES, "nexus_shared_permissions", "nexus_shared_language", "nexus_shared_theme", "nexus_shared_theme_color"].forEach(name => {
+                    nukeCookie(`${name}${suffix}`);
+                    nukeCookie(name);
+                });
             } catch (e) {
                 console.error("[Logout] Error clearing storage:", e);
             }
