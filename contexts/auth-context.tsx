@@ -451,58 +451,104 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Clear all storage and cookies
         if (typeof window !== "undefined") {
-            // 1. Clear LocalStorage and SessionStorage
-            localStorage.clear();
-            sessionStorage.clear();
-
-            // 2. Clear all Cookies with enhanced domain coverage
-            const cookies = document.cookie.split(";");
-            
-            const deleteCookie = (name: string, path: string, domain?: string) => {
-                let cookieString = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}`;
-                if (domain) {
-                    cookieString += `; domain=${domain}`;
+            try {
+                // 1. Preserve theme settings before clearing
+                const preservedTheme = localStorage.getItem("theme");
+                const preservedNexusTheme = localStorage.getItem("nexus_theme");
+                const preservedThemeUser = localStorage.getItem("theme_user");
+                // Also preserve per-user preference keys (theme_, vizPalette_, themeColor_)
+                const userPrefKeys: { key: string; value: string }[] = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.startsWith("theme_") || key.startsWith("vizPalette_") || key.startsWith("themeColor_"))) {
+                        const value = localStorage.getItem(key);
+                        if (value) userPrefKeys.push({ key, value });
+                    }
                 }
-                document.cookie = cookieString;
-            };
 
-            const hostname = window.location.hostname;
-            const domainsToCheck = [undefined, hostname, `.${hostname}`];
-            
-            // Try parent domains for cross-subdomain cookie clearing
-            const parts = hostname.split('.');
-            if (parts.length > 2) {
-                let currentParts = [...parts];
-                while (currentParts.length > 2) {
-                    currentParts.shift();
-                    const parentDomain = currentParts.join('.');
-                    domainsToCheck.push(parentDomain);
-                    domainsToCheck.push(`.${parentDomain}`);
+                // 2. Clear LocalStorage and SessionStorage
+                console.log("[Logout] Clearing localStorage and sessionStorage...");
+                localStorage.clear();
+                sessionStorage.clear();
+
+                // 3. Restore theme settings
+                if (preservedTheme) localStorage.setItem("theme", preservedTheme);
+                if (preservedNexusTheme) localStorage.setItem("nexus_theme", preservedNexusTheme);
+                if (preservedThemeUser) localStorage.setItem("theme_user", preservedThemeUser);
+                userPrefKeys.forEach(({ key, value }: { key: string; value: string }) => localStorage.setItem(key, value));
+
+                // 2. Clear all Cookies with enhanced domain coverage
+                console.log("[Logout] Clearing cookies...");
+                const cookies = document.cookie.split(";");
+                
+                const deleteCookie = (name: string, path: string, domain?: string) => {
+                    let cookieString = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}`;
+                    if (domain) {
+                        cookieString += `; domain=${domain}`;
+                    }
+                    document.cookie = cookieString;
+                };
+
+                const hostname = window.location.hostname;
+                // Generate list of domains to try clearing cookies for
+                // 1. Current domain and dot-prefixed (e.g. localhost, .localhost)
+                const domainsToCheck = [undefined, hostname, `.${hostname}`];
+                
+                // 2. Parent domains (e.g. if on app.example.com, try .example.com, example.com)
+                const parts = hostname.split('.');
+                // Simple heuristic: if we have more than 2 parts (e.g. a.b.com), try b.com
+                // Avoid doing this for localhost or simple IPs if possible, but trying won't hurt.
+                if (parts.length > 2) {
+                    let currentParts = [...parts];
+                    while (currentParts.length > 2) { // Stop before TLD (e.g. don't try .com)
+                        currentParts.shift();
+                        const parentDomain = currentParts.join('.');
+                        domainsToCheck.push(parentDomain);
+                        domainsToCheck.push(`.${parentDomain}`);
+                    }
                 }
+
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i];
+                    const eqPos = cookie.indexOf("=");
+                    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+
+                    // Try with different paths and domains
+                    domainsToCheck.forEach(domain => {
+                        deleteCookie(name, '/', domain);
+                    });
+                }
+
+                // Explicitly clear shared cross-subdomain cookies so all apps log out (except theme cookies)
+                const sharedDomain = getSharedCookieDomain();
+                if (sharedDomain) {
+                    const tenantId = localStorage.getItem("tenantId");
+                    const suffix = tenantId ? `_${tenantId}` : '';
+
+                    [...SHARED_COOKIE_NAMES, "nexus_shared_permissions", "nexus_shared_language", "nexus_shared_theme", "nexus_shared_theme_color"].forEach(name => {
+                        deleteCookie(`${name}${suffix}`, '/', sharedDomain);
+                        // Also clear generic for safety
+                        deleteCookie(name, '/', sharedDomain);
+                    });
+                }
+            } catch (e) {
+                console.error("[Logout] Error clearing storage:", e);
             }
+        }
 
+        // Final safety check: Clear all cookies on document again
+        if (typeof document !== "undefined") {
+            const cookies = document.cookie.split(";");
             for (let i = 0; i < cookies.length; i++) {
                 const cookie = cookies[i];
                 const eqPos = cookie.indexOf("=");
                 const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-                domainsToCheck.forEach(domain => {
-                    deleteCookie(name, '/', domain);
-                });
-            }
-
-            // Explicitly clear shared cross-subdomain cookies so all apps log out
-            const sharedDomain = getSharedCookieDomain();
-            if (sharedDomain) {
-                [...SHARED_COOKIE_NAMES, "nexus_shared_permissions", "nexus_shared_theme", "nexus_shared_theme_color"].forEach(name => {
-                    deleteCookie(name, '/', sharedDomain);
-                });
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
             }
         }
 
-        // Redirect to SSO logout พร้อม client_id ของ ERP360
-        const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
-        const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
-        window.location.href = `${ssoUrl}/#/logout?client_id=${clientId}`;
+        // ไปหน้า logout ของแอป (ไม่ redirect ไป SSO)
+        window.location.href = '/auth/logout';
     };
 
     const getAuthData = () => {
