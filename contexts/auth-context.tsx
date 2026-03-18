@@ -74,8 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [pollSharedCookie, setPollSharedCookie] = useState(false);
 
-    /** forceLogin = บังคับแสดงหน้า login, silent = ลอง silent auth (prompt=none) ถ้ามี session อยู่แล้วจะ redirect กลับทันที */
-    const redirectToSSO = useCallback((forceLogin: boolean = false, silent: boolean = false) => {
+    const redirectToSSO = useCallback((forceLogin: boolean = false) => {
         if (typeof window === "undefined") return;
 
         const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
@@ -84,9 +83,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         let url = `${ssoUrl}/#/login?client_id=${clientId}`;
         if (forceLogin) {
             url += "&prompt=login";
-        } else if (silent) {
-            // ลอง silent auth ก่อน - ถ้า user login ที่ SSO แล้วจะ redirect กลับทันทีโดยไม่แสดงหน้า login
-            url += "&prompt=none";
         }
 
         window.location.href = url;
@@ -261,8 +257,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         );
         const isLogoutPage = typeof window !== "undefined" && window.location.pathname.includes("/auth/logout");
 
-        console.log("Auth Check - SKIP_AUTH:", process.env.NEXT_PUBLIC_SKIP_AUTH);
-
         // ลอง bootstrap จาก shared cookie ก่อน (สำหรับ cross-subdomain auto-login)
         if (!isCallbackPage && !isLogoutPage) {
             if (tryBootstrapFromSharedCookie()) return;
@@ -302,25 +296,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 console.error("Failed to parse nexus user", e);
                 setIsLoading(false);
             }
-        } else if (process.env.NEXT_PUBLIC_SKIP_AUTH === 'true') {
-            // Bypass login for testing - set a mock guest user
-            const mockPermissions = ['*'];
-            const guestUser: User = {
-                username: 'Guest User (Dev Mode)',
-                email: 'guest@example.com',
-                isSuperAdmin: true,
-                permissions: mockPermissions
-            };
-
-            // Set to localStorage so usePermissions hook and other parts can find it
-            if (typeof window !== "undefined") {
-                localStorage.setItem("nexus_user", JSON.stringify(guestUser));
-                localStorage.setItem("nexus_permissions", JSON.stringify(mockPermissions));
-            }
-
-            setUser(guestUser);
-            setIsAuthenticated(true);
-            setIsLoading(false);
         } else {
             // Check original nexus_insight_user for backward compatibility
             const storedUser = localStorage.getItem("nexus_insight_user");
@@ -397,7 +372,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setUser(null);
                 setToken(undefined);
                 setIsAuthenticated(false);
-                redirectToSSO(false, true);
+                redirectToSSO(false);
                 return;
             }
             if (currentSharedToken && currentSharedToken !== lastSharedToken) {
@@ -427,7 +402,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setIsAuthenticated(false);
                 localStorage.removeItem("nexus_token");
                 localStorage.removeItem("nexus_user");
-                redirectToSSO(false, true);
+                redirectToSSO(false);
             }
         };
 
