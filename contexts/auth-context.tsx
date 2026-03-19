@@ -38,11 +38,8 @@ const SHARED_COOKIE_NAMES = ["nexus_shared_token", "nexus_shared_user"] as const
 const SHARED_COOKIE_MAX_AGE_DAYS = 7;
 /** อายุสัญญาณ logout (ms) - ต้องตรงกับ SHARED_LOGOUT_COOKIE_MAX_AGE_SEC ใน nexusSSO */
 const SHARED_LOGOUT_MAX_AGE_MS = 120 * 1000;
-/** โพล์ validate session ทุกกี่ ms (แบบ Microsoft 365 — logout ทุก device) */
-const SESSION_VALIDATE_INTERVAL_MS = 45 * 1000;
-/** โพล์ shared cookie ก่อน redirect SSO (รอ login จาก app อื่น) — ครั้งละ ms, สูงสุดกี่ครั้ง */
-const SHARED_COOKIE_POLL_MS = 1500;
-const SHARED_COOKIE_POLL_MAX = 6;
+// Removed: SESSION_VALIDATE_INTERVAL_MS, SHARED_COOKIE_POLL_MS, SHARED_COOKIE_POLL_MAX
+
 
 /** Returns domain for shared cookie (e.g. ".trirex.cloud") so all subdomains can read; null for localhost/single host. */
 function getSharedCookieDomain(): string | null {
@@ -257,10 +254,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         );
         const isLogoutPage = typeof window !== "undefined" && window.location.pathname.includes("/auth/logout");
 
-        // ลอง bootstrap จาก shared cookie ก่อน (สำหรับ cross-subdomain auto-login)
-        if (!isCallbackPage && !isLogoutPage) {
-            if (tryBootstrapFromSharedCookie()) return;
-        }
+        // Removed: bootstrap from shared cookie during init
+
 
         if (nexusUser && nexusToken) {
             try {
@@ -310,109 +305,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setIsLoading(false);
                 }
             } else {
-                // Cross-subdomain: ถ้ามี shared cookie (login จาก app อื่น) ให้ bootstrap
-                if (tryBootstrapFromSharedCookie()) return;
-                // ยังไม่มี shared cookie — โพล์สักครู่ (รอ auto login เมื่อมีการ login ที่ระบบอื่น)
-                if (!isCallbackPage && !isLogoutPage) {
-                    setPollSharedCookie(true);
-                } else {
-                    setIsLoading(false);
-                }
+                setIsLoading(false);
             }
+        }
         }
     }, [tryBootstrapFromSharedCookie]);
 
-    // โพล์ shared cookie ก่อน redirect ไป SSO (auto login เมื่อมีการ login ที่ระบบอื่น)
-    useEffect(() => {
-        if (!pollSharedCookie || typeof window === "undefined") return;
-        let count = 0;
-        const id = setInterval(() => {
-            if (tryBootstrapFromSharedCookie()) {
-                clearInterval(id);
-                setPollSharedCookie(false);
-                return;
-            }
-            count += 1;
-            if (count >= SHARED_COOKIE_POLL_MAX) {
-                clearInterval(id);
-                setPollSharedCookie(false);
-                redirectToSSO(false, true); // silent: ถ้า login ที่ SSO แล้วจะ redirect กลับทันที
-            }
-        }, SHARED_COOKIE_POLL_MS);
-        return () => clearInterval(id);
-    }, [pollSharedCookie, tryBootstrapFromSharedCookie]);
+    // Removed: SHARED_COOKIE_POLL useEffect
 
-    /** โพล์ validate-token และ shared cookie — sync ตาม SSO (logout/login ที่ SSO ส่งผลทุกแอป) */
-    useEffect(() => {
-        if (!isAuthenticated || typeof window === "undefined") return;
-        const isCallbackPage = window.location.pathname.includes("/auth/sso-callback");
-        const isLogoutPage = window.location.pathname.includes("/auth/logout");
-        if (isCallbackPage || isLogoutPage) return;
 
-        const getSharedTokenFromCookie = (): string | null => {
-            const cookies = document.cookie.split(";");
-            for (const cookie of cookies) {
-                const trimmed = cookie.trim();
-                if (trimmed.startsWith("nexus_shared_token")) {
-                    const eqIdx = trimmed.indexOf("=");
-                    if (eqIdx === -1) continue;
-                    try {
-                        return decodeURIComponent(trimmed.slice(eqIdx + 1));
-                    } catch { return trimmed.slice(eqIdx + 1); }
-                }
-            }
-            return null;
-        };
+    // Removed: Auto logout and session polling useEffect
 
-        let lastSharedToken = getSharedTokenFromCookie();
-
-        const tick = async () => {
-            const currentSharedToken = getSharedTokenFromCookie();
-            if (!currentSharedToken && isAuthenticated) {
-                setUser(null);
-                setToken(undefined);
-                setIsAuthenticated(false);
-                redirectToSSO(false);
-                return;
-            }
-            if (currentSharedToken && currentSharedToken !== lastSharedToken) {
-                lastSharedToken = currentSharedToken;
-            }
-            const session = await checkSSOSession();
-            if (session?.authenticated && session.user) {
-                const u = session.user;
-                const fullUser = {
-                    id: u.id,
-                    username: u.username || u.email,
-                    email: u.email,
-                    avatarUrl: u.avatarUrl,
-                    permissions: u.permissions,
-                    isSuperAdmin: u.permissions?.includes("*"),
-                };
-                setUser(fullUser);
-                if (currentSharedToken && currentSharedToken !== lastSharedToken) {
-                    lastSharedToken = currentSharedToken;
-                    setToken(currentSharedToken);
-                    localStorage.setItem("nexus_token", currentSharedToken);
-                }
-                localStorage.setItem("nexus_user", JSON.stringify(fullUser));
-            } else if (!session?.authenticated && isAuthenticated) {
-                setUser(null);
-                setToken(undefined);
-                setIsAuthenticated(false);
-                localStorage.removeItem("nexus_token");
-                localStorage.removeItem("nexus_user");
-                redirectToSSO(false);
-            }
-        };
-
-        const cookieInterval = setInterval(() => { tick().catch(() => {}); }, 2000);
-        const validateInterval = setInterval(() => { tick().catch(() => {}); }, SESSION_VALIDATE_INTERVAL_MS);
-        return () => {
-            clearInterval(cookieInterval);
-            clearInterval(validateInterval);
-        };
-    }, [isAuthenticated, redirectToSSO]);
 
     const login = (username: string) => {
         // This is the old local login, we can keep it or make it call redirectToSSO
@@ -585,21 +488,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
                 document.cookie = `auth_token=${token}; path=/`;
 
-                // Shared cookies across subdomains (e.g. *.trirex.cloud) so login once works for all apps
-                const sharedDomain = getSharedCookieDomain();
-                if (sharedDomain && typeof window !== "undefined") {
-                    const maxAge = SHARED_COOKIE_MAX_AGE_DAYS * 24 * 60 * 60;
-                    const isSecure = window.location.protocol === "https:";
-                    const opts = `path=/; domain=${sharedDomain}; max-age=${maxAge}; SameSite=Lax${isSecure ? "; Secure" : ""}`;
-                    
-                    const tenantSuffix = resolvedTenantId && resolvedTenantId !== 'default_tenant' ? `_${resolvedTenantId}` : '';
+                // Removed: Shared cookies creation
 
-                    document.cookie = `nexus_shared_token${tenantSuffix}=${encodeURIComponent(token)}; ${opts}`;
-                    document.cookie = `nexus_shared_user${tenantSuffix}=${encodeURIComponent(JSON.stringify(user))}; ${opts}`;
-                    if (permissions) {
-                        document.cookie = `nexus_shared_permissions${tenantSuffix}=${encodeURIComponent(JSON.stringify(permissions))}; ${opts}`;
-                    }
-                }
 
                 // อัปเดต State
                 const nexusUser: User = {
