@@ -254,8 +254,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         );
         const isLogoutPage = typeof window !== "undefined" && window.location.pathname.includes("/auth/logout");
 
-        // Removed: bootstrap from shared cookie during init
+        if (!isCallbackPage && !isLogoutPage) {
+            if (tryBootstrapFromSharedCookie()) return;
+        }
 
+        nexusUser = localStorage.getItem("nexus_user");
+        nexusToken = localStorage.getItem("nexus_token");
 
         if (nexusUser && nexusToken) {
             try {
@@ -307,7 +311,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } else {
                 setIsLoading(false);
             }
-        }
         }
     }, [tryBootstrapFromSharedCookie]);
 
