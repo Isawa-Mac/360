@@ -9,9 +9,9 @@ export function AppMenu({ className }: { className?: string }) {
     <Link
       href="/home"
       className={cn(
-        "flex items-center justify-center shrink-0 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 transition-colors",
-        "h-10 w-10",
-        "group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:w-9",
+        "flex items-center justify-start shrink-0 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 transition-colors",
+        "h-10 w-10 pl-2",
+        "group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:w-9 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:pl-0",
         className
       )}
       aria-label="ไปยัง 360"

@@ -59,7 +59,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="pb-3 flex flex-row justify-start group-data-[collapsible=icon]:justify-center">
-        <AppMenu className="flex items-center justify-center shrink-0" />
+        <AppMenu className="flex items-center justify-start shrink-0" />
       </SidebarHeader>
       <SidebarContent className="h-full w-full [&>[data-orientation=horizontal]]:hidden">
         <SidebarGroup>
