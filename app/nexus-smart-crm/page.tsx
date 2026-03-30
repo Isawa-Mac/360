@@ -27,7 +27,7 @@ export default function CRMLandingPage() {
     const [isSlideshowOpen, setIsSlideshowOpen] = useState(false)
 
     return (
-        <Layout showFilters={false} pageTitle="Nexus Smart CRM 360">
+        <Layout showFilters={false} pageTitle="360">
             <div className="min-h-[calc(100vh-48px)] flex flex-col items-center justify-center bg-transparent text-slate-900 dark:text-white overflow-y-auto relative">
 
                 {/* Hero Section - Centered and Scaling */}
@@ -49,7 +49,7 @@ export default function CRMLandingPage() {
                             className="max-w-4xl mx-auto text-center origin-center"
                         >
                             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 tracking-tight leading-tight text-slate-900 dark:text-white drop-shadow-sm">
-                                Nexus Smart CRM 360: <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">ปฏิวัติการบริหารความสัมพันธ์ลูกค้า</span> ด้วย AI อัจฉริยะ
+                                360: <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">ปฏิวัติการบริหารความสัมพันธ์ลูกค้า</span> ด้วย AI อัจฉริยะ
                             </h1>
                             <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-12 leading-relaxed max-w-2xl mx-auto text-balance">
                                 ระบบ CRM ที่ผสานพลัง AI เพื่อให้องค์กรสามารถวิเคราะห์ เข้าถึง และสร้างประสบการณ์ที่ยอดเยี่ยมให้แก่ลูกค้าได้อย่างมืออาชีพ
@@ -102,9 +102,9 @@ export default function CRMLandingPage() {
                                         exit={{ opacity: 0, scale: 0.9 }}
                                         className="fixed inset-0 z-[101] outline-none flex items-center justify-center p-4"
                                     >
-                                        <Dialog.Title className="sr-only">Nexus Smart CRM 360 Slide Show</Dialog.Title>
+                                        <Dialog.Title className="sr-only">360 Slide Show</Dialog.Title>
                                         <Dialog.Description className="sr-only">
-                                            การนำเสนอภาพรวมของ Nexus Smart CRM 360 ในรูปแบบสไลด์
+                                            การนำเสนอภาพรวมของ 360 ในรูปแบบสไลด์
                                         </Dialog.Description>
                                         <div className="relative w-full max-w-6xl h-[85vh] bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/80 flex items-center justify-center bg-slate-50">
                                             <div className="text-center">

@@ -33,7 +33,7 @@ export default function LogoutPage() {
                 </div>
 
                 <p className="mt-10 text-[13px] text-[#8a8886]">
-                    Nexus Smart CRM 360
+                    360
                 </p>
             </div>
         </div>

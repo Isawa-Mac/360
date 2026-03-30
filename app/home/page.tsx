@@ -74,8 +74,8 @@ function HomePageContent() {
   const menuItems = [
     // CRM card ปิดชั่วคราว — เอา hidden: false เพื่อแสดงอีกครั้ง
     // {
-    //   title: "Nexus Smart CRM 360",
-    //   description: "Nexus Smart CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้า",
+    //   title: "360",
+    //   description: "360 - ระบบบริหารความสัมพันธ์ลูกค้า",
     //   icon: Globe,
     //   url: "/nexus-smart-crm",
     //   isExternal: false,
@@ -144,7 +144,7 @@ function HomePageContent() {
   return (
     <Layout
       showFilters={false}
-      pageTitle="Nexus 360"
+      pageTitle="360"
     >
       <div className="min-h-full p-6 relative">
         {/* Background Decorative Elements for better see-through effect */}
@@ -157,7 +157,7 @@ function HomePageContent() {
           {/* Main Menu Section */}
           <div className="mb-8 relative">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 tracking-tight">
-              Nexus 360
+              360
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {menuItems.filter(item => {
@@ -220,7 +220,7 @@ export default function HomePage() {
     <Suspense fallback={
       <Layout
         showFilters={false}
-        pageTitle="Nexus 360"
+        pageTitle="360"
       >
         <div className="min-h-full p-6 flex items-center justify-center">
           <div className="text-center space-y-4">

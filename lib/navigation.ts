@@ -29,7 +29,7 @@ export const navItems: NavItem[] = [
     icon: Home,
   },
   {
-    title: "Nexus Smart CRM 360",
+    title: "360",
     url: "/nexus-smart-crm",
     icon: Globe,
     requiredPermission: 'erp360.erp.read',

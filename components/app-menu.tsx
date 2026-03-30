@@ -14,8 +14,8 @@ export function AppMenu({ className }: { className?: string }) {
         "group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:w-9",
         className
       )}
-      aria-label="ไปยัง Nexus 360"
-      title="ไปยัง Nexus 360"
+      aria-label="ไปยัง 360"
+      title="ไปยัง 360"
     >
       <LayoutGrid className="h-5 w-5 text-foreground group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4" />
     </Link>
