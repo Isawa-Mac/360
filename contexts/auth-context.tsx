@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { SpinnerCustom } from "@/components/ui/spinner-custom";
 import { checkSSOSession } from "@/lib/sso-utils";
 
@@ -40,6 +40,86 @@ const SHARED_COOKIE_MAX_AGE_DAYS = 7;
 const SHARED_LOGOUT_MAX_AGE_MS = 120 * 1000;
 // Removed: SESSION_VALIDATE_INTERVAL_MS, SHARED_COOKIE_POLL_MS, SHARED_COOKIE_POLL_MAX
 
+const TAB_AUTH_CHANNEL = "nexus_tab_auth_v1";
+type TabAuthMessage =
+    | { type: "LOGOUT"; userId: string; tenantId?: string }
+    | { type: "LOGIN"; userId: string; tenantId?: string };
+
+function postTabAuthMessage(msg: TabAuthMessage, persistentChannel: BroadcastChannel | null) {
+    if (typeof BroadcastChannel === "undefined") return;
+    try {
+        if (persistentChannel) {
+            persistentChannel.postMessage(msg);
+            return;
+        }
+        const ch = new BroadcastChannel(TAB_AUTH_CHANNEL);
+        ch.postMessage(msg);
+        ch.close();
+    } catch {
+        /* ignore */
+    }
+}
+
+function nukeCookieName(name: string): void {
+    if (typeof document === "undefined" || typeof window === "undefined") return;
+    const paths = ["/", "/auth", "/api"];
+    const hostname = window.location.hostname;
+    const sharedDom = process.env.NEXT_PUBLIC_SHARED_COOKIE_DOMAIN?.trim();
+    const domains: (string | undefined)[] = [
+        undefined,
+        hostname,
+        `.${hostname}`,
+        ...(sharedDom ? [sharedDom.startsWith(".") ? sharedDom : `.${sharedDom}`] : []),
+    ];
+    const parts = hostname.split(".");
+    if (parts.length > 2) {
+        let currentParts = [...parts];
+        while (currentParts.length > 2) {
+            currentParts.shift();
+            const parentDomain = currentParts.join(".");
+            domains.push(parentDomain, `.${parentDomain}`);
+        }
+    }
+    domains.push("trirex.cloud", ".trirex.cloud");
+    paths.forEach((path) => {
+        domains.forEach((domain) => {
+            let cookieString = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}`;
+            if (domain) cookieString += `; domain=${domain}`;
+            document.cookie = cookieString;
+        });
+    });
+}
+
+function clear360AuthCookies(resolvedTenantId: string | null | undefined): void {
+    if (typeof document === "undefined") return;
+    const suffix = resolvedTenantId ? `_${resolvedTenantId}` : "";
+    ["auth_token", "permissions"].forEach((n) => nukeCookieName(n));
+    const sharedBase = [
+        "nexus_shared_token",
+        "nexus_shared_user",
+        "nexus_shared_permissions",
+        "nexus_shared_language",
+        "nexus_shared_theme",
+        "nexus_shared_theme_color",
+    ];
+    sharedBase.forEach((name) => {
+        nukeCookieName(`${name}${suffix}`);
+        nukeCookieName(name);
+    });
+}
+
+function remove360AuthLocalStorageKeys(): void {
+    if (typeof window === "undefined") return;
+    try {
+        localStorage.removeItem("nexus_token");
+        localStorage.removeItem("nexus_user");
+        localStorage.removeItem("nexus_permissions");
+        localStorage.removeItem("tenantId");
+        localStorage.removeItem("nexus_insight_user");
+    } catch {
+        /* ignore */
+    }
+}
 
 /** Returns domain for shared cookie (e.g. ".trirex.cloud") so all subdomains can read; null for localhost/single host. */
 function getSharedCookieDomain(): string | null {
@@ -185,6 +265,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUser(nexusInsightUser);
             setIsAuthenticated(true);
             setIsLoading(false);
+            if (userObj.id) {
+                postTabAuthMessage(
+                    { type: "LOGIN", userId: String(userObj.id), tenantId: foundTenantId ?? undefined },
+                    null
+                );
+            }
             return true;
         } catch (e) {
             console.error("Failed to bootstrap from shared cookie", e);
@@ -206,6 +292,101 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setCookie(APP_THEME_COLOR_COOKIE, themeColor);
         }
     };
+
+    const userRef = useRef<User | null>(null);
+    const isAuthenticatedRef = useRef(false);
+    const channelRef = useRef<BroadcastChannel | null>(null);
+    useEffect(() => {
+        userRef.current = user;
+    }, [user]);
+    useEffect(() => {
+        isAuthenticatedRef.current = isAuthenticated;
+    }, [isAuthenticated]);
+
+    const logoutLocalOnly = useCallback((params: { userId?: string | null; tenantId?: string | null }) => {
+        let tid: string | null = params.tenantId ?? null;
+        if (tid === null && typeof window !== "undefined") {
+            try {
+                tid = localStorage.getItem("tenantId");
+            } catch {
+                tid = null;
+            }
+        }
+        setUser(null);
+        setToken(undefined);
+        setIsAuthenticated(false);
+        if (typeof window === "undefined") return;
+        remove360AuthLocalStorageKeys();
+        clear360AuthCookies(tid ?? undefined);
+    }, []);
+
+    const applySessionFromLocalStorageForUser = useCallback((expectedUserId: string) => {
+        if (typeof window === "undefined") return;
+        const nexusUserRaw = localStorage.getItem("nexus_user");
+        const nexusToken = localStorage.getItem("nexus_token");
+        if (!nexusUserRaw || !nexusToken) return;
+        try {
+            const userObj = JSON.parse(nexusUserRaw) as {
+                id?: string;
+                username?: string;
+                email?: string;
+                avatarUrl?: string;
+                avatar_url?: string;
+                permissions?: string[];
+            };
+            if (userObj.id !== expectedUserId) return;
+            const nexusInsightUser: User = {
+                id: userObj.id,
+                username: userObj.username || userObj.email || "",
+                email: userObj.email,
+                avatarUrl: userObj.avatarUrl || userObj.avatar_url,
+                roles: [],
+                permissions: userObj.permissions,
+                isSuperAdmin: userObj.username === "admin",
+            };
+            setUser(nexusInsightUser);
+            setToken(nexusToken);
+            setIsAuthenticated(true);
+        } catch {
+            /* ignore */
+        }
+    }, []);
+
+    useEffect(() => {
+        if (typeof window === "undefined" || typeof BroadcastChannel === "undefined") return;
+        const ch = new BroadcastChannel(TAB_AUTH_CHANNEL);
+        channelRef.current = ch;
+        ch.onmessage = (event: MessageEvent<TabAuthMessage>) => {
+            const msg = event.data;
+            if (!msg || typeof msg !== "object") return;
+            if (msg.type === "LOGOUT") {
+                if (userRef.current?.id === msg.userId) {
+                    let tidFromLs: string | null = null;
+                    try {
+                        tidFromLs = localStorage.getItem("tenantId");
+                    } catch {
+                        tidFromLs = null;
+                    }
+                    logoutLocalOnly({
+                        userId: msg.userId,
+                        tenantId: msg.tenantId ?? tidFromLs,
+                    });
+                    window.location.href = "/auth/logout";
+                }
+                return;
+            }
+            if (msg.type === "LOGIN") {
+                if (isAuthenticatedRef.current && userRef.current?.id && userRef.current.id !== msg.userId) {
+                    return;
+                }
+                applySessionFromLocalStorageForUser(msg.userId);
+            }
+        };
+        return () => {
+            ch.close();
+            channelRef.current = null;
+        };
+    }, [logoutLocalOnly, applySessionFromLocalStorageForUser]);
 
     useEffect(() => {
         // อ่าน theme: ให้ shared (SSO) มาก่อน แล้วค่อย theme ของแอป 360 เอง
@@ -326,105 +507,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const logout = () => {
-        // Clear all auth-related state
-        setUser(null);
-        setIsAuthenticated(false);
-
-        // Clear all storage and cookies
+        const uid = user?.id;
+        let tid: string | null = null;
         if (typeof window !== "undefined") {
             try {
-                // 1. Preserve theme settings before clearing
-                const preservedTheme = localStorage.getItem("theme");
-                const preservedNexusTheme = localStorage.getItem("nexus_theme");
-                const preservedThemeUser = localStorage.getItem("theme_user");
-                // Also preserve per-user preference keys (theme_, vizPalette_, themeColor_)
-                const userPrefKeys: { key: string; value: string }[] = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && (key.startsWith("theme_") || key.startsWith("vizPalette_") || key.startsWith("themeColor_"))) {
-                        const value = localStorage.getItem(key);
-                        if (value) userPrefKeys.push({ key, value });
-                    }
-                }
-
-                // 2. Clear LocalStorage and SessionStorage
-                console.log("[Logout] Clearing localStorage and sessionStorage...");
-                localStorage.clear();
-                sessionStorage.clear();
-
-                // 3. Restore theme settings
-                if (preservedTheme) localStorage.setItem("theme", preservedTheme);
-                if (preservedNexusTheme) localStorage.setItem("nexus_theme", preservedNexusTheme);
-                if (preservedThemeUser) localStorage.setItem("theme_user", preservedThemeUser);
-                userPrefKeys.forEach(({ key, value }: { key: string; value: string }) => localStorage.setItem(key, value));
-
-                // 4. Force clear all cookies across ALL possible paths and domains
-                console.log("[Logout] Nuke clearing cookies...");
-                const cookies = document.cookie.split(";");
-
-                const nukeCookie = (name: string) => {
-                    const paths = ['/', '/auth', '/api'];
-                    const hostname = window.location.hostname;
-                    const domains = [undefined, hostname, `.${hostname}`];
-                    
-                    const parts = hostname.split('.');
-                    if (parts.length > 2) {
-                        let currentParts = [...parts];
-                        while (currentParts.length > 2) {
-                            currentParts.shift();
-                            const parentDomain = currentParts.join('.');
-                            domains.push(parentDomain);
-                            domains.push(`.${parentDomain}`);
-                        }
-                    }
-                    
-                    // Also try common dev domains
-                    domains.push('trirex.cloud');
-                    domains.push('.trirex.cloud');
-
-                    paths.forEach(path => {
-                        domains.forEach(domain => {
-                            let cookieString = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}`;
-                            if (domain) cookieString += `; domain=${domain}`;
-                            document.cookie = cookieString;
-                        });
-                    });
-                };
-
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i];
-                    const eqPos = cookie.indexOf("=");
-                    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-                    nukeCookie(name);
-                }
-
-                // Explicitly nuke shared cross-subdomain cookies
-                const sharedDomain = getSharedCookieDomain() || '.trirex.cloud';
-                const tenantId = localStorage.getItem("tenantId");
-                const suffix = tenantId ? `_${tenantId}` : '';
-
-                [...SHARED_COOKIE_NAMES, "nexus_shared_permissions", "nexus_shared_language", "nexus_shared_theme", "nexus_shared_theme_color"].forEach(name => {
-                    nukeCookie(`${name}${suffix}`);
-                    nukeCookie(name);
-                });
-            } catch (e) {
-                console.error("[Logout] Error clearing storage:", e);
+                tid = localStorage.getItem("tenantId");
+            } catch {
+                tid = null;
             }
         }
-
-        // Final safety check: Clear all cookies on document again
-        if (typeof document !== "undefined") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i];
-                const eqPos = cookie.indexOf("=");
-                const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
-            }
+        if (uid) {
+            postTabAuthMessage({ type: "LOGOUT", userId: uid, tenantId: tid ?? undefined }, channelRef.current);
         }
-
-        // ไปหน้า logout ของแอป (ไม่ redirect ไป SSO)
-        window.location.href = '/auth/logout';
+        logoutLocalOnly({ userId: uid ?? null, tenantId: tid });
+        window.location.href = "/auth/logout";
     };
 
     const getAuthData = () => {
@@ -504,6 +600,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 };
                 setUser(nexusUser);
                 setIsAuthenticated(true);
+                if (nexusUser.id) {
+                    postTabAuthMessage(
+                        { type: "LOGIN", userId: nexusUser.id, tenantId: resolvedTenantId },
+                        channelRef.current
+                    );
+                }
             }
         } catch (error) {
             console.error("Code exchange failed:", error);
