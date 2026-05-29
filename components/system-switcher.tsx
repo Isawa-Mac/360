@@ -7,7 +7,8 @@ import {
   BarChart3,
   ShoppingCart,
   Key,
-  FileText
+  FileText,
+  Users
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePermission } from "@/hooks/use-permission"
@@ -52,14 +53,20 @@ type SystemItem = {
 }
 
 const SYSTEMS: SystemItem[] = [
-  // CRM 360 ปิดชั่วคราว
-  // {
-  //   name: "CRM 360",
-  //   url: "https://crm360.trirex.cloud",
-  //   icon: Globe,
-  //   permission: "erp360.erp.read",
-  //   disabled: true,
-  // },
+  {
+    name: "CRM 360",
+    url: "/nexus-smart-crm",
+    icon: Users,
+    permission: "erp360.crm.read",
+    disabled: false,
+  },
+  {
+    name: "ERP 360",
+    url: "/nexus-smart-erp",
+    icon: Globe,
+    permission: "erp360.erp.read",
+    disabled: false,
+  },
   {
     name: "Business Intelligence 360",
     url: "https://bi360.trirex.cloud",

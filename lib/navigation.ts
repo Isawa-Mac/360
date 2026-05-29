@@ -1,4 +1,4 @@
-import { Home, BarChart3, Key, Globe, Shield, FileText, ShoppingCart } from "lucide-react"
+import { Home, BarChart3, Key, Globe, Shield, FileText, ShoppingCart, Users } from "lucide-react"
 
 export interface NavItem {
   title: string
@@ -29,11 +29,16 @@ export const navItems: NavItem[] = [
     icon: Home,
   },
   {
-    title: "360",
+    title: "CRM 360",
     url: "/nexus-smart-crm",
+    icon: Users,
+    requiredPermission: 'erp360.crm.read',
+  },
+  {
+    title: "ERP 360",
+    url: "/nexus-smart-erp",
     icon: Globe,
     requiredPermission: 'erp360.erp.read',
-    hidden: true, // ปิดชั่วคราว
   },
   {
     title: "Business Intelligence 360",

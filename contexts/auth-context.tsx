@@ -425,15 +425,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     useEffect(() => {
-        // Check local storage for Nexus SSO user first
-        let nexusUser = localStorage.getItem("nexus_user");
-        let nexusToken = localStorage.getItem("nexus_token");
-
         const isCallbackPage = typeof window !== "undefined" && (
             window.location.pathname.includes("/auth/sso-callback") ||
             window.location.search.includes("code=")
         );
         const isLogoutPage = typeof window !== "undefined" && window.location.pathname.includes("/auth/logout");
+
+        const isDev = process.env.NODE_ENV === "development";
+        const bypassEnv = process.env.NEXT_PUBLIC_BYPASS_LOGIN;
+        const localBypassSetting = typeof window !== "undefined" ? localStorage.getItem("bypass_login") : null;
+        const shouldBypass = bypassEnv === "true" || isDev || localBypassSetting === "true";
+
+        if (shouldBypass && !isLogoutPage && !isCallbackPage) {
+            console.log("🔒 [Auth] Bypassing login for development/test mode");
+            const mockUser: User = {
+                id: "mock-admin-id",
+                username: "admin",
+                email: "admin@example.com",
+                avatarUrl: "",
+                roles: ["admin"],
+                permissions: ["*"],
+                isSuperAdmin: true,
+            };
+            setUser(mockUser);
+            setToken("mock-token-sso-session");
+            setIsAuthenticated(true);
+            setIsLoading(false);
+            try {
+                localStorage.setItem("nexus_user", JSON.stringify(mockUser));
+                localStorage.setItem("nexus_token", "mock-token-sso-session");
+                localStorage.setItem("nexus_permissions", JSON.stringify(["*"]));
+                document.cookie = "permissions=" + encodeURIComponent(JSON.stringify(["*"])) + "; path=/";
+                document.cookie = "auth_token=mock-token-sso-session; path=/";
+            } catch (e) {
+                console.error("Failed to write mock storage/cookies:", e);
+            }
+            return;
+        }
+
+        // Check local storage for Nexus SSO user first
+        let nexusUser = localStorage.getItem("nexus_user");
+        let nexusToken = localStorage.getItem("nexus_token");
 
         if (!isCallbackPage && !isLogoutPage) {
             if (tryBootstrapFromSharedCookie()) return;
@@ -512,6 +544,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (typeof window !== "undefined") {
             try {
                 tid = localStorage.getItem("tenantId");
+                localStorage.setItem("bypass_login", "false");
             } catch {
                 tid = null;
             }

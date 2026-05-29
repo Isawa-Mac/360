@@ -9,7 +9,8 @@ import {
   Loader2,
   ShoppingCart,
   Globe,
-  FileText
+  FileText,
+  Users
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -72,16 +73,24 @@ function HomePageContent() {
 
   // Main menu items — requiredPermission ใช้ permission string จาก SSO จริง
   const menuItems = [
-    // CRM card ปิดชั่วคราว — เอา hidden: false เพื่อแสดงอีกครั้ง
-    // {
-    //   title: "360",
-    //   description: "360 - ระบบบริหารความสัมพันธ์ลูกค้า",
-    //   icon: Globe,
-    //   url: "/nexus-smart-crm",
-    //   isExternal: false,
-    //   enabled: false,
-    //   requiredPermission: ['erp360.erp.read'],
-    // },
+    {
+      title: "CRM 360",
+      description: "CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้าและการจัดการลูกค้าสัมพันธ์อย่างมีประสิทธิภาพ",
+      icon: Users,
+      url: "/nexus-smart-crm",
+      isExternal: false,
+      enabled: true,
+      requiredPermission: ['erp360.crm.read'],
+    },
+    {
+      title: "ERP 360",
+      description: "ERP 360 - ระบบวางแผนและบริหารจัดการทรัพยากรภายในองค์กรอย่างมีประสิทธิภาพ",
+      icon: Globe,
+      url: "/nexus-smart-erp",
+      isExternal: false,
+      enabled: false,
+      requiredPermission: ['erp360.erp.read'],
+    },
     {
       title: "Business Intelligence 360",
       description: "Business Intelligence 360 (BI) - ระบบวิเคราะห์ข้อมูลทางธุรกิจเพื่อการตัดสินใจ",
