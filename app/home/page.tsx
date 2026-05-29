@@ -72,16 +72,15 @@ function HomePageContent() {
 
   // Main menu items — requiredPermission ใช้ permission string จาก SSO จริง
   const menuItems = [
-    // CRM card ปิดชั่วคราว — เอา hidden: false เพื่อแสดงอีกครั้ง
-    // {
-    //   title: "360",
-    //   description: "360 - ระบบบริหารความสัมพันธ์ลูกค้า",
-    //   icon: Globe,
-    //   url: "/nexus-smart-crm",
-    //   isExternal: false,
-    //   enabled: false,
-    //   requiredPermission: ['erp360.erp.read'],
-    // },
+    {
+      title: "CRM 360",
+      description: "CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้า",
+      icon: Globe,
+      url: "https://crm360.trirex.cloud",
+      isExternal: true,
+      enabled: true,
+      requiredPermission: ['erp360.erp.read'],
+    },
     {
       title: "Business Intelligence 360",
       description: "Business Intelligence 360 (BI) - ระบบวิเคราะห์ข้อมูลทางธุรกิจเพื่อการตัดสินใจ",

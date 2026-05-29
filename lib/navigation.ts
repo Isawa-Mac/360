@@ -29,11 +29,10 @@ export const navItems: NavItem[] = [
     icon: Home,
   },
   {
-    title: "360",
-    url: "/nexus-smart-crm",
+    title: "CRM 360",
+    url: "https://crm360.trirex.cloud",
     icon: Globe,
     requiredPermission: 'erp360.erp.read',
-    hidden: true, // ปิดชั่วคราว
   },
   {
     title: "Business Intelligence 360",

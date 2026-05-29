@@ -52,14 +52,13 @@ type SystemItem = {
 }
 
 const SYSTEMS: SystemItem[] = [
-  // CRM 360 ปิดชั่วคราว
-  // {
-  //   name: "CRM 360",
-  //   url: "https://crm360.trirex.cloud",
-  //   icon: Globe,
-  //   permission: "erp360.erp.read",
-  //   disabled: true,
-  // },
+  {
+    name: "CRM 360",
+    url: "https://crm360.trirex.cloud",
+    icon: Globe,
+    permission: "erp360.erp.read",
+    disabled: false,
+  },
   {
     name: "Business Intelligence 360",
     url: "https://bi360.trirex.cloud",

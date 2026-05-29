@@ -490,7 +490,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setIsLoading(false);
                 }
             } else {
-                setIsLoading(false);
+                if (!isCallbackPage && !isLogoutPage) {
+                    redirectToSSO();
+                } else {
+                    setIsLoading(false);
+                }
             }
         }
     }, [tryBootstrapFromSharedCookie]);
