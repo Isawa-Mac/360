@@ -65,6 +65,9 @@ export default async function RootLayout({
               :root, .dark {
                 --primary: ${themeColor};
                 --sidebar-primary: ${themeColor};
+                --sidebar-gradient-from: color-mix(in oklch, ${themeColor} 78%, black);
+                --sidebar-gradient-via: ${themeColor};
+                --sidebar-gradient-to: color-mix(in oklch, ${themeColor} 72%, white);
                 --ring: ${themeColor};
               }
               :root {

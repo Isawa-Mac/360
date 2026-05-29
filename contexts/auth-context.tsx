@@ -143,6 +143,15 @@ function getCookie(name: string): string | null {
     return match ? decodeURIComponent(match[1]) : null;
 }
 
+function applyThemeColorProperties(themeColor: string): void {
+    if (typeof document === "undefined") return;
+    document.documentElement.style.setProperty("--primary", themeColor);
+    document.documentElement.style.setProperty("--sidebar-primary", themeColor);
+    document.documentElement.style.setProperty("--sidebar-gradient-from", `color-mix(in oklch, ${themeColor} 78%, black)`);
+    document.documentElement.style.setProperty("--sidebar-gradient-via", themeColor);
+    document.documentElement.style.setProperty("--sidebar-gradient-to", `color-mix(in oklch, ${themeColor} 72%, white)`);
+    document.documentElement.style.setProperty("--ring", themeColor);
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
@@ -248,9 +257,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
             if (themeColor) {
                 localStorage.setItem("themeColor", themeColor);
-                document.documentElement.style.setProperty("--primary", themeColor);
-                document.documentElement.style.setProperty("--sidebar-primary", themeColor);
-                document.documentElement.style.setProperty("--ring", themeColor);
+                applyThemeColorProperties(themeColor);
             }
 
             const nexusInsightUser: User = {
@@ -412,14 +419,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             if (themeColor) {
                 localStorage.setItem("themeColor", themeColor);
-                document.documentElement.style.setProperty("--primary", themeColor);
-                document.documentElement.style.setProperty("--sidebar-primary", themeColor);
-                document.documentElement.style.setProperty("--ring", themeColor);
+                applyThemeColorProperties(themeColor);
             } else {
                 const fallbackColor = localStorage.getItem("themeColor") || "oklch(0.205 0 0)";
-                document.documentElement.style.setProperty("--primary", fallbackColor);
-                document.documentElement.style.setProperty("--sidebar-primary", fallbackColor);
-                document.documentElement.style.setProperty("--ring", fallbackColor);
+                applyThemeColorProperties(fallbackColor);
             }
         }
     }, []);
@@ -579,9 +582,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 const themeColor = appThemeColor || sharedThemeColor || settings?.primaryColor;
                 if (themeColor) {
                     localStorage.setItem("themeColor", themeColor);
-                    document.documentElement.style.setProperty('--primary', themeColor);
-                    document.documentElement.style.setProperty('--sidebar-primary', themeColor);
-                    document.documentElement.style.setProperty('--ring', themeColor);
+                    applyThemeColorProperties(themeColor);
                 }
 
                 document.cookie = `auth_token=${token}; path=/`;
