@@ -4,27 +4,18 @@ import { Layout } from '@/components/layout'
 import { motion, AnimatePresence } from 'motion/react'
 import {
     Users,
-    TrendingUp,
-    MessageSquare,
-    ShieldCheck,
-    Zap,
-    ChevronRight,
-    Expand,
     X,
-    Target,
-    Rocket,
     ArrowRight,
     Play,
-    BarChart3,
-    Heart
 } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import * as Dialog from '@radix-ui/react-dialog'
+import { useLanguage } from '@/contexts/language-context'
 
 export default function CRMLandingPage() {
     const [isSlideshowOpen, setIsSlideshowOpen] = useState(false)
+    const { t } = useLanguage()
 
     return (
         <Layout showFilters={false} pageTitle="360">
@@ -49,10 +40,10 @@ export default function CRMLandingPage() {
                             className="max-w-4xl mx-auto text-center origin-center"
                         >
                             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 tracking-tight leading-tight text-slate-900 dark:text-white drop-shadow-sm">
-                                360: <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">ปฏิวัติการบริหารความสัมพันธ์ลูกค้า</span> ด้วย AI อัจฉริยะ
+                                {t("crm_hero_prefix")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">{t("crm_hero_highlight")}</span> {t("crm_hero_suffix")}
                             </h1>
                             <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-12 leading-relaxed max-w-2xl mx-auto text-balance">
-                                ระบบ CRM ที่ผสานพลัง AI เพื่อให้องค์กรสามารถวิเคราะห์ เข้าถึง และสร้างประสบการณ์ที่ยอดเยี่ยมให้แก่ลูกค้าได้อย่างมืออาชีพ
+                                {t("crm_hero_description")}
                             </p>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -62,7 +53,7 @@ export default function CRMLandingPage() {
                                     onClick={() => window.location.href = 'https://360.trirex.cloud'}
                                 >
                                     <Users className="w-6 h-6 mr-3" />
-                                    เข้าสู่ระบบ CRM 360
+                                    {t("open_crm")}
                                     <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
                                 </Button>
                                 <Button
@@ -72,10 +63,10 @@ export default function CRMLandingPage() {
                                     onClick={() => setIsSlideshowOpen(true)}
                                 >
                                     <Play className="w-6 h-6 mr-3 fill-blue-600 dark:fill-blue-400 text-blue-600 dark:text-blue-400" />
-                                    แสดง Slide Show
+                                    {t("show_slideshow")}
                                 </Button>
                             </div>
-                            <p className="mt-8 text-base text-slate-400 dark:text-slate-500 italic">พร้อมขยายฐานลูกค้าและสร้างการเติบโตที่ยั่งยืน</p>
+                            <p className="mt-8 text-base text-slate-400 dark:text-slate-500 italic">{t("crm_hero_note")}</p>
                         </motion.div>
                     </div>
                 </section>
@@ -104,13 +95,13 @@ export default function CRMLandingPage() {
                                     >
                                         <Dialog.Title className="sr-only">360 Slide Show</Dialog.Title>
                                         <Dialog.Description className="sr-only">
-                                            การนำเสนอภาพรวมของ 360 ในรูปแบบสไลด์
+                                            {t("crm_slideshow_description")}
                                         </Dialog.Description>
                                         <div className="relative w-full max-w-6xl h-[85vh] bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/80 flex items-center justify-center bg-slate-50">
                                             <div className="text-center">
                                                 <Users className="w-20 h-20 text-blue-200 mx-auto mb-6" />
                                                 <h2 className="text-2xl font-bold text-slate-800 mb-2">CRM 360 Presentation</h2>
-                                                <p className="text-slate-500">Slide show content is coming soon...</p>
+                                                <p className="text-slate-500">{t("slideshow_coming_soon")}</p>
                                             </div>
 
                                             <Dialog.Close asChild>

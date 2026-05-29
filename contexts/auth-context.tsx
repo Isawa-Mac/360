@@ -249,7 +249,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (themeColor) {
                 localStorage.setItem("themeColor", themeColor);
                 document.documentElement.style.setProperty("--primary", themeColor);
-                document.documentElement.style.setProperty("--sidebar", themeColor);
                 document.documentElement.style.setProperty("--sidebar-primary", themeColor);
                 document.documentElement.style.setProperty("--ring", themeColor);
             }
@@ -414,13 +413,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (themeColor) {
                 localStorage.setItem("themeColor", themeColor);
                 document.documentElement.style.setProperty("--primary", themeColor);
-                document.documentElement.style.setProperty("--sidebar", themeColor);
                 document.documentElement.style.setProperty("--sidebar-primary", themeColor);
                 document.documentElement.style.setProperty("--ring", themeColor);
             } else {
                 const fallbackColor = localStorage.getItem("themeColor") || "oklch(0.205 0 0)";
                 document.documentElement.style.setProperty("--primary", fallbackColor);
-                document.documentElement.style.setProperty("--sidebar", fallbackColor);
                 document.documentElement.style.setProperty("--sidebar-primary", fallbackColor);
                 document.documentElement.style.setProperty("--ring", fallbackColor);
             }
@@ -444,6 +441,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         nexusUser = localStorage.getItem("nexus_user");
         nexusToken = localStorage.getItem("nexus_token");
+
+        if (nexusToken === "dev-token" || nexusUser?.includes('"id":"dev-1"')) {
+            localStorage.removeItem("nexus_user");
+            localStorage.removeItem("nexus_token");
+            localStorage.removeItem("nexus_permissions");
+            nexusUser = null;
+            nexusToken = null;
+        }
 
         if (nexusUser && nexusToken) {
             try {
@@ -480,66 +485,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setIsLoading(false);
             }
         } else {
-            // Check original nexus_insight_user for backward compatibility
-            const storedUser = localStorage.getItem("nexus_insight_user");
-            if (storedUser) {
-                try {
-                    const parsed = JSON.parse(storedUser);
-                    setUser(parsed);
-                    setIsAuthenticated(true);
-                    setIsLoading(false);
-                } catch (e) {
-                    console.error("Failed to parse stored user", e);
-                    setIsLoading(false);
-                }
+            localStorage.removeItem("nexus_insight_user");
+            if (!isCallbackPage && !isLogoutPage) {
+                redirectToSSO();
             } else {
-                // Development bypass: when running on localhost or when NEXT_PUBLIC_BYPASS_SSO is set,
-                // create a lightweight mock session so developers can work without SSO.
-                const bypassEnv = (process.env.NEXT_PUBLIC_BYPASS_SSO || "").toLowerCase();
-                const isLocalhost = typeof window !== "undefined" && (
-                    window.location.hostname === "localhost" ||
-                    window.location.hostname === "127.0.0.1" ||
-                    // treat non-trirex hosts (local dev network IPs, docker, etc.) as dev
-                    !window.location.hostname.includes("trirex.cloud")
-                );
-                if (isLocalhost || bypassEnv === "1" || bypassEnv === "true") {
-                    try {
-                        const mockUser = {
-                            id: "dev-1",
-                            username: "dev.user",
-                            email: "dev@example.com",
-                            avatarUrl: "",
-                            permissions: ["*"],
-                        };
-                        const mockToken = "dev-token";
-                        localStorage.setItem("nexus_user", JSON.stringify(mockUser));
-                        localStorage.setItem("nexus_token", mockToken);
-                        localStorage.setItem("nexus_permissions", JSON.stringify(mockUser.permissions));
-                        setUser({
-                            id: mockUser.id,
-                            username: mockUser.username,
-                            email: mockUser.email,
-                            avatarUrl: mockUser.avatarUrl,
-                            permissions: mockUser.permissions,
-                            isSuperAdmin: true,
-                        });
-                        setToken(mockToken);
-                        setIsAuthenticated(true);
-                        setIsLoading(false);
-                    } catch (e) {
-                        console.error("Failed to setup mock dev session", e);
-                        setIsLoading(false);
-                    }
-                } else {
-                    if (!isCallbackPage && !isLogoutPage) {
-                        redirectToSSO();
-                    } else {
-                        setIsLoading(false);
-                    }
-                }
+                setIsLoading(false);
             }
         }
-    }, [tryBootstrapFromSharedCookie]);
+    }, [tryBootstrapFromSharedCookie, redirectToSSO]);
 
     // Removed: SHARED_COOKIE_POLL useEffect
 
@@ -547,7 +500,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Removed: Auto logout and session polling useEffect
 
 
-    const login = (username: string) => {
+    const login: AuthContextType["login"] = () => {
         // This is the old local login, we can keep it or make it call redirectToSSO
         redirectToSSO();
     };
@@ -627,7 +580,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 if (themeColor) {
                     localStorage.setItem("themeColor", themeColor);
                     document.documentElement.style.setProperty('--primary', themeColor);
-                    document.documentElement.style.setProperty('--sidebar', themeColor);
                     document.documentElement.style.setProperty('--sidebar-primary', themeColor);
                     document.documentElement.style.setProperty('--ring', themeColor);
                 }

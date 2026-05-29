@@ -2,11 +2,11 @@
 
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
+import { useLanguage } from "@/contexts/language-context";
 
 export type DashboardControlProps = {
     /** แนวตั้งเมื่อ sidebar ปิด, แนวนอนเมื่อ sidebar เปิด */
@@ -20,6 +20,7 @@ export function DashboardControl({
 }: DashboardControlProps) {
     const { setTheme, resolvedTheme } = useTheme();
     const { syncThemeToCookie } = useAuth();
+    const { t } = useLanguage();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -51,7 +52,7 @@ export function DashboardControl({
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
-                title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                title={isDark ? t("switch_to_light") : t("switch_to_dark")}
                 className="h-7 w-7 text-muted-foreground hover:bg-background hover:shadow-sm transition-all duration-200"
             >
                 {isDark ? (

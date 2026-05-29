@@ -2,73 +2,16 @@
 
 import { Layout } from '@/components/layout'
 import { motion, AnimatePresence } from 'motion/react'
-import {
-    FileText,
-    Cpu,
-    Search,
-    ShieldCheck,
-    Zap,
-    ChevronRight,
-    Expand,
-    X,
-    Target,
-    Rocket,
-    ArrowRight,
-    Play
-} from 'lucide-react'
+import { Expand, X, ArrowRight, Play } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import * as Dialog from '@radix-ui/react-dialog'
+import { useLanguage } from '@/contexts/language-context'
 
 export default function NexDocsLandingPage() {
     const [isOpen, setIsOpen] = useState(false)
     const [isSlideshowOpen, setIsSlideshowOpen] = useState(false)
-
-    const features = [
-        {
-            title: "Smart Input & Dual Storage",
-            description: "อัปโหลดไฟล์ได้ทุกรูปแบบหรือถ่ายภาพบิล แล้วจัดเก็บคู่ขนานทั้งบน Cloud และ QNAP Storage ภายในบริษัท",
-            icon: ShieldCheck,
-            color: "from-blue-500 to-cyan-400"
-        },
-        {
-            title: "AI Multimodal Analysis",
-            description: "ใช้ Gemini 2.5 แกะเลย์เอาต์ อ่านตาราง และสรุปข้อมูลเป็นรูปแบบ JSON โดยอัตโนมัติ",
-            icon: Cpu,
-            color: "from-indigo-500 to-purple-500"
-        },
-        {
-            title: "Intelligent Vector Search",
-            description: "แปลงข้อมูลเป็น Vector เพื่อให้ค้นหาด้วยภาษาธรรมชาติผ่านระบบ RAG บน PostgreSQL 15",
-            icon: Search,
-            color: "from-violet-500 to-fuchsia-500"
-        }
-    ]
-
-    const benefits = [
-        {
-            title: "Data Sovereignty 100%",
-            description: "องค์กรเป็นเจ้าของข้อมูลทั้งหมด ด้วยการจัดเก็บภายใน (On-Premise)",
-            icon: ShieldCheck
-        },
-        {
-            title: "Ask Me Anything & Insights",
-            description: "ผู้บริหารสามารถถามคำถามด้วยภาษาคนเพื่อสรุปข้อมูลและดู Dashboard ได้ทันที",
-            icon: Target
-        },
-        {
-            title: "ลดเวลาทำงานได้กว่า 90%",
-            description: "เปลี่ยนการคีย์ข้อมูลและการค้นหาเอกสารแบบเดิมให้เป็นระบบอัตโนมัติ",
-            icon: Zap
-        }
-    ]
-
-    const roadmap = [
-        { month: "เดือนที่ 1-2", task: "ติดตั้งโครงสร้างพื้นฐาน Network และระบบ Dual Storage" },
-        { month: "เดือนที่ 3-4", task: "พัฒนา AI Extraction (Gemini 2.5) และระบบค้นหา RAG" },
-        { month: "เดือนที่ 5-6", task: "ทดสอบความแม่นยำ (UAT) และเปิดใช้งานจริงพร้อมอบรมพนักงาน" }
-    ]
+    const { t } = useLanguage()
 
     return (
         <Layout showFilters={false} pageTitle="NexDocs 360">
@@ -93,10 +36,10 @@ export default function NexDocsLandingPage() {
                             className="max-w-4xl mx-auto text-center origin-center"
                         >
                             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 tracking-tight leading-tight text-slate-900 drop-shadow-sm">
-                                NexDocs 360: <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">ปฏิวัติการจัดการเอกสาร</span> ด้วย AI อัจฉริยะ
+                                {t("nexdocs_hero_prefix")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{t("nexdocs_hero_highlight")}</span> {t("nexdocs_hero_suffix")}
                             </h1>
                             <p className="text-xl md:text-2xl text-slate-600 mb-12 leading-relaxed max-w-2xl mx-auto text-balance">
-                                ที่ผสานพลัง Multimodal AI (Gemini 2.5) เข้ากับระบบจัดเก็บข้อมูลแบบ Dual Storage เพื่อให้องค์กรสามารถวิเคราะห์ ค้นหา และเป็นเจ้าของข้อมูลได้ 100%
+                                {t("nexdocs_hero_description")}
                             </p>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -106,7 +49,7 @@ export default function NexDocsLandingPage() {
                                     onClick={() => setIsOpen(true)}
                                 >
                                     <Expand className="w-6 h-6 mr-3" />
-                                    เปิด NexDocs 360
+                                    {t("open_nexdocs")}
                                     <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
                                 </Button>
                                 <Button
@@ -116,10 +59,10 @@ export default function NexDocsLandingPage() {
                                     onClick={() => setIsSlideshowOpen(true)}
                                 >
                                     <Play className="w-6 h-6 mr-3 fill-blue-600 text-blue-600" />
-                                    แสดง Slide Show
+                                    {t("show_slideshow")}
                                 </Button>
                             </div>
-                            <p className="mt-8 text-base text-slate-400 italic">พร้อมลดระยะเวลาการทำงานลงถึง 90%</p>
+                            <p className="mt-8 text-base text-slate-400 italic">{t("nexdocs_hero_note")}</p>
                         </motion.div>
                     </div>
                 </section>
@@ -148,7 +91,7 @@ export default function NexDocsLandingPage() {
                                     >
                                         <Dialog.Title className="sr-only">NexDocs 360 Infographic</Dialog.Title>
                                         <Dialog.Description className="sr-only">
-                                            รายละเอียดโครงสร้างและการทำงานของระบบ NexDocs 360
+                                            {t("nexdocs_infographic_description")}
                                         </Dialog.Description>
                                         <div className="relative w-full h-full flex items-center justify-center p-4">
                                             <motion.img
@@ -198,7 +141,7 @@ export default function NexDocsLandingPage() {
                                     >
                                         <Dialog.Title className="sr-only">NexDocs 360 Slide Show</Dialog.Title>
                                         <Dialog.Description className="sr-only">
-                                            การนำเสนอภาพรวมของ NexDocs 360 ในรูปแบบสไลด์
+                                            {t("nexdocs_slideshow_description")}
                                         </Dialog.Description>
                                         <div className="relative w-full max-w-6xl h-[85vh] bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/80">
                                             {/* PDF Slide Show View */}

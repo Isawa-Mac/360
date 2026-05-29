@@ -16,13 +16,12 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { UserMenu } from "@/components/user-menu"
 import { AppMenu } from "@/components/app-menu"
 import { DashboardControl } from "@/components/dashboard-control"
 import { useLanguage } from "@/contexts/language-context"
-import { useAuth } from "@/contexts/auth-context"
 import { usePermission } from "@/hooks/use-permission"
 import { navItems } from "@/lib/navigation"
+import { Button } from "@/components/ui/button"
 
 /** แก้ URL ที่ขาด : ใน protocol (เช่น https// -> https://) */
 function ensureAbsoluteUrl(url: string): string {
@@ -34,7 +33,6 @@ function ensureAbsoluteUrl(url: string): string {
 
 export function AppSidebar() {
   const pathname = usePathname()
-  const { user } = useAuth()
   const { locale } = useLanguage()
   const { state, setOpen, setOpenMobile, isMobile } = useSidebar()
   const { hasPermission, isSuperAdmin } = usePermission()
@@ -60,20 +58,8 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="pb-3 flex items-center justify-between gap-2 group-data-[collapsible=icon]:justify-center">
+      <SidebarHeader className="pb-3 flex items-start gap-2 group-data-[collapsible=icon]:items-center">
         <AppMenu className="flex items-center justify-start shrink-0" />
-        <UserMenu
-          name={user?.username || "Guest"}
-          email={user?.email || ""}
-          avatarSrc={user?.avatarUrl}
-          avatarFallback={(() => {
-            const n = user?.username || user?.email || ""
-            if (n.length >= 2) return n.slice(0, 2).toUpperCase()
-            if (n.length === 1) return n.toUpperCase()
-            return "?"
-          })()}
-          className="ml-auto w-full max-w-[calc(100%-3rem)]"
-        />
       </SidebarHeader>
       <SidebarContent className="h-full w-full [&>[data-orientation=horizontal]]:hidden">
         <SidebarGroup>
@@ -116,7 +102,10 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <div className="flex flex-col gap-2 px-2 pb-4">
-          <div className="flex justify-center">
+          <div className="flex items-center justify-start gap-1 group-data-[collapsible=icon]:justify-center">
+            <LocaleToggle />
+          </div>
+          <div className="flex justify-start group-data-[collapsible=icon]:justify-center">
             <DashboardControl
               direction={state === "collapsed" ? "column" : "row"}
             />
@@ -125,5 +114,20 @@ export function AppSidebar() {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
+  )
+}
+
+function LocaleToggle() {
+  const { locale, setLocale } = useLanguage()
+
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() => setLocale(locale === "th" ? "en" : "th")}
+      className="h-8 w-8 px-0 text-[11px] font-semibold"
+    >
+      {locale === "th" ? "TH" : "EN"}
+    </Button>
   )
 }

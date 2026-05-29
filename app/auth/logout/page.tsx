@@ -1,9 +1,12 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { useLanguage } from "@/contexts/language-context"
 
 /** หน้า logout แบบ Microsoft: พื้นหลังขาว สะอาด "You've been signed out" */
 export default function LogoutPage() {
+    const { t } = useLanguage()
+
     const signInAgain = () => {
         const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
         const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
@@ -17,10 +20,10 @@ export default function LogoutPage() {
         >
             <div className="max-w-[440px] w-full px-6 text-center">
                 <h1 className="text-[28px] font-semibold text-[#1b1b1b] mb-4 tracking-tight">
-                    คุณได้ออกจากระบบแล้ว
+                    {t("signed_out_title")}
                 </h1>
                 <p className="text-[15px] text-[#605e5c] leading-relaxed mb-8">
-                    คุณได้ออกจากบัญชีทั้งหมดเรียบร้อยแล้ว คุณสามารถปิดหน้าต่างเบราว์เซอร์นี้ได้อย่างปลอดภัย
+                    {t("signed_out_description")}
                 </p>
 
                 <div className="flex flex-col gap-4">
@@ -28,7 +31,7 @@ export default function LogoutPage() {
                         onClick={signInAgain}
                         className="w-full h-11 bg-[#0078d4] hover:bg-[#106ebe] text-white font-medium rounded-sm"
                     >
-                        ลงชื่อเข้าใช้ด้วยบัญชีอื่น
+                        {t("sign_in_another_account")}
                     </Button>
                 </div>
 

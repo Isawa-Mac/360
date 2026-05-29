@@ -15,10 +15,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { useLanguage } from "@/contexts/language-context"
+import { UserMenu } from "@/components/user-menu"
+import { useAuth } from "@/contexts/auth-context"
 
 export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { t } = useLanguage()
+  const { user } = useAuth()
 
   const headerControl = useHeaderControl()
   const dashboardScale = useDashboardScale()
@@ -73,7 +76,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
             <BreadcrumbSeparator className="text-muted-foreground/30" />
             <BreadcrumbItem className="flex flex-col items-center justify-center leading-tight">
               <BreadcrumbPage className="text-[10px] uppercase font-bold tracking-widest text-primary dark:text-foreground">
-                {pageTitle || "Dashboard"}
+                {pageTitle || t("dashboard")}
               </BreadcrumbPage>
               {pageSubtitle && (
                 <span className="text-[9px] text-muted-foreground/60 font-medium lowercase">
@@ -83,6 +86,19 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+
+        <div className="ml-auto">
+          <UserMenu
+            name={user?.username || t("guest")}
+            email={user?.email || ""}
+            avatarFallback={(() => {
+              const n = user?.username || user?.email || ""
+              if (n.length >= 2) return n.slice(0, 2).toUpperCase()
+              if (n.length === 1) return n.toUpperCase()
+              return "?"
+            })()}
+          />
+        </div>
       </header>
 
       <div className="flex-1" style={containerStyle}>

@@ -3,8 +3,11 @@
 import { LayoutGrid } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/contexts/language-context"
 
 export function AppMenu({ className }: { className?: string }) {
+  const { t } = useLanguage()
+
   return (
     <Link
       href="/home"
@@ -14,8 +17,8 @@ export function AppMenu({ className }: { className?: string }) {
         "group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:w-9 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:pl-0",
         className
       )}
-      aria-label="ไปยัง 360"
-      title="ไปยัง 360"
+      aria-label={t("go_to_360")}
+      title={t("go_to_360")}
     >
       <LayoutGrid className="h-5 w-5 text-foreground group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4" />
     </Link>

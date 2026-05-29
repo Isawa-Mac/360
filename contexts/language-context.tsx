@@ -20,6 +20,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const saved = window.localStorage.getItem("locale") as Locale | null
     if (saved === "th" || saved === "en") {
       setLocaleState(saved)
+      document.documentElement.lang = saved
     }
   }, [])
 
@@ -27,6 +28,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLocaleState(nextLocale)
     if (typeof window !== "undefined") {
       window.localStorage.setItem("locale", nextLocale)
+      document.documentElement.lang = nextLocale
     }
   }
 
@@ -49,7 +51,6 @@ export function useLanguage() {
     // Fallback: return a safe no-op implementation to avoid runtime crashes
     // when components are rendered outside the provider (defensive fallback).
     // Prefer fixing provider placement; this is a safety net.
-    // eslint-disable-next-line no-console
     console.warn("useLanguage used outside LanguageProvider — returning fallback implementation")
     return {
       locale: DEFAULT_LOCALE as Locale,

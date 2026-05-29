@@ -4,11 +4,13 @@ import { useEffect, Suspense, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useAuth } from "@/contexts/auth-context";
+import { useLanguage } from "@/contexts/language-context";
 
 function SSOCallbackContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { handleCodeExchange } = useAuth();
+    const { t } = useLanguage();
     const hasExchanged = useRef(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -66,7 +68,7 @@ function SSOCallbackContent() {
                 <div className="flex flex-col items-center gap-6 max-w-md text-center">
                     <div className="space-y-4">
                         <div className="text-red-500 text-5xl">⚠️</div>
-                        <h2 className="text-2xl font-bold tracking-tight text-red-400">Login Failed</h2>
+                        <h2 className="text-2xl font-bold tracking-tight text-red-400">{t("login_failed")}</h2>
                         <p className="text-slate-300 font-sarabun text-sm bg-slate-900 p-4 rounded border border-slate-800">
                             {error}
                         </p>
@@ -74,7 +76,7 @@ function SSOCallbackContent() {
                             onClick={() => window.location.href = "/"}
                             className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
                         >
-                            Try Again
+                            {t("try_again")}
                         </button>
                     </div>
                 </div>

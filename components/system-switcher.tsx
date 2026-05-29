@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
+import { useLanguage } from "@/contexts/language-context"
 
 // Custom 3x3 Grid Icon
 const Grid3x3Icon = ({ className }: { className?: string }) => (
@@ -101,6 +102,7 @@ const CURRENT_SYSTEM = "BI 360" // CRM ปิดแล้ว ใช้ BI เป
 
 export function SystemSwitcher({ className }: { className?: string }) {
   const { hasPermission } = usePermission()
+  const { t } = useLanguage()
 
   const visibleSystems = SYSTEMS.filter(
     (s) => !s.permission || hasPermission(s.permission)
@@ -127,7 +129,7 @@ export function SystemSwitcher({ className }: { className?: string }) {
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Switch System
+              {t("switch_system")}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             {visibleSystems.map((system) => {
@@ -154,7 +156,7 @@ export function SystemSwitcher({ className }: { className?: string }) {
                   </div>
                   <span className="flex-1">{system.name}</span>
                   {isDisabled && (
-                    <span className="text-[10px] bg-muted px-1 rounded uppercase font-medium">Coming Soon</span>
+                    <span className="text-[10px] bg-muted px-1 rounded uppercase font-medium">{t("coming_soon")}</span>
                   )}
                   {system.name === CURRENT_SYSTEM && (
                     <Check className="ml-auto size-4" />

@@ -4,10 +4,6 @@ import { Layout } from '@/components/layout'
 import { motion, AnimatePresence } from 'motion/react'
 import {
     Globe,
-    TrendingUp,
-    Layers,
-    ShieldCheck,
-    Zap,
     X,
     ArrowRight,
     Play,
@@ -16,6 +12,7 @@ import {
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import * as Dialog from '@radix-ui/react-dialog'
+import { useLanguage } from '@/contexts/language-context'
 
 /**
  * ดึง Lobbey Base URL ตาม environment (client-side)
@@ -29,6 +26,7 @@ function getLobbeyBaseURL(): string {
 
 export default function ERPLandingPage() {
     const [isSlideshowOpen, setIsSlideshowOpen] = useState(false)
+    const { t } = useLanguage()
 
     return (
         <Layout showFilters={false} pageTitle="360">
@@ -52,10 +50,10 @@ export default function ERPLandingPage() {
                             className="max-w-4xl mx-auto text-center origin-center"
                         >
                             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 tracking-tight leading-tight text-slate-900 dark:text-white drop-shadow-sm">
-                                360 ERP: <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400">ปฏิวัติการวางแผนทรัพยากรองค์กร</span> อัจฉริยะแบบเรียลไทม์
+                                {t("erp_hero_prefix")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400">{t("erp_hero_highlight")}</span> {t("erp_hero_suffix")}
                             </h1>
                             <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-12 leading-relaxed max-w-2xl mx-auto text-balance">
-                                ระบบ ERP ที่รวบรวมข้อมูลและการทำงานทุกภาคส่วนเข้าด้วยกันอย่างราบรื่น เพื่อเพิ่มประสิทธิภาพในการปฏิบัติงานและการบริหารจัดการอย่างมืออาชีพ
+                                {t("erp_hero_description")}
                             </p>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -65,7 +63,7 @@ export default function ERPLandingPage() {
                                     onClick={() => window.location.href = getLobbeyBaseURL()}
                                 >
                                     <Building2 className="w-6 h-6 mr-3" />
-                                    เข้าสู่ระบบ ERP 360
+                                    {t("open_erp")}
                                     <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
                                 </Button>
                                 <Button
@@ -75,10 +73,10 @@ export default function ERPLandingPage() {
                                     onClick={() => setIsSlideshowOpen(true)}
                                 >
                                     <Play className="w-6 h-6 mr-3 fill-indigo-600 dark:fill-indigo-400 text-indigo-600 dark:text-indigo-400" />
-                                    แสดง Slide Show
+                                    {t("show_slideshow")}
                                 </Button>
                             </div>
-                            <p className="mt-8 text-base text-slate-400 dark:text-slate-500 italic">พร้อมเชื่อมโยงทุกแผนกงานและยกระดับการตัดสินใจทางธุรกิจ</p>
+                            <p className="mt-8 text-base text-slate-400 dark:text-slate-500 italic">{t("erp_hero_note")}</p>
                         </motion.div>
                     </div>
                 </section>
@@ -105,13 +103,13 @@ export default function ERPLandingPage() {
                                     >
                                         <Dialog.Title className="sr-only">ERP 360 Slide Show</Dialog.Title>
                                         <Dialog.Description className="sr-only">
-                                            การนำเสนอภาพรวมของ ERP 360 ในรูปแบบสไลด์
+                                            {t("erp_slideshow_description")}
                                         </Dialog.Description>
                                         <div className="relative w-full max-w-6xl h-[85vh] bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/80 flex items-center justify-center bg-slate-50">
                                             <div className="text-center">
                                                 <Globe className="w-20 h-20 text-indigo-200 mx-auto mb-6" />
                                                 <h2 className="text-2xl font-bold text-slate-800 mb-2">ERP 360 Presentation</h2>
-                                                <p className="text-slate-500">Slide show content is coming soon...</p>
+                                                <p className="text-slate-500">{t("slideshow_coming_soon")}</p>
                                             </div>
 
                                             <Dialog.Close asChild>

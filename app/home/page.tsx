@@ -15,6 +15,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { usePermission } from '@/hooks/use-permission'
+import { useLanguage } from '@/contexts/language-context'
 
 
 /**
@@ -56,13 +57,14 @@ function HomePageContent() {
   const router = useRouter()
   const [loadingItem, setLoadingItem] = useState<string | null>(null)
   const { hasPermission } = usePermission()
+  const { t } = useLanguage()
 
 
   // Main menu items — requiredPermission ใช้ permission string จาก SSO จริง
   const menuItems = [
     {
       title: "CRM 360",
-      description: "CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้า",
+      description: t("crm_description"),
       icon: Globe,
       url: "https://crm360.trirex.cloud",
       isExternal: true,
@@ -71,7 +73,7 @@ function HomePageContent() {
     },
     {
       title: "ERP 360",
-      description: "ERP 360 - ระบบบริหารจัดการทรัพยากรองค์กรแบบครบวงจร",
+      description: t("erp_description"),
       icon: Boxes,
       url: "#",
       isExternal: false,
@@ -79,7 +81,7 @@ function HomePageContent() {
     },
     {
       title: "Business Intelligence 360",
-      description: "Business Intelligence 360 (BI) - ระบบวิเคราะห์ข้อมูลทางธุรกิจเพื่อการตัดสินใจ",
+      description: t("bi_description"),
       icon: BarChart3,
       url: getBIBaseURL(),
       isExternal: true,
@@ -88,7 +90,7 @@ function HomePageContent() {
     },
     {
       title: "NexDocs 360",
-      description: "NexDocs 360 DMS - ระบบจัดการเอกสารดิจิทัลอัจฉริยะที่มุ่งเน้นการเพิ่มประสิทธิภาพการทำงานด้วย AI",
+      description: t("nexdocs_description"),
       icon: FileText,
       url: getNexDocsBaseURL(),
       isExternal: true,
@@ -97,7 +99,7 @@ function HomePageContent() {
     },
     {
       title: "Point of Sale 360 Online",
-      description: "Point of Sale 360 Online (POS) - ระบบขายหน้าร้านออนไลน์",
+      description: t("pos_description"),
       icon: ShoppingCart,
       url: getPOSBaseURL(),
       isExternal: true,
@@ -106,7 +108,7 @@ function HomePageContent() {
     },
     {
       title: "Single Sign-On 360",
-      description: "Single Sign-On 360 (SS) - ระบบเข้าสู่ระบบแบบรวมศูนย์ด้วยบัญชีเดียว",
+      description: t("sso_description"),
       icon: Key,
       url: getSSOBaseURL(),
       isExternal: true,
@@ -168,7 +170,7 @@ function HomePageContent() {
                     <div className="absolute top-4 right-4 z-10">
                       <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
                         <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                        กำลังโหลด...
+                        {t("loading")}
                       </Badge>
                     </div>
                   )}
@@ -182,7 +184,7 @@ function HomePageContent() {
                         {item.title}
                         {item.enabled === false && (
                           <Badge variant="outline" className="text-[10px] py-0 h-4 bg-gray-100 dark:bg-gray-800">
-                            Coming Soon
+                            {t("coming_soon")}
                           </Badge>
                         )}
                       </CardTitle>
@@ -207,19 +209,27 @@ function HomePageContent() {
 export default function HomePage() {
   return (
     <Suspense fallback={
-      <Layout
-        showFilters={false}
-        pageTitle="360"
-      >
-        <div className="min-h-full p-6 flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-            <p className="text-sm text-gray-600 dark:text-gray-400">กำลังโหลด...</p>
-          </div>
-        </div>
-      </Layout>
+      <HomeLoadingFallback />
     }>
       <HomePageContent />
     </Suspense>
+  )
+}
+
+function HomeLoadingFallback() {
+  const { t } = useLanguage()
+
+  return (
+    <Layout
+      showFilters={false}
+      pageTitle="360"
+    >
+      <div className="min-h-full p-6 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-gray-600 dark:text-gray-400">{t("loading")}</p>
+        </div>
+      </div>
+    </Layout>
   )
 }
