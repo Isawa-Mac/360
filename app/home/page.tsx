@@ -10,11 +10,7 @@ import {
   ShoppingCart,
   Globe,
   FileText,
-<<<<<<< HEAD
-  Boxes
-=======
-  Users
->>>>>>> 7b566e654e6891f35be20387977327df28053866
+  Boxes,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -79,29 +75,12 @@ function HomePageContent() {
   const menuItems = [
     {
       title: "CRM 360",
-<<<<<<< HEAD
-      description: "CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้าและการจัดการลูกค้าสัมพันธ์อย่างมีประสิทธิภาพ",
-      icon: Users,
-      url: "/nexus-smart-crm",
-      isExternal: false,
-      enabled: true,
-      requiredPermission: ['erp360.crm.read'],
-    },
-    {
-      title: "ERP 360",
-      description: "ERP 360 - ระบบวางแผนและบริหารจัดการทรัพยากรภายในองค์กรอย่างมีประสิทธิภาพ",
-      icon: Globe,
-      url: "/nexus-smart-erp",
-      isExternal: false,
-      enabled: false,
-=======
       description: "CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้า",
       icon: Globe,
       url: "https://crm360.trirex.cloud",
       isExternal: true,
       enabled: true,
->>>>>>> fe2d060f6b2f7a4751f3ba2a8600f828b2a243fd
-      requiredPermission: ['erp360.erp.read'],
+      requiredPermission: ['erp360.crm.read'],
     },
     {
       title: "ERP 360",
@@ -176,12 +155,6 @@ function HomePageContent() {
       pageTitle="360"
     >
       <div className="min-h-full p-6 relative">
-        {/* Background Decorative Elements for better see-through effect */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full" />
-          <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[30%] bg-indigo-500/10 blur-[100px] rounded-full" />
-        </div>
-
         <div className="max-w-7xl mx-auto">
           {/* Main Menu Section */}
           <div className="mb-8 relative">
