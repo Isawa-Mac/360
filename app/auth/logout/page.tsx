@@ -10,13 +10,6 @@ export default function LogoutPage() {
         window.location.href = `${ssoUrl}/#/login?client_id=${clientId}&prompt=login`;
     };
 
-    const loginWithMock = () => {
-        if (typeof window !== "undefined") {
-            localStorage.setItem("bypass_login", "true");
-            window.location.href = "/home";
-        }
-    };
-
     return (
         <div
             className="min-h-screen w-full flex flex-col items-center justify-center bg-[#f3f3f3]"
@@ -36,12 +29,6 @@ export default function LogoutPage() {
                         className="w-full h-11 bg-[#0078d4] hover:bg-[#106ebe] text-white font-medium rounded-sm"
                     >
                         ลงชื่อเข้าใช้ด้วยบัญชีอื่น
-                    </Button>
-                    <Button
-                        onClick={loginWithMock}
-                        className="w-full h-11 bg-[#107c41] hover:bg-[#0b592e] text-white font-medium rounded-sm"
-                    >
-                        เข้าสู่ระบบด้วยบัญชีทดสอบ (Mock Login)
                     </Button>
                 </div>
 

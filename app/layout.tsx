@@ -63,6 +63,7 @@ export default async function RootLayout({
             __html: `
               :root, .dark {
                 --primary: ${themeColor};
+                --sidebar: ${themeColor};
                 --sidebar-primary: ${themeColor};
                 --ring: ${themeColor};
               }
