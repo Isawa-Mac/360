@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter, Sarabun } from "next/font/google";
 import { cookies } from "next/headers";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { LanguageProvider } from "@/contexts/language-context";
 import { SidebarWrapper } from "@/components/sidebar-wrapper";
 import { Toaster } from "sonner";
 import { ReloadProvider } from "@/contexts/reload-context";
@@ -92,10 +93,11 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>
-            <SidebarProvider defaultOpen={defaultOpen}>
-              <AppSidebar />
-              <HeaderControlProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <SidebarProvider defaultOpen={defaultOpen}>
+                <AppSidebar />
+                <HeaderControlProvider>
                 <FullscreenProvider>
                   <ReloadProvider>
                     <DashboardScaleProvider>
@@ -111,7 +113,8 @@ export default async function RootLayout({
                 </FullscreenProvider>
               </HeaderControlProvider>
             </SidebarProvider>
-          </AuthProvider>
+            </AuthProvider>
+          </LanguageProvider>
         </ThemeProvider>
         <Toaster />
       </body>
