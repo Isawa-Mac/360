@@ -46,7 +46,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 export function useLanguage() {
   const context = React.useContext(LanguageContext)
   if (!context) {
-    throw new Error("useLanguage must be used within LanguageProvider")
+    // Fallback: return a safe no-op implementation to avoid runtime crashes
+    // when components are rendered outside the provider (defensive fallback).
+    // Prefer fixing provider placement; this is a safety net.
+    // eslint-disable-next-line no-console
+    console.warn("useLanguage used outside LanguageProvider — returning fallback implementation")
+    return {
+      locale: DEFAULT_LOCALE as Locale,
+      setLocale: () => {},
+      t: (key: string) => t(DEFAULT_LOCALE, key),
+      localeLabel: localeLabels[DEFAULT_LOCALE],
+    }
   }
   return context
 }

@@ -493,10 +493,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setIsLoading(false);
                 }
             } else {
-                if (!isCallbackPage && !isLogoutPage) {
-                    redirectToSSO();
+                // Development bypass: when running on localhost or when NEXT_PUBLIC_BYPASS_SSO is set,
+                // create a lightweight mock session so developers can work without SSO.
+                const bypassEnv = (process.env.NEXT_PUBLIC_BYPASS_SSO || "").toLowerCase();
+                const isLocalhost = typeof window !== "undefined" && (
+                    window.location.hostname === "localhost" ||
+                    window.location.hostname === "127.0.0.1" ||
+                    // treat non-trirex hosts (local dev network IPs, docker, etc.) as dev
+                    !window.location.hostname.includes("trirex.cloud")
+                );
+                if (isLocalhost || bypassEnv === "1" || bypassEnv === "true") {
+                    try {
+                        const mockUser = {
+                            id: "dev-1",
+                            username: "dev.user",
+                            email: "dev@example.com",
+                            avatarUrl: "",
+                            permissions: ["*"],
+                        };
+                        const mockToken = "dev-token";
+                        localStorage.setItem("nexus_user", JSON.stringify(mockUser));
+                        localStorage.setItem("nexus_token", mockToken);
+                        localStorage.setItem("nexus_permissions", JSON.stringify(mockUser.permissions));
+                        setUser({
+                            id: mockUser.id,
+                            username: mockUser.username,
+                            email: mockUser.email,
+                            avatarUrl: mockUser.avatarUrl,
+                            permissions: mockUser.permissions,
+                            isSuperAdmin: true,
+                        });
+                        setToken(mockToken);
+                        setIsAuthenticated(true);
+                        setIsLoading(false);
+                    } catch (e) {
+                        console.error("Failed to setup mock dev session", e);
+                        setIsLoading(false);
+                    }
                 } else {
-                    setIsLoading(false);
+                    if (!isCallbackPage && !isLogoutPage) {
+                        redirectToSSO();
+                    } else {
+                        setIsLoading(false);
+                    }
                 }
             }
         }
