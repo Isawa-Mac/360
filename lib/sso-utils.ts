@@ -134,7 +134,7 @@ export function isTokenExpired(token: string): boolean {
 
     const expirationTime = decoded.exp * 1000 // Convert to milliseconds
     return Date.now() >= expirationTime
-  } catch (error) {
+  } catch {
     return true
   }
 }
@@ -150,7 +150,7 @@ export function getTimeUntilExpiration(token: string): number {
     const expirationTime = decoded.exp * 1000 // Convert to milliseconds
     const timeUntilExpiration = expirationTime - Date.now()
     return Math.max(0, Math.floor(timeUntilExpiration / 1000))
-  } catch (error) {
+  } catch {
     return 0
   }
 }

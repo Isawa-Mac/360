@@ -1,4 +1,4 @@
-import { Home, BarChart3, Key, Globe, Shield, FileText, ShoppingCart, Users } from "lucide-react"
+import { Home, BarChart3, Key, Globe, FileText, ShoppingCart, Users } from "lucide-react"
 
 export interface NavItem {
   title: string
@@ -30,7 +30,6 @@ export const navItems: NavItem[] = [
   },
   {
     title: "CRM 360",
-<<<<<<< HEAD
     url: "/nexus-smart-crm",
     icon: Users,
     requiredPermission: 'erp360.crm.read',
@@ -38,9 +37,6 @@ export const navItems: NavItem[] = [
   {
     title: "ERP 360",
     url: "/nexus-smart-erp",
-=======
-    url: "https://crm360.trirex.cloud",
->>>>>>> fe2d060f6b2f7a4751f3ba2a8600f828b2a243fd
     icon: Globe,
     requiredPermission: 'erp360.erp.read',
   },

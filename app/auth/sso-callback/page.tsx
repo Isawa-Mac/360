@@ -29,7 +29,6 @@ function SSOCallbackContent() {
         if (errorParam && (errorParam === "login_required" || errorParam === "interaction_required")) {
             const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
             const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
-            const callbackUrl = `${window.location.origin}/auth/sso-callback`;
             window.location.href = `${ssoUrl}/#/login?client_id=${clientId}&prompt=login`;
             return;
         }

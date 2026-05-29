@@ -21,7 +21,7 @@ import { AppMenu } from "@/components/app-menu"
 import { DashboardControl } from "@/components/dashboard-control"
 import { useAuth } from "@/contexts/auth-context"
 import { usePermission } from "@/hooks/use-permission"
-import { navItems, filterNavItemsByPermission } from "@/lib/navigation"
+import { navItems } from "@/lib/navigation"
 
 /** แก้ URL ที่ขาด : ใน protocol (เช่น https// -> https://) */
 function ensureAbsoluteUrl(url: string): string {

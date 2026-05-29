@@ -81,7 +81,7 @@ export function UserMenu({
   // Logout always visible, no permission check needed
   const canLogout = true
 
-  const initials = name
+  const initials = avatarFallback || name
     .split(" ")
     .map((n) => n[0])
     .join("")

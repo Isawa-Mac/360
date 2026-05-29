@@ -4,7 +4,7 @@ import { Salesperson, SalespersonArray } from '@/lib/salespersons-schema';
 
 const DATA_PATH = 'public/data/salespersons.json';
 
-export async function GET(request: NextRequest) {
+export async function GET(_: NextRequest) {
     try {
         // อ่านข้อมูลจาก JSON file โดยตรง
         const data = await readJson<unknown>(DATA_PATH);
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json([], { status: 200 });
         }
         return NextResponse.json(parsed.data);
-    } catch (err) {
+    } catch {
         // Return empty list instead of 500 to avoid breaking UI
         return NextResponse.json([], { status: 200 });
     }

@@ -34,17 +34,9 @@ interface AppLayoutProps {
 // Inner component that uses the module context
 function AppLayoutInner({
   children,
-  showFilters = true,
-  disableDepartment = false,
-  disableEmployee = false,
   pageTitle: customPageTitle,
   pageDescription: customPageDescription,
   pageHelp,
-  customYears,
-  hideYear = false,
-  hideMonth = false,
-  hideQuarter = false,
-  hideYtd = false
 }: AppLayoutProps) {
   const pathname = usePathname()
   const [pageTitle, setPageTitle] = useState("Dashboard")

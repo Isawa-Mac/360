@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
     try {
-        const { code, clientId } = await request.json();
+        const { code } = await request.json();
 
         // 1. ตรวจสอบเบื้องต้น
         if (!code) {

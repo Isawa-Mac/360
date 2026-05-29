@@ -2,7 +2,7 @@
 
 import { Layout } from '@/components/layout'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import {
   BarChart3,
   Key,
@@ -14,25 +14,12 @@ import {
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { checkSSOSession, getSSOLoginUrl } from '@/lib/sso-utils'
 import { usePermission } from '@/hooks/use-permission'
 
 
 /**
  * เช็คว่าเป็น development environment หรือไม่ (client-side)
  */
-function isDevelopment(): boolean {
-  return process.env.NODE_ENV === 'development';
-}
-
-/**
- * ดึง Lobbey Base URL ตาม environment (client-side)
- */
-function getLobbeyBaseURL(): string {
-  if (process.env.NEXT_PUBLIC_LOBBEY_URL) return process.env.NEXT_PUBLIC_LOBBEY_URL;
-  return 'https://360.trirex.cloud';
-}
-
 /**
  * ดึง BI Base URL ตาม environment (client-side)
  */

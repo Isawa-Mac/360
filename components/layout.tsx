@@ -41,7 +41,6 @@ export function Layout({
         setDisableDepartment,
         setDisableEmployee,
         setCustomYears,
-        resetHeaderControls,
     } = useHeaderControl()
 
     useEffect(() => {

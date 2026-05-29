@@ -1,14 +1,10 @@
 "use client"
 
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { useHeaderControl } from "@/contexts/header-control-context"
 import { cn } from "@/lib/utils"
-import { UserMenu } from "@/components/user-menu"
-import { useAuth } from "@/contexts/auth-context"
 import { useDashboardScale } from "@/contexts/dashboard-scale-context"
 import { usePathname } from "next/navigation"
-import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Breadcrumb,
@@ -18,19 +14,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { useState, useEffect } from "react"
 
 export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const [mounted, setMounted] = useState(false)
 
   const headerControl = useHeaderControl()
   const dashboardScale = useDashboardScale()
-  const { user } = useAuth()
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const {
     isGlobalHeaderHidden,
