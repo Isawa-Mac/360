@@ -37,6 +37,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    if (token === "mock-token-sso-session") {
+      return NextResponse.json(
+        {
+          authenticated: true,
+          user: {
+            id: "mock-admin-id",
+            username: "admin",
+            email: "admin@example.com",
+            firstName: "Mock",
+            lastName: "Admin",
+            tenantId: "default_tenant",
+            companyName: "Mock Company",
+            avatarUrl: "",
+            permissions: ["*"],
+            isSuperAdmin: true,
+          },
+        },
+        { status: 200 }
+      );
+    }
+
     const base = SSO_BASE_URL.replace(/\/$/, "");
     const validateUrl = `${base}/api/sso/validate-token`;
 

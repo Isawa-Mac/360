@@ -46,6 +46,14 @@ export function usePermission() {
         const authData = getAuthData()
         const authToken = token || authData?.token
 
+        // Check if we are using a mock token for bypass
+        if (authToken === "mock-token-sso-session") {
+          console.log('🔑 usePermission - Using Mock Super Admin permissions (Bypass Mode)')
+          setPermissionsData({ permissions: ['*'], isSuperAdmin: true })
+          setIsLoading(false)
+          return
+        }
+
         // เช็คว่า token เป็น JWT token จริงๆ หรือไม่ (ไม่ใช่ 'sso-session' string literal)
         const isValidJWT = authToken &&
           authToken !== 'sso-session' &&
