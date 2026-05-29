@@ -75,6 +75,7 @@ function HomePageContent() {
   const menuItems = [
     {
       title: "CRM 360",
+<<<<<<< HEAD
       description: "CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้าและการจัดการลูกค้าสัมพันธ์อย่างมีประสิทธิภาพ",
       icon: Users,
       url: "/nexus-smart-crm",
@@ -89,6 +90,13 @@ function HomePageContent() {
       url: "/nexus-smart-erp",
       isExternal: false,
       enabled: false,
+=======
+      description: "CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้า",
+      icon: Globe,
+      url: "https://crm360.trirex.cloud",
+      isExternal: true,
+      enabled: true,
+>>>>>>> fe2d060f6b2f7a4751f3ba2a8600f828b2a243fd
       requiredPermission: ['erp360.erp.read'],
     },
     {
