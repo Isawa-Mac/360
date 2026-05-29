@@ -9,7 +9,8 @@ import {
   Loader2,
   ShoppingCart,
   Globe,
-  FileText
+  FileText,
+  Boxes
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -80,6 +81,14 @@ function HomePageContent() {
       isExternal: true,
       enabled: true,
       requiredPermission: ['erp360.erp.read'],
+    },
+    {
+      title: "ERP 360",
+      description: "ERP 360 - ระบบบริหารจัดการทรัพยากรองค์กรแบบครบวงจร",
+      icon: Boxes,
+      url: "#",
+      isExternal: false,
+      enabled: false,
     },
     {
       title: "Business Intelligence 360",
