@@ -19,6 +19,7 @@ import {
 import { UserMenu } from "@/components/user-menu"
 import { AppMenu } from "@/components/app-menu"
 import { DashboardControl } from "@/components/dashboard-control"
+import { useLanguage } from "@/contexts/language-context"
 import { useAuth } from "@/contexts/auth-context"
 import { usePermission } from "@/hooks/use-permission"
 import { navItems } from "@/lib/navigation"
@@ -34,6 +35,7 @@ function ensureAbsoluteUrl(url: string): string {
 export function AppSidebar() {
   const pathname = usePathname()
   const { user } = useAuth()
+  const { locale } = useLanguage()
   const { state, setOpen, setOpenMobile, isMobile } = useSidebar()
   const { hasPermission, isSuperAdmin } = usePermission()
 
@@ -58,8 +60,20 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="pb-3 flex flex-row justify-start group-data-[collapsible=icon]:justify-center">
+      <SidebarHeader className="pb-3 flex items-center justify-between gap-2 group-data-[collapsible=icon]:justify-center">
         <AppMenu className="flex items-center justify-start shrink-0" />
+        <UserMenu
+          name={user?.username || "Guest"}
+          email={user?.email || ""}
+          avatarSrc={user?.avatarUrl}
+          avatarFallback={(() => {
+            const n = user?.username || user?.email || ""
+            if (n.length >= 2) return n.slice(0, 2).toUpperCase()
+            if (n.length === 1) return n.toUpperCase()
+            return "?"
+          })()}
+          className="ml-auto w-full max-w-[calc(100%-3rem)]"
+        />
       </SidebarHeader>
       <SidebarContent className="h-full w-full [&>[data-orientation=horizontal]]:hidden">
         <SidebarGroup>
@@ -71,24 +85,25 @@ export function AppSidebar() {
                 const externalHref = looksExternal ? ensureAbsoluteUrl(item.url) : item.url
                 const isActive = !isExternal && pathname === item.url
                 const Icon = item.icon
+                const title = locale === "th" ? item.titleTh || item.title : item.titleEn || item.title
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       variant="ghost"
                       asChild
-                      tooltip={item.title}
+                      tooltip={title}
                       isActive={isActive}
                       onClick={() => isMobile ? setOpenMobile(false) : setOpen(false)}
                     >
                       {isExternal ? (
                         <a href={externalHref} target="_blank" rel="noopener noreferrer">
                           {Icon && <Icon />}
-                          <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                          <span className="group-data-[collapsible=icon]:hidden">{title}</span>
                         </a>
                       ) : (
                         <Link href={item.url}>
                           {Icon && <Icon />}
-                          <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                          <span className="group-data-[collapsible=icon]:hidden">{title}</span>
                         </Link>
                       )}
                     </SidebarMenuButton>
@@ -106,18 +121,6 @@ export function AppSidebar() {
               direction={state === "collapsed" ? "column" : "row"}
             />
           </div>
-          <UserMenu
-            name={user?.username || "Guest"}
-            email={user?.email || ""}
-            avatarSrc={user?.avatarUrl}
-            avatarFallback={(() => {
-              const n = user?.username || user?.email || ""
-              if (n.length >= 2) return n.slice(0, 2).toUpperCase()
-              if (n.length === 1) return n.toUpperCase()
-              return "?"
-            })()}
-            className="group-data-[collapsible=icon]:justify-center"
-          />
         </div>
       </SidebarFooter>
       <SidebarRail />

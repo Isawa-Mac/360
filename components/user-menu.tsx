@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn, getPermissionsFromCookie } from "@/lib/utils"
 import menuConfig from "@/lib/user-menu-config.json"
 import { useAuth } from "@/contexts/auth-context"
+import { useLanguage } from "@/contexts/language-context"
 
 interface MenuItem {
   id: string
@@ -47,6 +48,7 @@ export function UserMenu({
   permissionsCookieName = "permissions",
 }: UserMenuProps) {
   const { logout } = useAuth()
+  const { t } = useLanguage()
   const [permissions, setPermissions] = React.useState<string[]>([])
 
   React.useEffect(() => {
@@ -80,6 +82,13 @@ export function UserMenu({
 
   // Logout always visible, no permission check needed
   const canLogout = true
+
+  const translateMenuLabel = (itemId: string, fallback: string) => {
+    if (itemId === "profile") return t("profile")
+    if (itemId === "settings") return t("settings")
+    if (itemId === "logout") return t("logout")
+    return fallback
+  }
 
   const initials = avatarFallback || name
     .split(" ")
@@ -146,7 +155,7 @@ export function UserMenu({
               return (
                 <DropdownMenuItem key={item.id} variant={item.variant}>
                   {Icon && <Icon />}
-                  {item.label}
+                  {translateMenuLabel(item.id, item.label)}
                 </DropdownMenuItem>
               )
             })}
@@ -160,7 +169,7 @@ export function UserMenu({
               onSelect={logout}
             >
               {renderIcon(menuConfig.logoutItem.icon)}
-              {menuConfig.logoutItem.label}
+              {translateMenuLabel(menuConfig.logoutItem.id, menuConfig.logoutItem.label)}
             </DropdownMenuItem>
           </>
         )}

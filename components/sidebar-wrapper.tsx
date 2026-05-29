@@ -14,9 +14,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { useLanguage } from "@/contexts/language-context"
 
 export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const { t } = useLanguage()
 
   const headerControl = useHeaderControl()
   const dashboardScale = useDashboardScale()
@@ -65,7 +67,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
           <BreadcrumbList className="items-center">
             <BreadcrumbItem className="items-center">
               <BreadcrumbLink href="/" className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/60 hover:text-primary transition-colors dark:text-muted-foreground/80">
-                HOME
+                {t("home")}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="text-muted-foreground/30" />

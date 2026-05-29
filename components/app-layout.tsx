@@ -12,8 +12,10 @@ import { useFullscreen } from "@/contexts/fullscreen-context"
 import { Help } from "@/components/ui/help"
 import { ReactNode } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { LanguageToggle } from "@/components/language-toggle"
 import { ProjectToggle } from "@/components/project-toggle"
 import { SystemSwitcher } from "@/components/system-switcher"
+import { LanguageProvider } from "@/contexts/language-context"
 
 
 interface AppLayoutProps {
@@ -62,18 +64,19 @@ function AppLayoutInner({
   }, [pathname, mounted, customPageTitle, customPageDescription])
 
   return (
-    <SidebarProvider defaultOpen={false}>
-      <SidebarAutoClose pathname={pathname} mounted={mounted} />
-      <div className="flex h-screen w-full m-0 p-1">
+    <LanguageProvider>
+      <SidebarProvider defaultOpen={false}>
+        <SidebarAutoClose pathname={pathname} mounted={mounted} />
+        <div className="flex h-screen w-full m-0 p-1">
         <AppSidebar />
 
         <div className="flex flex-col flex-1 min-w-0 w-full">
           <div className="bg-card border border-border rounded-xl overflow-hidden flex-1 min-h-0 flex flex-col">
             {/* Fixed Header */}
             <header className={cn(
-              "flex h-12 shrink-0 items-center gap-2 bg-background px-2 sticky top-0 z-40 relative border-b border-border",
+              "flex min-h-[3rem] shrink-0 items-center gap-2 bg-background px-2 sticky top-0 z-40 relative border-b border-border",
               "transition-all duration-300 ease-in-out",
-              isHeaderHidden ? "h-0 opacity-0 overflow-hidden" : "h-12 opacity-100"
+              isHeaderHidden ? "h-0 opacity-0 overflow-hidden" : "h-auto opacity-100"
             )}>
               <SidebarTrigger className="-ml-1" />
               <Separator
@@ -99,8 +102,11 @@ function AppLayoutInner({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 ml-auto">
-                <ThemeToggle />
+              <div className="flex items-center gap-4 ml-auto">
+                <div className="flex flex-col items-center gap-1">
+                  <ThemeToggle />
+                  <LanguageToggle />
+                </div>
                 <ProjectToggle
                   projectName1="LOBBEY"
                   projectName2="360"
@@ -133,8 +139,8 @@ function AppLayoutInner({
 
       </div>
 
-
     </SidebarProvider>
+  </LanguageProvider>
   )
 }
 

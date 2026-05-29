@@ -2,6 +2,8 @@ import { Home, BarChart3, Key, Globe, FileText, ShoppingCart, Users } from "luci
 
 export interface NavItem {
   title: string
+  titleTh?: string
+  titleEn?: string
   url: string
   icon?: any
   items?: NavSubItem[]
@@ -13,6 +15,8 @@ export interface NavItem {
 
 export interface NavSubItem {
   title: string
+  titleTh?: string
+  titleEn?: string
   url: string
   description?: string
   icon?: any
@@ -25,23 +29,31 @@ export interface NavSubItem {
 export const navItems: NavItem[] = [
   {
     title: "Home",
+    titleTh: "หน้าแรก",
+    titleEn: "Home",
     url: "/home",
     icon: Home,
   },
   {
     title: "CRM 360",
+    titleTh: "CRM 360",
+    titleEn: "CRM 360",
     url: "/nexus-smart-crm",
     icon: Users,
     requiredPermission: 'erp360.crm.read',
   },
   {
     title: "ERP 360",
+    titleTh: "ERP 360",
+    titleEn: "ERP 360",
     url: "/nexus-smart-erp",
     icon: Globe,
     requiredPermission: 'erp360.erp.read',
   },
   {
     title: "Business Intelligence 360",
+    titleTh: "BI 360",
+    titleEn: "Business Intelligence 360",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_BI_URL || "https://bi360.trirex.cloud";
       return /^https?:\/\//.test(u) ? u : "https://bi360.trirex.cloud";
@@ -51,6 +63,8 @@ export const navItems: NavItem[] = [
   },
   {
     title: "NexDocs 360",
+    titleTh: "NexDocs 360",
+    titleEn: "NexDocs 360",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_NEXDOCS_URL || "https://nexdocs360.trirex.cloud";
       return /^https?:\/\//.test(u) ? u : "https://nexdocs360.trirex.cloud";
@@ -60,6 +74,8 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Point of Sale 360 Online",
+    titleTh: "Point of Sale 360 ออนไลน์",
+    titleEn: "Point of Sale 360 Online",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_POS_URL || "https://pos360.trirex.cloud";
       return /^https?:\/\//.test(u) ? u : "https://pos360.trirex.cloud";
@@ -69,6 +85,8 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Single Sign-On 360",
+    titleTh: "Single Sign-On 360",
+    titleEn: "Single Sign-On 360",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_SSO_BASE_URL || "https://sso360.trirex.cloud";
       return /^https?:\/\//.test(u) ? u : "https://sso360.trirex.cloud";
@@ -79,26 +97,26 @@ export const navItems: NavItem[] = [
 ]
 
 // Function to get page title from nav items based on pathname
-export function getPageTitle(pathname: string): string {
+export function getPageTitle(pathname: string, locale: "th" | "en" = "en"): string {
   // Search through all nav items and their sub-items
   for (const item of navItems) {
     // Check sub-items first (more specific)
     if (item.items) {
       for (const subItem of item.items) {
         if (subItem.url === pathname) {
-          return subItem.title
+          return locale === "th" ? subItem.titleTh || subItem.title : subItem.titleEn || subItem.title
         }
       }
     }
 
     // Check main item (less specific)
     if (item.url === pathname) {
-      return item.title
+      return locale === "th" ? item.titleTh || item.title : item.titleEn || item.title
     }
   }
 
   // Fallback to "Dashboard" if no match found
-  return "Dashboard"
+  return locale === "th" ? "แดชบอร์ด" : "Dashboard"
 }
 
 // Helper function to check if pathname matches
