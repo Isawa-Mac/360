@@ -14,6 +14,42 @@ interface User {
     isSuperAdmin?: boolean;
 }
 
+type AvatarSource = {
+    avatarUrl?: string | null;
+    avatar_url?: string | null;
+    image?: string | null;
+    picture?: string | null;
+    photoUrl?: string | null;
+    photoURL?: string | null;
+};
+
+function resolveAvatarUrl(...sources: Array<AvatarSource | null | undefined>): string | undefined {
+    for (const source of sources) {
+        if (!source) continue;
+        const candidates = [
+            source.avatarUrl,
+            source.avatar_url,
+            source.image,
+            source.picture,
+            source.photoUrl,
+            source.photoURL,
+        ];
+        const avatarUrl = candidates.find((value) => typeof value === "string" && value.trim().length > 0);
+        if (avatarUrl) return avatarUrl.trim();
+    }
+    return undefined;
+}
+
+function getCachedUser(): AvatarSource | null {
+    if (typeof window === "undefined") return null;
+    try {
+        const raw = localStorage.getItem("nexus_user");
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
 /** Cookie ชื่อ theme ของแอป 360 เอง (ไม่ใช้แค่จาก SSO) */
 const APP_THEME_COOKIE = "bi360_theme";
 const APP_THEME_COLOR_COOKIE = "bi360_theme_color";
@@ -217,6 +253,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         try {
             const userObj = JSON.parse(sharedUser);
+            const cachedUser = getCachedUser();
             console.log("🔑 [Auth] Bootstrapping from SHARED COOKIE user:", userObj.username, foundTenantId ? `(Tenant: ${foundTenantId})` : "");
 
             let userPermissions: string[] = [];
@@ -264,11 +301,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 id: userObj.id,
                 username: userObj.username || userObj.email,
                 email: userObj.email,
-                avatarUrl: userObj.avatarUrl || userObj.avatar_url,
+                avatarUrl: resolveAvatarUrl(userObj, cachedUser),
                 roles: [],
                 permissions: userPermissions,
                 isSuperAdmin: userObj.username === "admin",
             };
+            localStorage.setItem("nexus_user", JSON.stringify({ ...userObj, avatarUrl: nexusInsightUser.avatarUrl }));
             setUser(nexusInsightUser);
             setIsAuthenticated(true);
             setIsLoading(false);
@@ -346,7 +384,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 id: userObj.id,
                 username: userObj.username || userObj.email || "",
                 email: userObj.email,
-                avatarUrl: userObj.avatarUrl || userObj.avatar_url,
+                avatarUrl: resolveAvatarUrl(userObj),
                 roles: [],
                 permissions: userObj.permissions,
                 isSuperAdmin: userObj.username === "admin",
@@ -459,7 +497,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 const nexusInsightUser: User = {
                     username: userObj.username || userObj.email,
                     email: userObj.email,
-                    avatarUrl: userObj.avatarUrl || userObj.avatar_url,
+                    avatarUrl: resolveAvatarUrl(userObj),
                     roles: [],
                     isSuperAdmin: userObj.username === 'admin'
                 };
@@ -474,7 +512,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                             id: u.id,
                             username: u.username || u.email,
                             email: u.email,
-                            avatarUrl: u.avatarUrl || userObj.avatarUrl || userObj.avatar_url,
+                            avatarUrl: resolveAvatarUrl(u, userObj),
                             roles: [],
                             permissions: u.permissions,
                             isSuperAdmin: u.permissions?.includes("*"),
@@ -554,6 +592,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const { token, user, permissions, settings } = result.data;
 
             if (token && user) {
+                const cachedUser = getCachedUser();
                 // เก็บข้อมูลลง Storage
                 localStorage.setItem("nexus_token", token);
                 setToken(token);
@@ -595,9 +634,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     id: user.id,
                     username: user.username || user.email,
                     email: user.email,
-                    avatarUrl: user.avatarUrl || user.avatar_url,
+                    avatarUrl: resolveAvatarUrl(user, cachedUser),
                     isSuperAdmin: user.username === 'admin'
                 };
+                localStorage.setItem("nexus_user", JSON.stringify({ ...user, avatarUrl: nexusUser.avatarUrl }));
                 setUser(nexusUser);
                 setIsAuthenticated(true);
                 if (nexusUser.id) {

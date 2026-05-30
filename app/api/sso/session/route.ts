@@ -11,9 +11,26 @@ type ValidateTokenResponse = {
     tenantId?: string;
     companyName?: string;
     avatarUrl?: string;
+    avatar_url?: string;
+    image?: string;
+    picture?: string;
+    photoUrl?: string;
+    photoURL?: string;
   };
   permissions?: string[];
 };
+
+function resolveAvatarUrl(user: ValidateTokenResponse["user"]): string | undefined {
+  const candidates = [
+    user?.avatarUrl,
+    user?.avatar_url,
+    user?.image,
+    user?.picture,
+    user?.photoUrl,
+    user?.photoURL,
+  ];
+  return candidates.find((value) => typeof value === "string" && value.trim().length > 0)?.trim();
+}
 
 const SSO_BASE_URL =
   process.env.NEXT_PUBLIC_SSO_BASE_URL ||
@@ -100,7 +117,7 @@ export async function GET(request: NextRequest) {
           lastName: data.user.lastName,
           tenantId: data.user.tenantId,
           companyName: data.user.companyName,
-          avatarUrl: data.user.avatarUrl,
+          avatarUrl: resolveAvatarUrl(data.user),
           permissions,
           isSuperAdmin: permissions.includes("*"),
         },
