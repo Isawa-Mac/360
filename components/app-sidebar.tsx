@@ -82,7 +82,7 @@ export function AppSidebar() {
                       onClick={() => isMobile ? setOpenMobile(false) : setOpen(false)}
                     >
                       {isExternal ? (
-                        <a href={externalHref} target="_blank" rel="noopener noreferrer">
+                        <a href={externalHref}>
                           {Icon && <Icon />}
                           <span className="group-data-[collapsible=icon]:hidden">{title}</span>
                         </a>
