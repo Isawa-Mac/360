@@ -38,7 +38,10 @@ export const navItems: NavItem[] = [
     title: "CRM 360",
     titleTh: "CRM 360",
     titleEn: "CRM 360",
-    url: "/nexus-smart-crm",
+    url: (() => {
+      const u = process.env.NEXT_PUBLIC_CRM_URL || "https://crm360.trirex.cloud";
+      return /^https?:\/\//.test(u) ? u : "https://crm360.trirex.cloud";
+    })(),
     icon: Users,
     requiredPermission: 'erp360.crm.read',
   },
