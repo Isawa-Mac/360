@@ -91,6 +91,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
           <UserMenu
             name={user?.username || t("guest")}
             email={user?.email || ""}
+            avatarSrc={user?.avatarUrl}
             avatarFallback={(() => {
               const n = user?.username || user?.email || ""
               if (n.length >= 2) return n.slice(0, 2).toUpperCase()

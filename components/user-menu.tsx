@@ -12,16 +12,19 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/auth-context"
 import { useLanguage } from "@/contexts/language-context"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface UserMenuProps {
   name?: string
   email?: string
+  avatarSrc?: string
   avatarFallback?: string
 }
 
 export function UserMenu({
   name = "superadmin",
   email = "isawa.mac@gmail.com",
+  avatarSrc,
   avatarFallback = "SA",
 }: UserMenuProps) {
   const { logout } = useAuth()
@@ -42,15 +45,23 @@ export function UserMenu({
           className="inline-flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold text-foreground transition-colors hover:bg-accent"
           aria-label={t("profile_menu")}
         >
-          {initials}
+          <Avatar className="h-9 w-9">
+            {avatarSrc ? <AvatarImage src={avatarSrc} alt={name} /> : null}
+            <AvatarFallback className="text-xs font-bold text-foreground">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" side="bottom" className="w-64">
         <DropdownMenuLabel className="px-3 py-3 text-foreground">
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-muted text-sm font-semibold text-foreground">
-              {initials}
-            </span>
+            <Avatar className="h-10 w-10">
+              {avatarSrc ? <AvatarImage src={avatarSrc} alt={name} /> : null}
+              <AvatarFallback className="text-sm font-semibold text-foreground">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-foreground">{name}</p>
               <p className="truncate text-xs text-muted-foreground">{email}</p>
