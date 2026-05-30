@@ -50,6 +50,32 @@ function getCachedUser(): AvatarSource | null {
     }
 }
 
+function getStoredTheme(): "dark" | "light" | null {
+    if (typeof window === "undefined") return null;
+    const storedTheme = localStorage.getItem("theme") || localStorage.getItem("nexus_theme");
+    return storedTheme === "dark" || storedTheme === "light" ? storedTheme : null;
+}
+
+function resolveThemePreference(...fallbacks: Array<string | null | undefined>): "dark" | "light" | null {
+    const storedTheme = getStoredTheme();
+    if (storedTheme) return storedTheme;
+    for (const fallback of fallbacks) {
+        if (fallback === "dark" || fallback === "light") return fallback;
+    }
+    return null;
+}
+
+function resolveThemeColorPreference(...fallbacks: Array<string | null | undefined>): string | null {
+    if (typeof window !== "undefined") {
+        const storedThemeColor = localStorage.getItem("themeColor");
+        if (storedThemeColor?.trim()) return storedThemeColor.trim();
+    }
+    for (const fallback of fallbacks) {
+        if (fallback?.trim()) return fallback.trim();
+    }
+    return null;
+}
+
 /** Cookie ชื่อ theme ของแอป 360 เอง (ไม่ใช้แค่จาก SSO) */
 const APP_THEME_COOKIE = "bi360_theme";
 const APP_THEME_COLOR_COOKIE = "bi360_theme_color";
@@ -282,10 +308,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const sharedTheme = getCookie("nexus_shared_theme" + suffix);
             const sharedThemeColor = getCookie("nexus_shared_theme_color" + suffix);
             
-            const theme = (sharedTheme === "dark" || sharedTheme === "light")
-                ? sharedTheme
-                : (appTheme === "dark" || appTheme === "light" ? appTheme : null);
-            const themeColor = sharedThemeColor || appThemeColor;
+            const theme = resolveThemePreference(appTheme, sharedTheme);
+            const themeColor = resolveThemeColorPreference(appThemeColor, sharedThemeColor);
 
             if (theme) {
                 localStorage.setItem("nexus_theme", theme);
@@ -434,20 +458,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [logoutLocalOnly, applySessionFromLocalStorageForUser]);
 
     useEffect(() => {
-        // อ่าน theme: ให้ shared (SSO) มาก่อน แล้วค่อย theme ของแอป 360 เอง
+        // อ่าน theme: ให้ localStorage ของแอปมาก่อน เพื่อไม่ให้ reload ทับค่าที่ผู้ใช้เลือกไว้
         if (typeof window !== "undefined") {
             const appTheme = getCookie(APP_THEME_COOKIE);
             const appThemeColor = getCookie(APP_THEME_COLOR_COOKIE);
             const sharedTheme = getCookie("nexus_shared_theme");
             const sharedThemeColor = getCookie("nexus_shared_theme_color");
 
-            const theme =
-                (sharedTheme === "dark" || sharedTheme === "light")
-                    ? sharedTheme
-                    : (appTheme === "dark" || appTheme === "light" ? appTheme : null);
+            const theme = resolveThemePreference(appTheme, sharedTheme);
 
-            // Accent color: บังคับให้ใช้สีจาก SSO ก่อนเสมอ
-            const themeColor = sharedThemeColor || appThemeColor;
+            const themeColor = resolveThemeColorPreference(appThemeColor, sharedThemeColor);
 
             if (theme) {
                 localStorage.setItem("nexus_theme", theme);
@@ -607,18 +627,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     document.cookie = `permissions=${encodeURIComponent(JSON.stringify(permissions))}; path=/`;
                 }
                 
-                // นำ theme: ใช้ของแอป 360 ก่อน แล้วค่อย shared หรือ settings
+                // นำ theme: ใช้ localStorage ของแอปก่อน แล้วค่อย cookie/shared หรือ settings
                 const appTheme = getCookie(APP_THEME_COOKIE);
                 const appThemeColor = getCookie(APP_THEME_COLOR_COOKIE);
                 const sharedTheme = getCookie("nexus_shared_theme");
                 const sharedThemeColor = getCookie("nexus_shared_theme_color");
-                const theme = appTheme === "dark" || appTheme === "light" ? appTheme : (sharedTheme === "dark" || sharedTheme === "light" ? sharedTheme : null);
+                const theme = resolveThemePreference(appTheme, sharedTheme);
                 if (theme) {
                     localStorage.setItem("nexus_theme", theme);
                     localStorage.setItem("theme", theme);
                     document.documentElement.classList.toggle("dark", theme === "dark");
                 }
-                const themeColor = appThemeColor || sharedThemeColor || settings?.primaryColor;
+                const themeColor = resolveThemeColorPreference(appThemeColor, sharedThemeColor, settings?.primaryColor);
                 if (themeColor) {
                     localStorage.setItem("themeColor", themeColor);
                     applyThemeColorProperties(themeColor);
