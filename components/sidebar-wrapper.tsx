@@ -17,7 +17,7 @@ import {
 import { useLanguage } from "@/contexts/language-context"
 import { UserMenu } from "@/components/user-menu"
 import { useAuth } from "@/contexts/auth-context"
-import Threads from "@/components/Threads"
+import { ThreadsBackground } from "@/components/threads-background"
 
 export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -41,13 +41,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
     return (
       <div className="relative h-screen w-full">
         <div className="fixed inset-0 -z-10 pointer-events-none bg-background">
-          <Threads
-            color={[0.32, 0.15, 1]}
-            amplitude={2.9}
-            distance={1.1}
-            enableMouseInteraction={false}
-            className="absolute inset-0"
-          />
+          <ThreadsBackground />
         </div>
         {children}
       </div>
@@ -59,13 +53,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
       className="relative flex flex-col h-screen overflow-hidden bg-transparent transition-all duration-300"
     >
       <div className="fixed inset-0 -z-10 pointer-events-none bg-background">
-        <Threads
-          color={[0.32, 0.15, 1]}
-          amplitude={2.9}
-          distance={1.1}
-          enableMouseInteraction={false}
-          className="absolute inset-0 opacity-80 dark:opacity-50"
-        />
+        <ThreadsBackground className="opacity-80 dark:opacity-50" />
       </div>
 
       <header className={cn(

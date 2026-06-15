@@ -19,6 +19,8 @@ precision highp float;
 uniform float iTime;
 uniform vec3 iResolution;
 uniform vec3 uColor;
+uniform vec3 uColorDark;
+uniform vec3 uColorLight;
 uniform float uAmplitude;
 uniform float uDistance;
 uniform vec2 uMouse;
@@ -96,10 +98,13 @@ float lineFn(vec2 st, float width, float perc, float offset, vec2 mouse, float t
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 uv = fragCoord / iResolution.xy;
 
-    float line_strength = 1.0;
+    vec3 compositeColor = vec3(0.0);
+    float compositeAlpha = 0.0;
+
     for (int i = 0; i < u_line_count; i++) {
         float p = float(i) / float(u_line_count);
-        line_strength *= (1.0 - lineFn(
+        vec3 lineColor = mix(uColorDark, uColorLight, p);
+        float lineMask = lineFn(
             uv,
             u_line_width * pixel(1.0, iResolution.xy) * (1.0 - p),
             p,
@@ -108,11 +113,13 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
             iTime,
             uAmplitude,
             uDistance
-        ));
+        );
+
+        compositeColor += lineColor * lineMask * (1.0 - compositeAlpha);
+        compositeAlpha += lineMask * (1.0 - compositeAlpha);
     }
 
-    float colorVal = 1.0 - line_strength;
-    fragColor = vec4(uColor * colorVal, colorVal);
+    fragColor = vec4(compositeColor, compositeAlpha);
 }
 
 void main() {
@@ -120,9 +127,11 @@ void main() {
 }
 `;
 
-const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseInteraction = false, ...rest }) => {
+const Threads = ({ color = [1, 1, 1], colorDark, colorLight, amplitude = 1, distance = 0, speed = 1, enableMouseInteraction = false, ...rest }) => {
   const containerRef = useRef(null);
   const animationFrameId = useRef();
+  const resolvedDark = colorDark ?? color;
+  const resolvedLight = colorLight ?? color;
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -145,6 +154,8 @@ const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseIn
           value: new Color(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height)
         },
         uColor: { value: new Color(...color) },
+        uColorDark: { value: new Color(...resolvedDark) },
+        uColorLight: { value: new Color(...resolvedLight) },
         uAmplitude: { value: amplitude },
         uDistance: { value: distance },
         uMouse: { value: new Float32Array([0.5, 0.5]) }
@@ -191,7 +202,7 @@ const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseIn
         program.uniforms.uMouse.value[0] = 0.5;
         program.uniforms.uMouse.value[1] = 0.5;
       }
-      program.uniforms.iTime.value = t * 0.001;
+      program.uniforms.iTime.value = t * 0.001 * speed;
 
       renderer.render({ scene: mesh });
       animationFrameId.current = requestAnimationFrame(update);
@@ -209,7 +220,7 @@ const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseIn
       if (container.contains(gl.canvas)) container.removeChild(gl.canvas);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
-  }, [color, amplitude, distance, enableMouseInteraction]);
+  }, [color, colorDark, colorLight, amplitude, distance, speed, enableMouseInteraction]);
 
   return <div ref={containerRef} className="threads-container" {...rest} />;
 };
