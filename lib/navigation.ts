@@ -1,4 +1,4 @@
-import { Home, BarChart3, Key, Globe, FileText, ShoppingCart, Users } from "lucide-react"
+import { Home, BarChart3, Key, Globe, FileText, ShoppingCart, Users, MessageCircle } from "lucide-react"
 
 export interface NavItem {
   title: string
@@ -96,6 +96,13 @@ export const navItems: NavItem[] = [
     })(),
     icon: Key,
     requiredPermission: 'erp360.admin.read',
+  },
+  {
+    title: "Chat bot 360",
+    titleTh: "Chat bot 360",
+    titleEn: "Chat bot 360",
+    url: "https://hermes.trirex.cloud/chat",
+    icon: MessageCircle,
   },
 ]
 

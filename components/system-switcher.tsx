@@ -8,7 +8,8 @@ import {
   ShoppingCart,
   Key,
   FileText,
-  Users
+  Users,
+  MessageCircle
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePermission } from "@/hooks/use-permission"
@@ -94,6 +95,13 @@ const SYSTEMS: SystemItem[] = [
     url: "https://sso360.trirex.cloud",
     icon: Key,
     permission: "erp360.admin.read",
+    disabled: false,
+  },
+  {
+    name: "Chat bot 360",
+    url: "https://hermes.trirex.cloud/chat",
+    icon: MessageCircle,
+    permission: "",
     disabled: false,
   },
 ]
