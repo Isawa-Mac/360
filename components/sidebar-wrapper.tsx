@@ -17,6 +17,7 @@ import {
 import { useLanguage } from "@/contexts/language-context"
 import { UserMenu } from "@/components/user-menu"
 import { useAuth } from "@/contexts/auth-context"
+import Threads from "@/components/Threads"
 
 export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -37,26 +38,33 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const isAuthPage = pathname?.startsWith('/auth/')
 
   if (isAuthPage) {
-    return <div className="h-screen w-full">{children}</div>
+    return (
+      <div className="relative h-screen w-full">
+        <div className="fixed inset-0 -z-10 pointer-events-none bg-background">
+          <Threads
+            color={[0.32, 0.15, 1]}
+            amplitude={2.9}
+            distance={1.1}
+            enableMouseInteraction={false}
+            className="absolute inset-0"
+          />
+        </div>
+        {children}
+      </div>
+    )
   }
 
   return (
     <SidebarInset
       className="relative flex flex-col h-screen overflow-hidden bg-transparent transition-all duration-300"
     >
-      {/* Background Pattern */}
       <div className="fixed inset-0 -z-10 pointer-events-none bg-background">
-        <div
-          className="absolute inset-0 opacity-100 dark:opacity-[0.5]"
-          style={{
-            backgroundImage: `
-               linear-gradient(to right, var(--grid-color, oklch(0.145 0 0 / 0.12)) 1px, transparent 1px),
-               linear-gradient(to bottom, var(--grid-color, oklch(0.145 0 0 / 0.12)) 1px, transparent 1px)
-             `,
-            backgroundSize: "40px 40px",
-            maskImage: "radial-gradient(ellipse 100% 80% at 50% 0%, black 60%, transparent 100%)",
-            WebkitMaskImage: "radial-gradient(ellipse 100% 80% at 50% 0%, black 60%, transparent 100%)",
-          }}
+        <Threads
+          color={[0.32, 0.15, 1]}
+          amplitude={2.9}
+          distance={1.1}
+          enableMouseInteraction={false}
+          className="absolute inset-0 opacity-80 dark:opacity-50"
         />
       </div>
 
