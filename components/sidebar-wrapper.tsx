@@ -53,7 +53,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
       className="relative flex flex-col h-screen overflow-hidden bg-transparent transition-all duration-300"
     >
       <div className="fixed inset-0 -z-10 pointer-events-none bg-background">
-        <ThreadsBackground className="opacity-80 dark:opacity-50" />
+        <ThreadsBackground />
       </div>
 
       <header className={cn(

@@ -19,7 +19,7 @@ export function ThreadsBackground({ className }: ThreadsBackgroundProps) {
       distance={1.1}
       speed={0.01}
       enableMouseInteraction={false}
-      className={cn("absolute inset-0", className)}
+      className={cn("absolute inset-0 opacity-60", className)}
     />
   )
 }
