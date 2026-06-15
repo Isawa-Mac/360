@@ -11,6 +11,7 @@ import {
   Globe,
   FileText,
   Boxes,
+  MessageCircle,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -114,6 +115,14 @@ function HomePageContent() {
       isExternal: true,
       enabled: true,
       requiredPermission: ['erp360.admin.read'],
+    },
+    {
+      title: "Chat bot 360",
+      description: t("chatbot_description"),
+      icon: MessageCircle,
+      url: "https://hermes.trirex.cloud/chat",
+      isExternal: true,
+      enabled: true,
     }
   ]
 
