@@ -134,13 +134,13 @@
   }
 }
 
-.theme-threads-bg {
-  --threads-from: var(
+.theme-gradient-bg {
+  --gradient-from: var(
     --sidebar-gradient-from,
     color-mix(in oklch, var(--primary) 78%, black)
   );
-  --threads-via: var(--sidebar-gradient-via, var(--primary));
-  --threads-to: var(
+  --gradient-via: var(--sidebar-gradient-via, var(--primary));
+  --gradient-to: var(
     --sidebar-gradient-to,
     color-mix(in oklch, var(--primary) 72%, white)
   );
@@ -152,25 +152,25 @@
       168deg,
       transparent 0,
       transparent 32px,
-      color-mix(in oklch, var(--threads-from) 28%, transparent) 32px,
-      color-mix(in oklch, var(--threads-via) 22%, transparent) 33px,
+      color-mix(in oklch, var(--gradient-from) 28%, transparent) 32px,
+      color-mix(in oklch, var(--gradient-via) 22%, transparent) 33px,
       transparent 33px,
       transparent 64px,
-      color-mix(in oklch, var(--threads-to) 18%, transparent) 64px,
-      color-mix(in oklch, var(--threads-via) 14%, transparent) 65px
+      color-mix(in oklch, var(--gradient-to) 18%, transparent) 64px,
+      color-mix(in oklch, var(--gradient-via) 14%, transparent) 65px
     ),
     repeating-linear-gradient(
       174deg,
       transparent 0,
       transparent 52px,
-      color-mix(in oklch, var(--threads-via) 16%, transparent) 52px,
-      color-mix(in oklch, var(--threads-to) 12%, transparent) 53px
+      color-mix(in oklch, var(--gradient-via) 16%, transparent) 52px,
+      color-mix(in oklch, var(--gradient-to) 12%, transparent) 53px
     ),
     linear-gradient(
       180deg,
-      color-mix(in oklch, var(--threads-from) 20%, transparent),
-      color-mix(in oklch, var(--threads-via) 10%, transparent) 45%,
-      color-mix(in oklch, var(--threads-to) 16%, transparent) 100%
+      color-mix(in oklch, var(--gradient-from) 20%, transparent),
+      color-mix(in oklch, var(--gradient-via) 10%, transparent) 45%,
+      color-mix(in oklch, var(--gradient-to) 16%, transparent) 100%
     );
   mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 60%, transparent 100%);
   -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 60%, transparent 100%);

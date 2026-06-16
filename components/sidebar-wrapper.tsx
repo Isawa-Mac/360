@@ -17,7 +17,10 @@ import {
 import { useLanguage } from "@/contexts/language-context"
 import { UserMenu } from "@/components/user-menu"
 import { useAuth } from "@/contexts/auth-context"
-import { ThreadsBackground } from "@/components/threads-background"
+
+function ThemeGradientBackground() {
+  return <div aria-hidden className="theme-gradient-bg absolute inset-0" />
+}
 
 export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -41,7 +44,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
     return (
       <div className="relative h-screen w-full">
         <div className="fixed inset-0 -z-10 pointer-events-none bg-background">
-          <ThreadsBackground />
+          <ThemeGradientBackground />
         </div>
         {children}
       </div>
@@ -53,7 +56,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
       className="relative flex flex-col h-screen overflow-hidden bg-transparent transition-all duration-300"
     >
       <div className="fixed inset-0 -z-10 pointer-events-none bg-background">
-        <ThreadsBackground />
+        <ThemeGradientBackground />
       </div>
 
       <header className={cn(
