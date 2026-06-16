@@ -56,4 +56,8 @@ export function applyThemeAccentProperties(themeColor: string): void {
     `color-mix(in oklch, ${themeColor} 72%, white)`
   );
   rootStyle.setProperty("--ring", themeColor);
+  rootStyle.setProperty(
+    "--grid-color",
+    `color-mix(in oklch, ${themeColor} 14%, transparent)`
+  );
 }

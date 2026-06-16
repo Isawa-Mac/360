@@ -1,27 +1,24 @@
 ---
 name: theme-wind-gradient-background
-description: Implements a static SVG wind-curve app background with procedurally random curved lines (regenerated on page reload). Follows themeColor CSS variables, sits beneath sidebar and header with glass overlays, and avoids WebGL, react-bits, or CSS animation. Use when adding or updating app shell background, ThemeGradientBackground, AppShellBackground, wind lines from the bottom, or transparent sidebar/header over a global background.
+description: Implements nexusSSO-style CSS grid app background with radial fade from top. Uses --grid-color and sits beneath sidebar/header with glass overlays. Use when adding or updating AppShellBackground or transparent sidebar/header over a global background.
 ---
 
-# Theme Wind Gradient Background
+# App Shell Grid Background (nexusSSO pattern)
 
-Project reference implementation lives in:
+Reference: `nexusSSO/components/Layout.tsx`
 
-- `components/theme-gradient-background.tsx`
+Project implementation:
+
 - `components/app-shell-background.tsx`
-- `lib/wind-background-lines.ts` (random bezier path generator)
-- `app/globals.css` (`.theme-gradient-bg`, `.app-shell-bg`, glass rules)
-- `app/layout.tsx` (`<AppShellBackground />` inside `SidebarProvider`)
-
-For full templates and integration steps, read the shared skill:
-
-`~/.agents/skills/theme-wind-gradient-background/SKILL.md`
+- `app/globals.css` (`.app-shell-bg`, `.app-shell-bg__grid`, `--grid-color`, glass rules)
+- `app/layout.tsx` (`<AppShellBackground />` in body)
+- `lib/theme-local.ts` (`applyThemeAccentProperties` sets `--grid-color`)
 
 Quick rules:
 
-1. Mount background at shell root — not inside `SidebarInset`
-2. Static SVG only — no react-bits, no WebGL, **no CSS animation**
-3. **Chessboard grid** — alternating light/dark SVG cells with theme colors
-4. Random cell size/offset on reload — static, no animation
-5. Colors from `--sidebar-gradient-from/via/to` (from `themeColor`)
-6. Sidebar + header use glass (`backdrop-filter`) so lines show underneath
+1. Mount `AppShellBackground` at shell root (body level)
+2. CSS grid only — `linear-gradient` 40×40px, no SVG, no animation
+3. Radial mask fade from top: `ellipse 100% 80% at 50% 0%`
+4. `--grid-color` from theme accent (`color-mix(in oklch, themeColor 14%, transparent)`)
+5. Dark mode: grid layer `opacity: 0.5`
+6. Sidebar + header use glass (`backdrop-filter`) so grid shows underneath
