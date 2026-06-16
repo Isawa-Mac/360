@@ -63,7 +63,7 @@ export default async function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var raw=localStorage.getItem('themeLocal');if(!raw)return;var color=raw.trim();if(color.charAt(0)==='{'){var o=JSON.parse(color);color=(o.themeColor||'').trim();}if(!color)return;var s=document.documentElement.style;s.setProperty('--primary',color);s.setProperty('--sidebar-primary',color);s.setProperty('--sidebar-gradient-from','color-mix(in oklch, '+color+' 78%, black)');s.setProperty('--sidebar-gradient-via',color);s.setProperty('--sidebar-gradient-to','color-mix(in oklch, '+color+' 72%, white)');s.setProperty('--ring',color);s.setProperty('--grid-color','color-mix(in oklch, '+color+' 14%, transparent)');}catch(e){}})();`,
+            __html: `(function(){try{var raw=localStorage.getItem('themeLocal');if(!raw)return;var color=raw.trim();if(color.charAt(0)==='{'){var o=JSON.parse(color);color=(o.themeColor||'').trim();}if(!color)return;var s=document.documentElement.style;s.setProperty('--primary',color);s.setProperty('--sidebar-primary',color);s.setProperty('--sidebar-gradient-from','color-mix(in oklch, '+color+' 78%, black)');s.setProperty('--sidebar-gradient-via',color);s.setProperty('--sidebar-gradient-to','color-mix(in oklch, '+color+' 72%, white)');s.setProperty('--ring',color);s.setProperty('--grid-color','color-mix(in oklch, '+color+' 14%, transparent)');s.setProperty('--header-tint',color);}catch(e){}})();`,
           }}
         />
         {themeColor && (
@@ -77,6 +77,7 @@ export default async function RootLayout({
                 --sidebar-gradient-to: color-mix(in oklch, ${themeColor} 72%, white);
                 --ring: ${themeColor};
                 --grid-color: color-mix(in oklch, ${themeColor} 14%, transparent);
+                --header-tint: ${themeColor};
               }
               :root {
                 font-size: ${fontScale}%;

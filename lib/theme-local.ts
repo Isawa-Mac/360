@@ -60,4 +60,5 @@ export function applyThemeAccentProperties(themeColor: string): void {
     "--grid-color",
     `color-mix(in oklch, ${themeColor} 14%, transparent)`
   );
+  rootStyle.setProperty("--header-tint", themeColor);
 }
