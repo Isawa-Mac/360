@@ -37,7 +37,7 @@ function ProfileAvatar({
   return (
     <span className="inline-flex rounded-full bg-[conic-gradient(from_210deg,color-mix(in_oklch,var(--primary)_36%,white)_0_26%,var(--primary)_26%_100%)] p-[2px] shadow-sm">
       <Avatar className={className}>
-        {avatarSrc ? <AvatarImage src={avatarSrc} alt={name} /> : null}
+        {avatarSrc ? <AvatarImage src={avatarSrc} alt={name} referrerPolicy="no-referrer" /> : null}
         <AvatarFallback className={fallbackClassName}>
           {initials}
         </AvatarFallback>

@@ -17,6 +17,7 @@ import {
 import { useLanguage } from "@/contexts/language-context"
 import { UserMenu } from "@/components/user-menu"
 import { useAuth } from "@/contexts/auth-context"
+import { normalizeProfileImageSrc } from "@/lib/profile-image"
 
 export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -75,7 +76,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
           <UserMenu
             name={user?.username || t("guest")}
             email={user?.email || ""}
-            avatarSrc={user?.avatarUrl}
+            avatarSrc={normalizeProfileImageSrc(user?.avatarUrl) || undefined}
             avatarFallback={(() => {
               const n = user?.username || user?.email || ""
               if (n.length >= 2) return n.slice(0, 2).toUpperCase()

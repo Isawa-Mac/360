@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { normalizeProfileImageSrc } from "@/lib/profile-image";
 
 type ValidateTokenResponse = {
   valid: boolean;
@@ -29,7 +30,10 @@ function resolveAvatarUrl(user: ValidateTokenResponse["user"]): string | undefin
     user?.photoUrl,
     user?.photoURL,
   ];
-  return candidates.find((value) => typeof value === "string" && value.trim().length > 0)?.trim();
+  const raw = candidates.find((value) => typeof value === "string" && value.trim().length > 0)?.trim();
+  if (!raw) return undefined;
+  const normalized = normalizeProfileImageSrc(raw);
+  return normalized || undefined;
 }
 
 const SSO_BASE_URL =

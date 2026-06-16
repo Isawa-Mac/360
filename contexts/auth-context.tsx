@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { SpinnerCustom } from "@/components/ui/spinner-custom";
+import { normalizeProfileImageSrc } from "@/lib/profile-image";
 import { checkSSOSession } from "@/lib/sso-utils";
 import {
     applyThemeAccentProperties,
@@ -40,7 +41,10 @@ function resolveAvatarUrl(...sources: Array<AvatarSource | null | undefined>): s
             source.photoURL,
         ];
         const avatarUrl = candidates.find((value) => typeof value === "string" && value.trim().length > 0);
-        if (avatarUrl) return avatarUrl.trim();
+        if (avatarUrl) {
+            const normalized = normalizeProfileImageSrc(avatarUrl.trim());
+            if (normalized) return normalized;
+        }
     }
     return undefined;
 }
@@ -234,6 +238,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         window.location.href = url;
     }, []);
 
+    /** ดึง avatar/profile จาก SSO validate-token แล้ว merge กลับ state + localStorage */
+    const syncUserFromSSOSession = useCallback(async (baseUser?: User) => {
+        try {
+            const session = await checkSSOSession();
+            if (!session?.authenticated || !session.user) return;
+
+            const u = session.user;
+            let stored: AvatarSource = {};
+            try {
+                const raw = localStorage.getItem("nexus_user");
+                stored = raw ? JSON.parse(raw) : {};
+            } catch {
+                stored = {};
+            }
+
+            const avatarUrl = resolveAvatarUrl(u, stored, baseUser);
+            const fullUser: User = {
+                id: u.id ?? baseUser?.id ?? (stored as { id?: string }).id,
+                username: u.username || u.email || baseUser?.username || "",
+                email: u.email ?? baseUser?.email,
+                avatarUrl,
+                roles: u.roles ?? baseUser?.roles ?? [],
+                permissions: u.permissions ?? baseUser?.permissions,
+                isSuperAdmin: u.isSuperAdmin ?? u.permissions?.includes("*") ?? baseUser?.isSuperAdmin,
+            };
+
+            setUser(fullUser);
+            localStorage.setItem("nexus_user", JSON.stringify({ ...stored, ...fullUser, avatarUrl }));
+        } catch {
+            // ignore
+        }
+    }, []);
+
     /** ลอง bootstrap จาก shared cookie (รองรับ tenant suffix). คืน true ถ้าสำเร็จ */
     const tryBootstrapFromSharedCookie = useCallback((): boolean => {
         if (typeof document === "undefined") return false;
@@ -338,12 +375,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     null
                 );
             }
+            void syncUserFromSSOSession(nexusInsightUser);
             return true;
         } catch (e) {
             console.error("Failed to bootstrap from shared cookie", e);
             return false;
         }
-    }, []);
+    }, [syncUserFromSSOSession]);
 
     function setCookie(name: string, value: string, maxAgeDays: number = THEME_COOKIE_MAX_AGE_DAYS) {
         if (typeof document === "undefined") return;
@@ -521,23 +559,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setUser(nexusInsightUser);
                 setIsAuthenticated(true);
                 setIsLoading(false);
-                // ดึง session ทันทีเพื่ออัปเดต avatarUrl (แก้รูปหายตอน reload)
-                checkSSOSession().then((session) => {
-                    if (session?.authenticated && session.user) {
-                        const u = session.user;
-                        const fullUser: User = {
-                            id: u.id,
-                            username: u.username || u.email,
-                            email: u.email,
-                            avatarUrl: resolveAvatarUrl(u, userObj),
-                            roles: [],
-                            permissions: u.permissions,
-                            isSuperAdmin: u.permissions?.includes("*"),
-                        };
-                        setUser(fullUser);
-                        localStorage.setItem("nexus_user", JSON.stringify(fullUser));
-                    }
-                }).catch(() => {});
+                void syncUserFromSSOSession(nexusInsightUser);
             } catch (e) {
                 console.error("Failed to parse nexus user", e);
                 setIsLoading(false);
@@ -550,7 +572,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setIsLoading(false);
             }
         }
-    }, [tryBootstrapFromSharedCookie, redirectToSSO]);
+    }, [tryBootstrapFromSharedCookie, redirectToSSO, syncUserFromSSOSession]);
 
     // Removed: SHARED_COOKIE_POLL useEffect
 
@@ -663,6 +685,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         channelRef.current
                     );
                 }
+                await syncUserFromSSOSession(nexusUser);
             }
         } catch (error) {
             console.error("Code exchange failed:", error);
