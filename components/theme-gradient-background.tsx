@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useId, useState, type CSSProperties } from "react"
+import { useEffect, useId, useState } from "react"
 import { cn } from "@/lib/utils"
 import { generateWindBackgroundLines, type WindBackgroundLine } from "@/lib/wind-background-lines"
 
@@ -34,29 +34,16 @@ export function ThemeGradientBackground({ className }: ThemeGradientBackgroundPr
         </defs>
 
         {lines.map((line) => (
-          <g
+          <path
             key={line.id}
-            className="theme-gradient-bg__line-group"
-            style={
-              {
-                "--wind-duration": `${line.duration}s`,
-                "--wind-delay": `${line.delay}s`,
-                "--wind-stroke-duration": `${line.strokeDuration}s`,
-                "--wind-sway": line.sway,
-                "--wind-opacity": line.opacity,
-              } as CSSProperties
-            }
-          >
-            <path
-              d={line.d}
-              className="theme-gradient-bg__line"
-              style={{
-                stroke: `url(#wind-line-gradient-${gradientId})`,
-                strokeOpacity: line.opacity,
-                strokeWidth: line.strokeWidth,
-              }}
-            />
-          </g>
+            d={line.d}
+            className="theme-gradient-bg__line"
+            style={{
+              stroke: `url(#wind-line-gradient-${gradientId})`,
+              strokeOpacity: line.opacity,
+              strokeWidth: line.strokeWidth,
+            }}
+          />
         ))}
       </svg>
     </div>
