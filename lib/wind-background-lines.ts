@@ -5,6 +5,19 @@ export type WindBackgroundLine = {
   strokeWidth: number
 }
 
+type WaveParams = {
+  freq1: number
+  freq2: number
+  freq3: number
+  amp1: number
+  amp2: number
+  amp3: number
+  phase1: number
+  phase2: number
+  phase3: number
+  lineBias: number
+}
+
 function mulberry32(seed: number) {
   let state = seed
   return () => {
@@ -16,59 +29,58 @@ function mulberry32(seed: number) {
   }
 }
 
-/** สร้างเส้นโค้ง bezier แบบกระแสลม — สุ่มใหม่ทุกครั้งที่ reload */
-function createWindPath(rng: () => number, laneIndex: number, laneCount: number): string {
-  const spread = 920 / Math.max(laneCount - 1, 1)
-  const drift = (rng() - 0.5) * 2
-  let x = -120 + laneIndex * spread * 0.52 + (rng() - 0.5) * spread * 0.55
-  let y = 930 + rng() * 95
-  const segmentCount = 4 + Math.floor(rng() * 3)
-  let path = `M ${x.toFixed(1)} ${y.toFixed(1)}`
+function waveY(x: number, baseY: number, lineIndex: number, params: WaveParams): number {
+  return (
+    baseY +
+    Math.sin(x * params.freq1 + params.phase1 + lineIndex * params.lineBias) * params.amp1 +
+    Math.sin(x * params.freq2 + params.phase2 - lineIndex * 0.22) * params.amp2 +
+    Math.sin(x * params.freq3 + params.phase3 + lineIndex * 0.11) * params.amp3
+  )
+}
 
-  for (let segment = 0; segment < segmentCount; segment += 1) {
-    const rise = 95 + rng() * 155
-    const run = 130 + rng() * 195 + drift * 45
-    const wave = Math.sin(segment * 1.35 + laneIndex * 0.55 + rng()) * (35 + rng() * 55)
-    const targetX = x + run + wave
-    const targetY = Math.max(-150, y - rise)
-
-    const cp1x = x + run * (0.28 + rng() * 0.18) + drift * 30
-    const cp1y = y - rise * (0.28 + rng() * 0.22)
-    const cp2x = targetX - run * (0.22 + rng() * 0.18) + wave * 0.45
-    const cp2y = targetY + rise * (0.18 + rng() * 0.16)
-
-    path += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${targetX.toFixed(1)} ${targetY.toFixed(1)}`
-    x = targetX
-    y = targetY
+/** เส้นโค้งแนวนอนแบบคลื่นน้ำ — สุ่มใหม่ทุกครั้งที่ reload */
+function createWavePath(rng: () => number, lineIndex: number, lineCount: number): string {
+  const params: WaveParams = {
+    freq1: 0.0028 + rng() * 0.0055,
+    freq2: 0.0055 + rng() * 0.009,
+    freq3: 0.0012 + rng() * 0.0028,
+    amp1: 22 + rng() * 48,
+    amp2: 12 + rng() * 32,
+    amp3: 6 + rng() * 18,
+    phase1: rng() * Math.PI * 2,
+    phase2: rng() * Math.PI * 2,
+    phase3: rng() * Math.PI * 2,
+    lineBias: 0.18 + rng() * 0.22,
   }
 
-  if (rng() > 0.2) {
-    const tailRun = 100 + rng() * 150
-    const tailRise = 70 + rng() * 110
-    const tailX = x + tailRun + drift * 35
-    const tailY = Math.max(-180, y - tailRise)
-    const smoothX = x + tailRun * 0.45 + waveOffset(rng, laneIndex)
-    const smoothY = y - tailRise * 0.35
-    path += ` S ${smoothX.toFixed(1)} ${smoothY.toFixed(1)}, ${tailX.toFixed(1)} ${tailY.toFixed(1)}`
+  const t = lineIndex / Math.max(lineCount - 1, 1)
+  const baseY = 320 + t * 560 + (rng() - 0.5) * 28
+  const startX = -120
+  const endX = 1560
+  const steps = 36
+
+  let path = ""
+  for (let step = 0; step <= steps; step += 1) {
+    const x = startX + (step / steps) * (endX - startX)
+    const y = waveY(x, baseY, lineIndex, params)
+    path += step === 0 ? `M ${x.toFixed(1)} ${y.toFixed(1)}` : ` L ${x.toFixed(1)} ${y.toFixed(1)}`
   }
 
   return path
 }
 
-function waveOffset(rng: () => number, laneIndex: number): number {
-  return Math.sin(laneIndex * 0.7 + rng() * 2) * (20 + rng() * 40)
-}
-
-export function generateWindBackgroundLines(seed: number, count = 16): WindBackgroundLine[] {
+export function generateWindBackgroundLines(seed: number, count = 20): WindBackgroundLine[] {
   const rng = mulberry32(seed)
+  const lineCount = count + Math.floor(rng() * 6)
   const lines: WindBackgroundLine[] = []
 
-  for (let index = 0; index < count; index += 1) {
+  for (let index = 0; index < lineCount; index += 1) {
+    const depth = index / Math.max(lineCount - 1, 1)
     lines.push({
       id: index,
-      d: createWindPath(rng, index, count),
-      opacity: 0.16 + rng() * 0.22,
-      strokeWidth: 0.95 + rng() * 1.25,
+      d: createWavePath(rng, index, lineCount),
+      opacity: 0.1 + depth * 0.22 + rng() * 0.06,
+      strokeWidth: 0.75 + rng() * 0.9,
     })
   }
 

@@ -14,7 +14,7 @@ export function ThemeGradientBackground({ className }: ThemeGradientBackgroundPr
 
   useEffect(() => {
     const seed = Math.floor(Math.random() * 1_000_000_000)
-    setLines(generateWindBackgroundLines(seed, 16 + Math.floor(Math.random() * 5)))
+    setLines(generateWindBackgroundLines(seed))
   }, [])
 
   return (
