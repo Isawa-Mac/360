@@ -1,20 +1,18 @@
 "use client"
 
-import { useEffect, useId, useState } from "react"
+import { useLayoutEffect, useState } from "react"
 import { cn } from "@/lib/utils"
-import { generateWindBackgroundLines, type WindBackgroundLine } from "@/lib/wind-background-lines"
+import { generateChessboardBackground } from "@/lib/wind-background-lines"
 
 type ThemeGradientBackgroundProps = {
   className?: string
 }
 
 export function ThemeGradientBackground({ className }: ThemeGradientBackgroundProps) {
-  const gradientId = useId().replace(/:/g, "")
-  const [lines, setLines] = useState<WindBackgroundLine[]>([])
+  const [pattern, setPattern] = useState(() => generateChessboardBackground(42))
 
-  useEffect(() => {
-    const seed = Math.floor(Math.random() * 1_000_000_000)
-    setLines(generateWindBackgroundLines(seed))
+  useLayoutEffect(() => {
+    setPattern(generateChessboardBackground(Math.floor(Math.random() * 1_000_000_000)))
   }, [])
 
   return (
@@ -25,24 +23,17 @@ export function ThemeGradientBackground({ className }: ThemeGradientBackgroundPr
         viewBox="0 0 1440 900"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <defs>
-          <linearGradient id={`wind-line-gradient-${gradientId}`} x1="0" y1="1" x2="0.75" y2="0">
-            <stop offset="0%" stopColor="var(--gradient-from)" />
-            <stop offset="45%" stopColor="var(--gradient-via)" />
-            <stop offset="100%" stopColor="var(--gradient-to)" />
-          </linearGradient>
-        </defs>
-
-        {lines.map((line) => (
-          <path
-            key={line.id}
-            d={line.d}
-            className="theme-gradient-bg__line"
-            style={{
-              stroke: `url(#wind-line-gradient-${gradientId})`,
-              strokeOpacity: line.opacity,
-              strokeWidth: line.strokeWidth,
-            }}
+        {pattern.cells.map((cell) => (
+          <rect
+            key={cell.id}
+            x={cell.x}
+            y={cell.y}
+            width={cell.width}
+            height={cell.height}
+            className={cn(
+              "theme-gradient-bg__cell",
+              cell.variant === "dark" ? "theme-gradient-bg__cell--dark" : "theme-gradient-bg__cell--light"
+            )}
           />
         ))}
       </svg>

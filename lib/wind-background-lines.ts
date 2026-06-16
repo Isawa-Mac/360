@@ -1,8 +1,14 @@
-export type WindBackgroundLine = {
+export type ChessboardCell = {
   id: number
-  d: string
-  opacity: number
-  strokeWidth: number
+  x: number
+  y: number
+  width: number
+  height: number
+  variant: "light" | "dark"
+}
+
+export type ChessboardPattern = {
+  cells: ChessboardCell[]
 }
 
 function mulberry32(seed: number) {
@@ -16,40 +22,33 @@ function mulberry32(seed: number) {
   }
 }
 
-/** ตารางเส้นตรงแนวนอน + แนวตั้ง — สุ่ม spacing ใหม่ทุกครั้งที่ reload */
-export function generateWindBackgroundLines(seed: number): WindBackgroundLine[] {
+/** ตารางหมากรุก (ช่องสลับสี) — สุ่มขนาดช่องใหม่ทุกครั้งที่ reload */
+export function generateChessboardBackground(seed: number): ChessboardPattern {
   const rng = mulberry32(seed)
-  const rowCount = 11 + Math.floor(rng() * 4)
-  const colCount = 14 + Math.floor(rng() * 5)
-  const lines: WindBackgroundLine[] = []
+  const cellWidth = 52 + Math.floor(rng() * 40)
+  const cellHeight = 52 + Math.floor(rng() * 40)
+  const originX = -Math.floor(rng() * cellWidth)
+  const originY = -Math.floor(rng() * cellHeight)
+
+  const viewW = 1440
+  const viewH = 900
+  const cols = Math.ceil((viewW - originX) / cellWidth) + 1
+  const rows = Math.ceil((viewH - originY) / cellHeight) + 1
+  const cells: ChessboardCell[] = []
   let id = 0
 
-  const xStart = -60
-  const xEnd = 1500
-  const yStart = 280
-  const yEnd = 920
-
-  for (let row = 0; row <= rowCount; row += 1) {
-    const y = yStart + (row / rowCount) * (yEnd - yStart)
-    const depth = row / rowCount
-    lines.push({
-      id: id++,
-      d: `M ${xStart.toFixed(1)} ${y.toFixed(1)} L ${xEnd.toFixed(1)} ${y.toFixed(1)}`,
-      opacity: 0.09 + depth * 0.2 + rng() * 0.05,
-      strokeWidth: 0.7 + rng() * 0.55,
-    })
+  for (let row = 0; row < rows; row += 1) {
+    for (let col = 0; col < cols; col += 1) {
+      cells.push({
+        id: id++,
+        x: originX + col * cellWidth,
+        y: originY + row * cellHeight,
+        width: cellWidth,
+        height: cellHeight,
+        variant: (row + col) % 2 === 0 ? "light" : "dark",
+      })
+    }
   }
 
-  for (let col = 0; col <= colCount; col += 1) {
-    const x = xStart + (col / colCount) * (xEnd - xStart)
-    const depth = col / colCount
-    lines.push({
-      id: id++,
-      d: `M ${x.toFixed(1)} ${yStart.toFixed(1)} L ${x.toFixed(1)} ${yEnd.toFixed(1)}`,
-      opacity: 0.08 + depth * 0.18 + rng() * 0.05,
-      strokeWidth: 0.65 + rng() * 0.5,
-    })
-  }
-
-  return lines
+  return { cells }
 }

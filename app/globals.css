@@ -141,7 +141,7 @@
     color-mix(in oklch, var(--primary) 72%, white)
   );
 
-  opacity: 0.6;
+  opacity: 1;
   overflow: hidden;
   pointer-events: none;
 }
@@ -177,16 +177,26 @@
   box-shadow: none;
 }
 
-.theme-gradient-bg__line {
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.theme-gradient-bg__cell {
+  stroke: var(--gradient-via);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.theme-gradient-bg__cell--light {
+  fill: var(--gradient-to);
+  fill-opacity: 0.07;
+  stroke-opacity: 0.22;
+}
+
+.theme-gradient-bg__cell--dark {
+  fill: var(--gradient-from);
+  fill-opacity: 0.16;
+  stroke-opacity: 0.32;
 }
 
 .theme-gradient-bg svg {
   display: block;
   width: 100%;
   height: 100%;
-  mask-image: radial-gradient(ellipse 120% 90% at 50% 100%, black 35%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 120% 90% at 50% 100%, black 35%, transparent 100%);
 }

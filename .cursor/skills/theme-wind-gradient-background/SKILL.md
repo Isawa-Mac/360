@@ -21,7 +21,7 @@ Quick rules:
 
 1. Mount background at shell root — not inside `SidebarInset`
 2. Static SVG only — no react-bits, no WebGL, **no CSS animation**
-3. Background grid uses **straight horizontal + vertical lines** generated on mount/reload
-4. Random row/column spacing and opacity — no curves, no animation
+3. **Chessboard grid** — alternating light/dark SVG cells with theme colors
+4. Random cell size/offset on reload — static, no animation
 5. Colors from `--sidebar-gradient-from/via/to` (from `themeColor`)
 6. Sidebar + header use glass (`backdrop-filter`) so lines show underneath
