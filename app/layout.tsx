@@ -16,6 +16,7 @@ import { HeaderControlProvider } from "@/contexts/header-control-context";
 import { ModuleProvider } from "@/contexts/module-context";
 import { DashboardScaleProvider } from "@/contexts/dashboard-scale-context";
 import { AppShellBackground } from "@/components/app-shell-background";
+import { ThemeSync } from "@/components/theme-sync";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -60,6 +61,11 @@ export default async function RootLayout({
   return (
     <html lang="th" className={`${inter.variable} ${sarabun.variable}`} suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var raw=localStorage.getItem('themeLocal');if(!raw)return;var color=raw.trim();if(color.charAt(0)==='{'){var o=JSON.parse(color);color=(o.themeColor||'').trim();}if(!color)return;var s=document.documentElement.style;s.setProperty('--primary',color);s.setProperty('--sidebar-primary',color);s.setProperty('--sidebar-gradient-from','color-mix(in oklch, '+color+' 78%, black)');s.setProperty('--sidebar-gradient-via',color);s.setProperty('--sidebar-gradient-to','color-mix(in oklch, '+color+' 72%, white)');s.setProperty('--ring',color);}catch(e){}})();`,
+          }}
+        />
         {themeColor && (
           <style dangerouslySetInnerHTML={{
             __html: `
@@ -96,6 +102,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <ThemeSync />
           <LanguageProvider>
             <AuthProvider>
               <SidebarProvider defaultOpen={defaultOpen}>

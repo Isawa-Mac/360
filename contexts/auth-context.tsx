@@ -3,6 +3,11 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { SpinnerCustom } from "@/components/ui/spinner-custom";
 import { checkSSOSession } from "@/lib/sso-utils";
+import {
+    applyThemeAccentProperties,
+    getThemeLocalColor,
+    resolveThemeAccentColor,
+} from "@/lib/theme-local";
 
 interface User {
     id?: string;
@@ -66,10 +71,9 @@ function resolveThemePreference(...fallbacks: Array<string | null | undefined>):
 }
 
 function resolveThemeColorPreference(...fallbacks: Array<string | null | undefined>): string | null {
-    if (typeof window !== "undefined") {
-        const storedThemeColor = localStorage.getItem("themeColor");
-        if (storedThemeColor?.trim()) return storedThemeColor.trim();
-    }
+    const fromThemeLocal = getThemeLocalColor();
+    if (fromThemeLocal) return fromThemeLocal;
+
     for (const fallback of fallbacks) {
         if (fallback?.trim()) return fallback.trim();
     }
@@ -206,13 +210,7 @@ function getCookie(name: string): string | null {
 }
 
 function applyThemeColorProperties(themeColor: string): void {
-    if (typeof document === "undefined") return;
-    document.documentElement.style.setProperty("--primary", themeColor);
-    document.documentElement.style.setProperty("--sidebar-primary", themeColor);
-    document.documentElement.style.setProperty("--sidebar-gradient-from", `color-mix(in oklch, ${themeColor} 78%, black)`);
-    document.documentElement.style.setProperty("--sidebar-gradient-via", themeColor);
-    document.documentElement.style.setProperty("--sidebar-gradient-to", `color-mix(in oklch, ${themeColor} 72%, white)`);
-    document.documentElement.style.setProperty("--ring", themeColor);
+    applyThemeAccentProperties(themeColor);
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -479,8 +477,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 localStorage.setItem("themeColor", themeColor);
                 applyThemeColorProperties(themeColor);
             } else {
-                const fallbackColor = localStorage.getItem("themeColor") || "oklch(0.205 0 0)";
-                applyThemeColorProperties(fallbackColor);
+                applyThemeColorProperties(resolveThemeAccentColor(appThemeColor, sharedThemeColor));
             }
         }
     }, []);
