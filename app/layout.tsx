@@ -15,6 +15,7 @@ import { FullscreenProvider } from "@/contexts/fullscreen-context";
 import { HeaderControlProvider } from "@/contexts/header-control-context";
 import { ModuleProvider } from "@/contexts/module-context";
 import { DashboardScaleProvider } from "@/contexts/dashboard-scale-context";
+import { AppShellBackground } from "@/components/app-shell-background";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -98,6 +99,7 @@ export default async function RootLayout({
           <LanguageProvider>
             <AuthProvider>
               <SidebarProvider defaultOpen={defaultOpen}>
+                <AppShellBackground />
                 <AppSidebar />
                 <HeaderControlProvider>
                 <FullscreenProvider>

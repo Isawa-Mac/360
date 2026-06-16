@@ -18,10 +18,6 @@ import { useLanguage } from "@/contexts/language-context"
 import { UserMenu } from "@/components/user-menu"
 import { useAuth } from "@/contexts/auth-context"
 
-function ThemeGradientBackground() {
-  return <div aria-hidden className="theme-gradient-bg absolute inset-0" />
-}
-
 export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { t } = useLanguage()
@@ -41,26 +37,15 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const isAuthPage = pathname?.startsWith('/auth/')
 
   if (isAuthPage) {
-    return (
-      <div className="relative h-screen w-full">
-        <div className="fixed inset-0 -z-10 pointer-events-none bg-background">
-          <ThemeGradientBackground />
-        </div>
-        {children}
-      </div>
-    )
+    return <div className="relative h-screen w-full">{children}</div>
   }
 
   return (
     <SidebarInset
       className="relative flex flex-col h-screen overflow-hidden bg-transparent transition-all duration-300"
     >
-      <div className="fixed inset-0 -z-10 pointer-events-none bg-background">
-        <ThemeGradientBackground />
-      </div>
-
       <header className={cn(
-        "sticky top-0 z-50 flex h-12 shrink-0 items-center gap-2 bg-background/80 backdrop-blur-md border-b px-4",
+        "app-shell-header sticky top-0 z-50 flex h-12 shrink-0 items-center gap-2 border-b px-4",
         isGlobalHeaderHidden && "hidden"
       )}>
         <SidebarTrigger className="-ml-1" />
