@@ -45,7 +45,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
       className="relative flex flex-col h-screen overflow-hidden bg-transparent transition-all duration-300"
     >
       <header className={cn(
-        "app-shell-header sticky top-0 z-50 flex h-12 shrink-0 items-center gap-2 border-b border-border px-4",
+        "app-shell-header sticky top-0 z-50 flex h-12 shrink-0 items-center gap-2 px-4",
         isGlobalHeaderHidden && "hidden"
       )}>
         <SidebarTrigger className="-ml-1" />

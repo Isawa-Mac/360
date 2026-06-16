@@ -94,8 +94,9 @@ export default async function RootLayout({
         )}
       </head>
       <body
-        className={`${sarabun.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${sarabun.className} ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
+        <AppShellBackground />
         <ThemeProvider
           attribute="class"
           defaultTheme={defaultTheme}
@@ -106,7 +107,6 @@ export default async function RootLayout({
           <LanguageProvider>
             <AuthProvider>
               <SidebarProvider defaultOpen={defaultOpen}>
-                <AppShellBackground />
                 <AppSidebar />
                 <HeaderControlProvider>
                 <FullscreenProvider>
