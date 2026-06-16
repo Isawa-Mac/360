@@ -59,7 +59,7 @@ export default async function RootLayout({
   const fontScale = sharedScale ? parseInt(sharedScale) : 100;
 
   return (
-    <html lang="th" className={`${inter.variable} ${sarabun.variable}`} suppressHydrationWarning>
+    <html lang="th" className={`${inter.variable} ${sarabun.variable} bg-background`} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
