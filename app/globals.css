@@ -177,11 +177,52 @@
   box-shadow: none;
 }
 
+.theme-gradient-bg__line-group {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: theme-wind-sway var(--wind-duration, 14s) ease-in-out infinite;
+  animation-delay: var(--wind-delay, 0s);
+  will-change: transform;
+}
+
 .theme-gradient-bg__line {
   fill: none;
-  stroke: url(#wind-line-gradient);
   stroke-linecap: round;
   stroke-linejoin: round;
+  stroke-dasharray: 680 420;
+  animation: theme-wind-flow var(--wind-stroke-duration, 22s) linear infinite;
+  animation-delay: var(--wind-delay, 0s);
+}
+
+@keyframes theme-wind-sway {
+  0%,
+  100% {
+    transform: translate3d(calc(var(--wind-sway, 1) * -1.2%), 0.4%, 0) rotate(calc(var(--wind-sway, 1) * -0.35deg));
+  }
+  35% {
+    transform: translate3d(calc(var(--wind-sway, 1) * 2.4%), calc(var(--wind-sway, 1) * -1.8%), 0)
+      rotate(calc(var(--wind-sway, 1) * 0.45deg));
+  }
+  68% {
+    transform: translate3d(calc(var(--wind-sway, 1) * -1.8%), calc(var(--wind-sway, 1) * -2.6%), 0)
+      rotate(calc(var(--wind-sway, 1) * -0.25deg));
+  }
+}
+
+@keyframes theme-wind-flow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -2200;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-gradient-bg__line-group,
+  .theme-gradient-bg__line {
+    animation: none;
+  }
 }
 
 .theme-gradient-bg svg {
