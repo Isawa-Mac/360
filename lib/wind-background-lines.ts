@@ -5,17 +5,13 @@ export type WindBackgroundLine = {
   strokeWidth: number
 }
 
-type WaveParams = {
-  freq1: number
-  freq2: number
-  freq3: number
-  amp1: number
-  amp2: number
-  amp3: number
-  phase1: number
-  phase2: number
-  phase3: number
-  lineBias: number
+type GridWarp = {
+  freqX: number
+  freqY: number
+  ampX: number
+  ampY: number
+  phaseX: number
+  phaseY: number
 }
 
 function mulberry32(seed: number) {
@@ -29,58 +25,90 @@ function mulberry32(seed: number) {
   }
 }
 
-function waveY(x: number, baseY: number, lineIndex: number, params: WaveParams): number {
-  return (
-    baseY +
-    Math.sin(x * params.freq1 + params.phase1 + lineIndex * params.lineBias) * params.amp1 +
-    Math.sin(x * params.freq2 + params.phase2 - lineIndex * 0.22) * params.amp2 +
-    Math.sin(x * params.freq3 + params.phase3 + lineIndex * 0.11) * params.amp3
-  )
+function warpPoint(x: number, y: number, warp: GridWarp): { x: number; y: number } {
+  const dx =
+    Math.sin(y * warp.freqY + warp.phaseY) * warp.ampX +
+    Math.sin(x * warp.freqX * 0.65 + warp.phaseX) * warp.ampX * 0.4
+  const dy =
+    Math.sin(x * warp.freqX + warp.phaseX) * warp.ampY +
+    Math.sin(y * warp.freqY * 0.75 + warp.phaseY) * warp.ampY * 0.4
+  return { x: x + dx, y: y + dy }
 }
 
-/** เส้นโค้งแนวนอนแบบคลื่นน้ำ — สุ่มใหม่ทุกครั้งที่ reload */
-function createWavePath(rng: () => number, lineIndex: number, lineCount: number): string {
-  const params: WaveParams = {
-    freq1: 0.0028 + rng() * 0.0055,
-    freq2: 0.0055 + rng() * 0.009,
-    freq3: 0.0012 + rng() * 0.0028,
-    amp1: 22 + rng() * 48,
-    amp2: 12 + rng() * 32,
-    amp3: 6 + rng() * 18,
-    phase1: rng() * Math.PI * 2,
-    phase2: rng() * Math.PI * 2,
-    phase3: rng() * Math.PI * 2,
-    lineBias: 0.18 + rng() * 0.22,
-  }
+function buildPolylinePath(points: Array<{ x: number; y: number }>): string {
+  return points
+    .map((point, index) =>
+      index === 0 ? `M ${point.x.toFixed(1)} ${point.y.toFixed(1)}` : ` L ${point.x.toFixed(1)} ${point.y.toFixed(1)}`
+    )
+    .join("")
+}
 
-  const t = lineIndex / Math.max(lineCount - 1, 1)
-  const baseY = 320 + t * 560 + (rng() - 0.5) * 28
-  const startX = -120
-  const endX = 1560
-  const steps = 36
+function createHorizontalGridLine(logicalY: number, warp: GridWarp, steps = 32): string {
+  const points: Array<{ x: number; y: number }> = []
+  const startX = -100
+  const endX = 1540
 
-  let path = ""
   for (let step = 0; step <= steps; step += 1) {
     const x = startX + (step / steps) * (endX - startX)
-    const y = waveY(x, baseY, lineIndex, params)
-    path += step === 0 ? `M ${x.toFixed(1)} ${y.toFixed(1)}` : ` L ${x.toFixed(1)} ${y.toFixed(1)}`
+    points.push(warpPoint(x, logicalY, warp))
   }
 
-  return path
+  return buildPolylinePath(points)
 }
 
-export function generateWindBackgroundLines(seed: number, count = 20): WindBackgroundLine[] {
-  const rng = mulberry32(seed)
-  const lineCount = count + Math.floor(rng() * 6)
-  const lines: WindBackgroundLine[] = []
+function createVerticalGridLine(logicalX: number, warp: GridWarp, steps = 24): string {
+  const points: Array<{ x: number; y: number }> = []
+  const startY = 260
+  const endY = 940
 
-  for (let index = 0; index < lineCount; index += 1) {
-    const depth = index / Math.max(lineCount - 1, 1)
+  for (let step = 0; step <= steps; step += 1) {
+    const y = startY + (step / steps) * (endY - startY)
+    points.push(warpPoint(logicalX, y, warp))
+  }
+
+  return buildPolylinePath(points)
+}
+
+/** ตารางเส้น (grid) โค้งเบาๆ แบบ mesh — สุ่มใหม่ทุกครั้งที่ reload */
+export function generateWindBackgroundLines(seed: number): WindBackgroundLine[] {
+  const rng = mulberry32(seed)
+  const warp: GridWarp = {
+    freqX: 0.0032 + rng() * 0.0048,
+    freqY: 0.004 + rng() * 0.0055,
+    ampX: 6 + rng() * 16,
+    ampY: 8 + rng() * 20,
+    phaseX: rng() * Math.PI * 2,
+    phaseY: rng() * Math.PI * 2,
+  }
+
+  const rowCount = 11 + Math.floor(rng() * 4)
+  const colCount = 14 + Math.floor(rng() * 5)
+  const lines: WindBackgroundLine[] = []
+  let id = 0
+
+  const yStart = 280
+  const yEnd = 920
+  for (let row = 0; row <= rowCount; row += 1) {
+    const logicalY = yStart + (row / rowCount) * (yEnd - yStart) + (rng() - 0.5) * 6
+    const depth = row / rowCount
     lines.push({
-      id: index,
-      d: createWavePath(rng, index, lineCount),
-      opacity: 0.1 + depth * 0.22 + rng() * 0.06,
-      strokeWidth: 0.75 + rng() * 0.9,
+      id: id++,
+      d: createHorizontalGridLine(logicalY, warp),
+      opacity: 0.09 + depth * 0.2 + rng() * 0.05,
+      strokeWidth: 0.7 + rng() * 0.55,
+    })
+  }
+
+  const xStart = -60
+  const xEnd = 1500
+  for (let col = 0; col <= colCount; col += 1) {
+    const logicalX = xStart + (col / colCount) * (xEnd - xStart) + (rng() - 0.5) * 6
+    const depth = col / colCount
+    lines.push({
+      id: id++,
+      d: createVerticalGridLine(logicalX, warp),
+      opacity: 0.08 + depth * 0.18 + rng() * 0.05,
+      strokeWidth: 0.65 + rng() * 0.5,
     })
   }
 
