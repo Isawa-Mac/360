@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
 
-const BRAND_NAME = "360"
+const BRAND_NAME = "360 Intelligent"
 
 function UserAvatar({
   src,

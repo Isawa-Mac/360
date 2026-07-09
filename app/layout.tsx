@@ -37,7 +37,7 @@ const sarabun = Sarabun({
 });
 
 export const metadata: Metadata = {
-  title: "360",
+  title: "360 Intelligent",
   description: "Enterprise Resource Planning 360 Online",
 };
 

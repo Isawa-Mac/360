@@ -150,14 +150,14 @@ function HomePageContent() {
   return (
     <Layout
       showFilters={false}
-      pageTitle="360"
+      pageTitle="360 Intelligent"
     >
       <div className="min-h-full p-6 relative">
         <div className="max-w-7xl mx-auto">
           {/* Main Menu Section */}
           <div className="mb-8 relative">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 tracking-tight">
-              360
+              360 Intelligent
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {menuItems.filter(item => {
@@ -231,7 +231,7 @@ function HomeLoadingFallback() {
   return (
     <Layout
       showFilters={false}
-      pageTitle="360"
+      pageTitle="360 Intelligent"
     >
       <div className="min-h-full p-6 flex items-center justify-center">
         <div className="text-center space-y-4">
