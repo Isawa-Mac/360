@@ -34,7 +34,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     switch_to_light: "เปลี่ยนเป็นโหมดสว่าง",
     switch_to_dark: "เปลี่ยนเป็นโหมดมืด",
     switch_system: "สลับระบบ",
-    crm_description: "CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้า",
+    crm_description: "CRM 360 - ระบบบริหารความสัมพันธ์ลูกค้าเพื่อการเติบโตอย่างยั่งยืน\nช่วยจัดการข้อมูลวิเคราะห์พฤติกรรมเพื่อการตลาดและบริการหลังการขาย",
     erp_description: "ERP 360 - ระบบบริหารจัดการทรัพยากรองค์กรแบบครบวงจร",
     bi_description: "Business Intelligence 360 (BI) - ระบบวิเคราะห์ข้อมูลทางธุรกิจเพื่อการตัดสินใจ",
     nexdocs_description: "NexDocs 360 DMS - ระบบจัดการเอกสารดิจิทัลอัจฉริยะที่มุ่งเน้นการเพิ่มประสิทธิภาพการทำงานด้วย AI",
