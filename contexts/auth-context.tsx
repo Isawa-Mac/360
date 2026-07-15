@@ -181,14 +181,44 @@ function clear360AuthCookies(resolvedTenantId: string | null | undefined): void 
 function remove360AuthLocalStorageKeys(): void {
     if (typeof window === "undefined") return;
     try {
-        localStorage.removeItem("nexus_token");
-        localStorage.removeItem("nexus_user");
-        localStorage.removeItem("nexus_permissions");
-        localStorage.removeItem("tenantId");
-        localStorage.removeItem("nexus_insight_user");
+        // ล้าง auth/session keys ทั้งแบบ legacy และแบบที่เพิ่ม suffix ตาม tenant
+        for (const key of Object.keys(localStorage)) {
+            if (
+                key === "tenantId" ||
+                key === "auth_token" ||
+                key.startsWith("nexus_") && (
+                    key.includes("token") ||
+                    key.includes("user") ||
+                    key.includes("permission") ||
+                    key.includes("session")
+                ) ||
+                key.startsWith("session")
+            ) {
+                localStorage.removeItem(key);
+            }
+        }
+        sessionStorage.clear();
     } catch {
         /* ignore */
     }
+}
+
+function clearAllAuthCookies(): void {
+    if (typeof document === "undefined") return;
+
+    // ล้าง cookie auth ทุกชื่อที่มองเห็นได้ รวมถึง nexus_shared_*_tenantId
+    const cookieNames = document.cookie
+        .split(";")
+        .map((cookie) => cookie.trim().split("=", 1)[0])
+        .filter(Boolean);
+    const authCookieNames = cookieNames.filter((name) =>
+        name === "auth_token" ||
+        name === "permissions" ||
+        name.startsWith("nexus_shared_") ||
+        name.startsWith("nexus_session") ||
+        name.startsWith("session")
+    );
+    authCookieNames.forEach(nukeCookieName);
 }
 
 /** Returns domain for shared cookie (e.g. ".trirex.cloud") so all subdomains can read; null for localhost/single host. */
@@ -423,6 +453,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (typeof window === "undefined") return;
         remove360AuthLocalStorageKeys();
         clear360AuthCookies(tid ?? undefined);
+        clearAllAuthCookies();
     }, []);
 
     const applySessionFromLocalStorageForUser = useCallback((expectedUserId: string) => {
@@ -599,7 +630,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             postTabAuthMessage({ type: "LOGOUT", userId: uid, tenantId: tid ?? undefined }, channelRef.current);
         }
         logoutLocalOnly({ userId: uid ?? null, tenantId: tid });
-        window.location.href = "/auth/logout";
+        const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
+        const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
+        const returnUrl = `${window.location.origin}/auth/logout`;
+        window.location.href = `${ssoUrl.replace(/\/$/, "")}/logout?client_id=${encodeURIComponent(clientId)}&return_url=${encodeURIComponent(returnUrl)}`;
     };
 
     const getAuthData = () => {
