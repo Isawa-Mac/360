@@ -56,14 +56,14 @@ type SystemItem = {
 
 const SYSTEMS: SystemItem[] = [
   {
-    name: "CRM 360",
+    name: "CRM 360 Intelligent",
     url: "/nexus-smart-crm",
     icon: Users,
     permission: "erp360.crm.read",
     disabled: false,
   },
   {
-    name: "ERP 360",
+    name: "ERP 360 Intelligent",
     url: process.env.NEXT_PUBLIC_ERP360_URL || process.env.NEXT_PUBLIC_ERP_URL || "https://erp360.trirex.cloud",
     icon: Globe,
     permission: "erp360.erp.read",
@@ -77,28 +77,28 @@ const SYSTEMS: SystemItem[] = [
     disabled: false,
   },
   {
-    name: "POS 360",
+    name: "POS 360 Intelligent",
     url: "https://pos360.trirex.cloud",
     icon: ShoppingCart,
     permission: "erp360.pos.read",
     disabled: false,
   },
   {
-    name: "NexDocs 360",
+    name: "NexDocs 360 Intelligent",
     url: "https://nexdocs360.trirex.cloud",
     icon: FileText,
     permission: ["erp360.nexdocs.full", "erp360.nexdocs.read"],
     disabled: false,
   },
   {
-    name: "Nexus SSO",
+    name: "Nexus SSO Intelligent",
     url: "https://sso360.trirex.cloud",
     icon: Key,
     permission: "erp360.admin.read",
     disabled: false,
   },
   {
-    name: "Chat bot 360",
+    name: "Chat bot 360 Intelligent",
     url: process.env.NEXT_PUBLIC_CHATBOT360_URL || process.env.NEXT_PUBLIC_CHATBOT_URL || "https://hermes.trirex.cloud/chat",
     icon: MessageCircle,
     permission: "erp360.chatbot.read",

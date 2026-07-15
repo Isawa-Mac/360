@@ -35,9 +35,9 @@ export const navItems: NavItem[] = [
     icon: Home,
   },
   {
-    title: "CRM 360",
-    titleTh: "CRM 360",
-    titleEn: "CRM 360",
+    title: "CRM 360 Intelligent",
+    titleTh: "CRM 360 Intelligent",
+    titleEn: "CRM 360 Intelligent",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_CRM_URL || "https://crm360.trirex.cloud";
       return /^https?:\/\//.test(u) ? u : "https://crm360.trirex.cloud";
@@ -46,9 +46,9 @@ export const navItems: NavItem[] = [
     requiredPermission: 'erp360.crm.read',
   },
   {
-    title: "ERP 360",
-    titleTh: "ERP 360",
-    titleEn: "ERP 360",
+    title: "ERP 360 Intelligent",
+    titleTh: "ERP 360 Intelligent",
+    titleEn: "ERP 360 Intelligent",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_ERP360_URL || process.env.NEXT_PUBLIC_ERP_URL || "https://erp360.trirex.cloud";
       return /^https?:\/\//.test(u) ? u : "https://erp360.trirex.cloud";
@@ -68,9 +68,9 @@ export const navItems: NavItem[] = [
     requiredPermission: 'erp360.bi.read',
   },
   {
-    title: "NexDocs 360",
-    titleTh: "NexDocs 360",
-    titleEn: "NexDocs 360",
+    title: "NexDocs 360 Intelligent",
+    titleTh: "NexDocs 360 Intelligent",
+    titleEn: "NexDocs 360 Intelligent",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_NEXDOCS_URL || "https://nexdocs360.trirex.cloud";
       return /^https?:\/\//.test(u) ? u : "https://nexdocs360.trirex.cloud";
@@ -79,9 +79,9 @@ export const navItems: NavItem[] = [
     requiredPermission: ['erp360.nexdocs.full', 'erp360.nexdocs.read'],
   },
   {
-    title: "Point of Sale 360 Online",
-    titleTh: "Point of Sale 360 ออนไลน์",
-    titleEn: "Point of Sale 360 Online",
+    title: "Point of Sale 360 Online Intelligent",
+    titleTh: "Point of Sale 360 ออนไลน์ Intelligent",
+    titleEn: "Point of Sale 360 Online Intelligent",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_POS_URL || "https://pos360.trirex.cloud";
       return /^https?:\/\//.test(u) ? u : "https://pos360.trirex.cloud";
@@ -90,9 +90,9 @@ export const navItems: NavItem[] = [
     requiredPermission: 'erp360.pos.read',
   },
   {
-    title: "Single Sign-On 360",
-    titleTh: "Single Sign-On 360",
-    titleEn: "Single Sign-On 360",
+    title: "Single Sign-On 360 Intelligent",
+    titleTh: "Single Sign-On 360 Intelligent",
+    titleEn: "Single Sign-On 360 Intelligent",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_SSO_BASE_URL || "https://sso360.trirex.cloud";
       return /^https?:\/\//.test(u) ? u : "https://sso360.trirex.cloud";
@@ -101,9 +101,9 @@ export const navItems: NavItem[] = [
     requiredPermission: 'erp360.admin.read',
   },
   {
-    title: "Chat bot 360",
-    titleTh: "Chat bot 360",
-    titleEn: "Chat bot 360",
+    title: "Chat bot 360 Intelligent",
+    titleTh: "Chat bot 360 Intelligent",
+    titleEn: "Chat bot 360 Intelligent",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_CHATBOT360_URL || process.env.NEXT_PUBLIC_CHATBOT_URL || "https://hermes.trirex.cloud/chat";
       return /^https?:\/\//.test(u) ? u : "https://hermes.trirex.cloud/chat";
