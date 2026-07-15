@@ -99,9 +99,9 @@ const SYSTEMS: SystemItem[] = [
   },
   {
     name: "Chat bot 360",
-    url: "https://hermes.trirex.cloud/chat",
+    url: process.env.NEXT_PUBLIC_CHATBOT360_URL || process.env.NEXT_PUBLIC_CHATBOT_URL || "https://hermes.trirex.cloud/chat",
     icon: MessageCircle,
-    permission: "",
+    permission: "erp360.chatbot.read",
     disabled: false,
   },
 ]

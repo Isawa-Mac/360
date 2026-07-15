@@ -44,6 +44,12 @@ function getERPBaseURL(): string {
   return url && /^https?:\/\//.test(url) ? url : 'https://erp360.trirex.cloud';
 }
 
+/** ดึง Chat bot Base URL ตาม environment */
+function getChatbotBaseURL(): string {
+  const url = process.env.NEXT_PUBLIC_CHATBOT360_URL || process.env.NEXT_PUBLIC_CHATBOT_URL;
+  return url && /^https?:\/\//.test(url) ? url : 'https://hermes.trirex.cloud/chat';
+}
+
 /**
  * ดึง POS Base URL ตาม environment (client-side)
  */
@@ -127,9 +133,10 @@ function HomePageContent() {
       title: "Chat bot 360",
       description: t("chatbot_description"),
       icon: MessageCircle,
-      url: "https://hermes.trirex.cloud/chat",
+      url: getChatbotBaseURL(),
       isExternal: true,
       enabled: true,
+      requiredPermission: ['erp360.chatbot.read'],
     }
   ]
 
