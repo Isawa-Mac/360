@@ -57,9 +57,9 @@ export const navItems: NavItem[] = [
     requiredPermission: 'erp360.erp.read',
   },
   {
-    title: "Business Intelligence 360",
-    titleTh: "BI 360",
-    titleEn: "Business Intelligence 360",
+    title: "Business Intelligence 360 Intelligent",
+    titleTh: "BI 360 Intelligent",
+    titleEn: "Business Intelligence 360 Intelligent",
     url: (() => {
       const u = process.env.NEXT_PUBLIC_BI_URL || "https://bi360.trirex.cloud";
       return /^https?:\/\//.test(u) ? u : "https://bi360.trirex.cloud";

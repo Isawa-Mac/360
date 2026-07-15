@@ -70,7 +70,7 @@ const SYSTEMS: SystemItem[] = [
     disabled: false,
   },
   {
-    name: "Business Intelligence 360",
+    name: "Business Intelligence 360 Intelligent",
     url: "https://bi360.trirex.cloud",
     icon: BarChart3,
     permission: "erp360.bi.read",
