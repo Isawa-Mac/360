@@ -76,7 +76,7 @@ function HomePageContent() {
   // Main menu items — requiredPermission ใช้ permission string จาก SSO จริง
   const menuItems = [
     {
-      title: "CRM 360",
+      title: "CRM 360 Intelligent",
       description: t("crm_description"),
       icon: Globe,
       url: "https://crm360.trirex.cloud",
@@ -85,7 +85,7 @@ function HomePageContent() {
       requiredPermission: ['erp360.crm.read'],
     },
     {
-      title: "ERP 360",
+      title: "ERP 360 Intelligent",
       description: t("erp_description"),
       icon: Boxes,
       url: getERPBaseURL(),
@@ -103,7 +103,7 @@ function HomePageContent() {
       requiredPermission: ['erp360.bi.read'],
     },
     {
-      title: "NexDocs 360",
+      title: "NexDocs 360 Intelligent",
       description: t("nexdocs_description"),
       icon: FileText,
       url: getNexDocsBaseURL(),
@@ -112,7 +112,7 @@ function HomePageContent() {
       requiredPermission: ['erp360.nexdocs.full', 'erp360.nexdocs.read'],
     },
     {
-      title: "Point of Sale 360 Online",
+      title: "Point of Sale 360 Online Intelligent",
       description: t("pos_description"),
       icon: ShoppingCart,
       url: getPOSBaseURL(),
@@ -121,7 +121,7 @@ function HomePageContent() {
       requiredPermission: ['erp360.pos.read'],
     },
     {
-      title: "Single Sign-On 360",
+      title: "Single Sign-On 360 Intelligent",
       description: t("sso_description"),
       icon: Key,
       url: getSSOBaseURL(),
@@ -130,7 +130,7 @@ function HomePageContent() {
       requiredPermission: ['erp360.admin.read'],
     },
     {
-      title: "Chat bot 360",
+      title: "Chat bot 360 Intelligent",
       description: t("chatbot_description"),
       icon: MessageCircle,
       url: getChatbotBaseURL(),
