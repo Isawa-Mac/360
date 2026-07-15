@@ -64,7 +64,7 @@ const SYSTEMS: SystemItem[] = [
   },
   {
     name: "ERP 360",
-    url: "/nexus-smart-erp",
+    url: process.env.NEXT_PUBLIC_ERP360_URL || process.env.NEXT_PUBLIC_ERP_URL || "https://erp360.trirex.cloud",
     icon: Globe,
     permission: "erp360.erp.read",
     disabled: false,

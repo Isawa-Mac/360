@@ -49,7 +49,10 @@ export const navItems: NavItem[] = [
     title: "ERP 360",
     titleTh: "ERP 360",
     titleEn: "ERP 360",
-    url: "/nexus-smart-erp",
+    url: (() => {
+      const u = process.env.NEXT_PUBLIC_ERP360_URL || process.env.NEXT_PUBLIC_ERP_URL || "https://erp360.trirex.cloud";
+      return /^https?:\/\//.test(u) ? u : "https://erp360.trirex.cloud";
+    })(),
     icon: Globe,
     requiredPermission: 'erp360.erp.read',
   },

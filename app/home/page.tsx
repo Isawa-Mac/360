@@ -38,6 +38,12 @@ function getSSOBaseURL(): string {
   return 'https://sso360.trirex.cloud';
 }
 
+/** ดึง ERP Base URL ตาม environment (ให้สอดคล้องกับ CRM 360) */
+function getERPBaseURL(): string {
+  const url = process.env.NEXT_PUBLIC_ERP360_URL || process.env.NEXT_PUBLIC_ERP_URL;
+  return url && /^https?:\/\//.test(url) ? url : 'https://erp360.trirex.cloud';
+}
+
 /**
  * ดึง POS Base URL ตาม environment (client-side)
  */
@@ -76,9 +82,10 @@ function HomePageContent() {
       title: "ERP 360",
       description: t("erp_description"),
       icon: Boxes,
-      url: "#",
-      isExternal: false,
-      enabled: false,
+      url: getERPBaseURL(),
+      isExternal: true,
+      enabled: true,
+      requiredPermission: ['erp360.erp.read'],
     },
     {
       title: "Business Intelligence 360",
