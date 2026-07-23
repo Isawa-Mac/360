@@ -1,11 +1,18 @@
 "use client"
 
+import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import { clearBrowserSession } from "@/contexts/auth-context"
 import { useLanguage } from "@/contexts/language-context"
 
 /** หน้า logout แบบ Microsoft: พื้นหลังขาว สะอาด "You've been signed out" */
 export default function LogoutPage() {
     const { t } = useLanguage()
+
+    useEffect(() => {
+        // Also clear when SSO navigates here directly after logout.
+        clearBrowserSession()
+    }, [])
 
     const signInAgain = () => {
         const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";

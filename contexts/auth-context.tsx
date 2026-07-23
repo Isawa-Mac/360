@@ -164,7 +164,7 @@ function nukeCookieName(name: string): void {
     });
 }
 
-function clearBrowserSession(): void {
+export function clearBrowserSession(): void {
     if (typeof window === "undefined") return;
 
     // Clear all browser-side state so no app data or shared SSO value can
@@ -578,10 +578,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             postTabAuthMessage({ type: "LOGOUT", userId: uid, tenantId: tid ?? undefined }, channelRef.current);
         }
         logoutLocalOnly();
-        const ssoUrl = process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud";
-        const clientId = process.env.NEXT_PUBLIC_CLIENT_ID || "cli_1mkd41fz";
         const returnUrl = `${window.location.origin}/auth/logout`;
-        window.location.href = `${ssoUrl.replace(/\/$/, "")}/logout?client_id=${encodeURIComponent(clientId)}&return_url=${encodeURIComponent(returnUrl)}`;
+        const ssoBaseUrl = (process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud").replace(/\/$/, "");
+        const logoutParams = new URLSearchParams({ redirect_uri: returnUrl, return_url: returnUrl });
+        window.location.replace(`${ssoBaseUrl}/#/logout?${logoutParams.toString()}`);
     };
 
     const getAuthData = () => {
