@@ -90,7 +90,7 @@ function HomePageContent() {
       icon: Boxes,
       url: getERPBaseURL(),
       isExternal: true,
-      enabled: true,
+      enabled: false,
       requiredPermission: ['erp360.erp.read'],
     },
     {
@@ -135,7 +135,7 @@ function HomePageContent() {
       icon: MessageCircle,
       url: getChatbotBaseURL(),
       isExternal: true,
-      enabled: true,
+      enabled: false,
       requiredPermission: ['erp360.chatbot.read'],
     }
   ]
