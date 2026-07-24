@@ -301,3 +301,21 @@ export function getSSOLogoutUrl(returnUrl?: string): string {
   }
   return logoutUrl.toString()
 }
+
+export function hasGlobalSSOLogoutSignal(): boolean {
+  return typeof document !== 'undefined'
+    && document.cookie.split(';').some((cookie) => cookie.trim().startsWith('nexus_shared_logout='))
+}
+
+export async function revokeAllSSOSessions(token: string, userId: string): Promise<void> {
+  if (!token || !userId) return
+  const baseUrl = (process.env.NEXT_PUBLIC_SSO_URL || 'https://sso360.trirex.cloud').replace(/\/$/, '')
+  const response = await fetch(`${baseUrl}/api/sso/revoke-session`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    keepalive: true,
+    body: JSON.stringify({ token, userId, all: true }),
+  })
+  if (!response.ok) throw new Error(`Global logout failed (${response.status})`)
+}

@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { SpinnerCustom } from "@/components/ui/spinner-custom";
 import { normalizeProfileImageSrc } from "@/lib/profile-image";
-import { checkSSOSession } from "@/lib/sso-utils";
+import { checkSSOSession, hasGlobalSSOLogoutSignal, revokeAllSSOSessions } from "@/lib/sso-utils";
 import {
     applyThemeAccentProperties,
     getThemeLocalColor,
@@ -184,7 +184,7 @@ export function clearBrowserSession(): void {
     const cookieNames = document.cookie
         .split(";")
         .map((cookie) => cookie.trim().split("=", 1)[0])
-        .filter(Boolean);
+        .filter((name) => Boolean(name) && !name.startsWith("nexus_shared_logout"));
     cookieNames.forEach(nukeCookieName);
 }
 
@@ -574,15 +574,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 tid = null;
             }
         }
-        if (uid) {
-            postTabAuthMessage({ type: "LOGOUT", userId: uid, tenantId: tid ?? undefined }, channelRef.current);
+        const currentToken = localStorage.getItem("nexus_token");
+        const finishLogout = () => {
+            if (uid) {
+                postTabAuthMessage({ type: "LOGOUT", userId: uid, tenantId: tid ?? undefined }, channelRef.current);
+            }
+            logoutLocalOnly();
+            const returnUrl = `${window.location.origin}/auth/logout`;
+            const ssoBaseUrl = (process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud").replace(/\/$/, "");
+            const logoutParams = new URLSearchParams({ redirect_uri: returnUrl, return_url: returnUrl });
+            window.location.replace(`${ssoBaseUrl}/#/logout?${logoutParams.toString()}`);
+        };
+        if (currentToken && uid) {
+            void revokeAllSSOSessions(currentToken, uid).catch(() => undefined).finally(finishLogout);
+        } else {
+            finishLogout();
         }
-        logoutLocalOnly();
-        const returnUrl = `${window.location.origin}/auth/logout`;
-        const ssoBaseUrl = (process.env.NEXT_PUBLIC_SSO_URL || "https://sso360.trirex.cloud").replace(/\/$/, "");
-        const logoutParams = new URLSearchParams({ redirect_uri: returnUrl, return_url: returnUrl });
-        window.location.replace(`${ssoBaseUrl}/#/logout?${logoutParams.toString()}`);
     };
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const checkGlobalLogout = () => {
+            if (
+                hasGlobalSSOLogoutSignal() &&
+                isAuthenticatedRef.current &&
+                !window.location.pathname.includes("/auth/logout")
+            ) {
+                logoutLocalOnly();
+                window.location.replace("/auth/logout");
+            }
+        };
+        checkGlobalLogout();
+        const intervalId = window.setInterval(checkGlobalLogout, 2000);
+        return () => window.clearInterval(intervalId);
+    }, [logoutLocalOnly]);
 
     const getAuthData = () => {
         const storedToken = localStorage.getItem("nexus_token");
