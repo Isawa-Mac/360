@@ -135,7 +135,7 @@ function HomePageContent() {
       icon: MessageCircle,
       url: getChatbotBaseURL(),
       isExternal: true,
-      enabled: false,
+      enabled: true,
       requiredPermission: ['erp360.chatbot.read'],
     }
   ]
