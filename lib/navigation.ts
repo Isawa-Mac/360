@@ -105,8 +105,8 @@ export const navItems: NavItem[] = [
     titleTh: "Chat bot 360 Intelligent",
     titleEn: "Chat bot 360 Intelligent",
     url: (() => {
-      const u = process.env.NEXT_PUBLIC_CHATBOT360_URL || process.env.NEXT_PUBLIC_CHATBOT_URL || "https://hermes.trirex.cloud/chat";
-      return /^https?:\/\//.test(u) ? u : "https://hermes.trirex.cloud/chat";
+      const u = process.env.NEXT_PUBLIC_CHATBOT360_URL || process.env.NEXT_PUBLIC_CHATBOT_URL || "https://chatbot360.trirex.cloud/";
+      return /^https?:\/\//.test(u) ? u : "https://chatbot360.trirex.cloud/";
     })(),
     icon: MessageCircle,
     requiredPermission: 'erp360.chatbot.read',

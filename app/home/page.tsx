@@ -47,7 +47,7 @@ function getERPBaseURL(): string {
 /** ดึง Chat bot Base URL ตาม environment */
 function getChatbotBaseURL(): string {
   const url = process.env.NEXT_PUBLIC_CHATBOT360_URL || process.env.NEXT_PUBLIC_CHATBOT_URL;
-  return url && /^https?:\/\//.test(url) ? url : 'https://hermes.trirex.cloud/chat';
+  return url && /^https?:\/\//.test(url) ? url : 'https://chatbot360.trirex.cloud/';
 }
 
 /**
