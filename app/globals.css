@@ -209,10 +209,9 @@
   position: relative;
   border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
   box-shadow:
-    0 1px 2px color-mix(in oklch, var(--foreground) 13%, transparent),
-    0 8px 18px -10px color-mix(in oklch, var(--foreground) 30%, transparent),
+    0 1px 2px color-mix(in oklch, var(--foreground) 16%, transparent),
+    0 2px 3px color-mix(in oklch, var(--foreground) 8%, transparent),
     inset 0 1px 0 color-mix(in oklch, white 82%, transparent);
-  transition: box-shadow 180ms ease, transform 180ms ease, background-color 180ms ease;
 }
 
 .soft-depth-card::before {
@@ -227,16 +226,16 @@
 
 .soft-depth-card:hover {
   box-shadow:
-    0 2px 4px color-mix(in oklch, var(--foreground) 14%, transparent),
-    0 14px 24px -12px color-mix(in oklch, var(--foreground) 34%, transparent),
+    0 1px 2px color-mix(in oklch, var(--foreground) 20%, transparent),
+    0 3px 5px color-mix(in oklch, var(--foreground) 10%, transparent),
     inset 0 1px 0 color-mix(in oklch, white 88%, transparent);
 }
 
 .dark .soft-depth-card {
   border-color: color-mix(in oklch, white 12%, transparent);
   box-shadow:
-    0 1px 2px color-mix(in oklch, black 24%, transparent),
-    0 8px 18px -10px color-mix(in oklch, black 48%, transparent),
+    0 1px 2px color-mix(in oklch, black 30%, transparent),
+    0 2px 3px color-mix(in oklch, black 18%, transparent),
     inset 0 1px 0 color-mix(in oklch, white 16%, transparent);
 }
 
@@ -246,8 +245,8 @@
 
 .dark .soft-depth-card:hover {
   box-shadow:
-    0 2px 4px color-mix(in oklch, black 28%, transparent),
-    0 14px 24px -12px color-mix(in oklch, black 58%, transparent),
+    0 1px 2px color-mix(in oklch, black 36%, transparent),
+    0 3px 5px color-mix(in oklch, black 24%, transparent),
     inset 0 1px 0 color-mix(in oklch, white 22%, transparent);
 }
 
