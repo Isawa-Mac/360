@@ -203,6 +203,54 @@
   box-shadow: inset 0 1px 0 color-mix(in oklch, var(--foreground) 12%, transparent);
 }
 
+/* Soft card depth inspired by the reference: a crisp top highlight over a
+   shallow, diffused shadow keeps surfaces dimensional without looking glossy. */
+.soft-depth-card {
+  position: relative;
+  border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
+  box-shadow:
+    0 1px 2px color-mix(in oklch, var(--foreground) 13%, transparent),
+    0 8px 18px -10px color-mix(in oklch, var(--foreground) 30%, transparent),
+    inset 0 1px 0 color-mix(in oklch, white 82%, transparent);
+  transition: box-shadow 180ms ease, transform 180ms ease, background-color 180ms ease;
+}
+
+.soft-depth-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 1px auto;
+  height: 1px;
+  border-radius: inherit;
+  background: color-mix(in oklch, white 72%, transparent);
+  pointer-events: none;
+}
+
+.soft-depth-card:hover {
+  box-shadow:
+    0 2px 4px color-mix(in oklch, var(--foreground) 14%, transparent),
+    0 14px 24px -12px color-mix(in oklch, var(--foreground) 34%, transparent),
+    inset 0 1px 0 color-mix(in oklch, white 88%, transparent);
+}
+
+.dark .soft-depth-card {
+  border-color: color-mix(in oklch, white 12%, transparent);
+  box-shadow:
+    0 1px 2px color-mix(in oklch, black 24%, transparent),
+    0 8px 18px -10px color-mix(in oklch, black 48%, transparent),
+    inset 0 1px 0 color-mix(in oklch, white 16%, transparent);
+}
+
+.dark .soft-depth-card::before {
+  background: color-mix(in oklch, white 18%, transparent);
+}
+
+.dark .soft-depth-card:hover {
+  box-shadow:
+    0 2px 4px color-mix(in oklch, black 28%, transparent),
+    0 14px 24px -12px color-mix(in oklch, black 58%, transparent),
+    inset 0 1px 0 color-mix(in oklch, white 22%, transparent);
+}
+
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .app-shell-header {
     background: color-mix(in oklch, var(--background) 86%, var(--header-tint, var(--primary)) 14%);
