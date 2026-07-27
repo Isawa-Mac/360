@@ -398,6 +398,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const userRef = useRef<User | null>(null);
     const isAuthenticatedRef = useRef(false);
     const channelRef = useRef<BroadcastChannel | null>(null);
+    const logoutInProgressRef = useRef(false);
     useEffect(() => {
         userRef.current = user;
     }, [user]);
@@ -565,6 +566,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const logout = () => {
+        if (logoutInProgressRef.current || typeof window === "undefined") return;
+        logoutInProgressRef.current = true;
+
         const uid = user?.id;
         let tid: string | null = null;
         if (typeof window !== "undefined") {
