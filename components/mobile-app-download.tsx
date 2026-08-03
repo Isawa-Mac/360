@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Download, Smartphone, X } from "lucide-react"
 
-const APK_DOWNLOAD_URL = "https://trirexinter-my.sharepoint.com/:u:/g/personal/isara-it_trirex_co_th/IQAxMBs-h9-uRb-n5vYwDEjJAayJhhzmKF6YQkgNd5-oSGg?e=K3gq4I"
+const APK_DOWNLOAD_URL = "/download/mobile-app"
 
 export function MobileAppDownload() {
   const [open, setOpen] = useState(false)
