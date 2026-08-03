@@ -13,6 +13,7 @@ import { useLanguage } from "@/contexts/language-context"
 import { useAuth } from "@/contexts/auth-context"
 import { normalizeProfileImageSrc } from "@/lib/profile-image"
 import { getPageTitle } from "@/lib/navigation"
+import { MobileAppDownload } from "@/components/mobile-app-download"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -108,7 +109,8 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
             </span>
           </div>
 
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <MobileAppDownload />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
