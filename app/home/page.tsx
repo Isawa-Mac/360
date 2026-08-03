@@ -30,14 +30,6 @@ function getBIBaseURL(): string {
   return 'https://bi360.trirex.cloud';
 }
 
-/**
- * ดึง SSO Base URL ตาม environment (client-side)
- */
-function getSSOBaseURL(): string {
-  if (process.env.NEXT_PUBLIC_SSO_BASE_URL) return process.env.NEXT_PUBLIC_SSO_BASE_URL;
-  return 'https://sso360.trirex.cloud';
-}
-
 /** ดึง ERP Base URL ตาม environment (ให้สอดคล้องกับ CRM 360) */
 function getERPBaseURL(): string {
   const url = process.env.NEXT_PUBLIC_ERP360_URL || process.env.NEXT_PUBLIC_ERP_URL;
@@ -124,8 +116,7 @@ function HomePageContent() {
       title: "Single Sign-On 360 Intelligent",
       description: t("sso_description"),
       icon: Key,
-      url: getSSOBaseURL(),
-      isExternal: true,
+      pwaRoute: "/sso",
       enabled: true,
       requiredPermission: ['erp360.admin.read'],
     },
@@ -140,7 +131,7 @@ function HomePageContent() {
     }
   ]
 
-  const handleItemClick = async (item: typeof menuItems[0] & { isExternal?: boolean, enabled?: boolean }) => {
+  const handleItemClick = async (item: typeof menuItems[0] & { isExternal?: boolean, enabled?: boolean, pwaRoute?: string }) => {
     if (item.enabled === false) return // ไม่ให้กดถ้าโดน disable
 
     setLoadingItem(item.title || null)
@@ -148,10 +139,14 @@ function HomePageContent() {
       // เพิ่ม delay เล็กน้อยเพื่อให้เห็น loading state
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      if (item.isExternal || item.url.startsWith('http')) {
+      if (item.pwaRoute) {
+        router.push(item.pwaRoute)
+      } else if (item.url && (item.isExternal || item.url.startsWith('http'))) {
         window.location.href = item.url
-      } else {
+      } else if (item.url) {
         router.push(item.url)
+      } else {
+        setLoadingItem(null)
       }
     } catch (error) {
       console.error('Error navigating:', error)
