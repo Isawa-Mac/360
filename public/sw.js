@@ -1,13 +1,13 @@
-const CACHE_NAME = "360-pwa-v4";
+const CACHE_NAME = "360-pwa-v5";
 const OFFLINE_URL = "/offline.html";
 const PRECACHE_URLS = [
   OFFLINE_URL,
-  "/icons/favicon-light.png?v=4",
-  "/icons/favicon-dark.png?v=4",
-  "/icons/apple-touch-icon.png?v=4",
-  "/icons/icon-180.png?v=4",
-  "/icons/icon-192.png?v=4",
-  "/icons/icon-512.png?v=4",
+  "/icons/favicon-light.png?v=5",
+  "/icons/favicon-dark.png?v=5",
+  "/icons/apple-touch-icon.png?v=5",
+  "/icons/icon-180.png?v=5",
+  "/icons/icon-192.png?v=5",
+  "/icons/icon-512.png?v=5",
 ];
 
 self.addEventListener("install", (event) => {
