@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>360 Intelligent — ออฟไลน์</title>
+    <style>
+      :root { color-scheme: light dark; font-family: system-ui, "Sarabun", sans-serif; }
+      body { min-height: 100vh; margin: 0; display: grid; place-items: center; background: #f8fafc; color: #0f172a; }
+      main { width: min(88vw, 28rem); padding: 2rem; text-align: center; border: 1px solid #cbd5e1; border-radius: 1rem; background: #fff; box-shadow: 0 8px 24px rgb(15 23 42 / 8%); }
+      img { width: 5rem; height: 5rem; border-radius: 1.25rem; }
+      h1 { margin: 1rem 0 .5rem; font-size: 1.5rem; }
+      p { margin: 0 0 1.25rem; color: #475569; line-height: 1.6; }
+      button { border: 0; border-radius: .65rem; padding: .75rem 1.25rem; color: #fff; background: #0f766e; font: inherit; cursor: pointer; }
+      @media (prefers-color-scheme: dark) {
+        body { background: #020617; color: #f8fafc; }
+        main { border-color: #334155; background: #0f172a; }
+        p { color: #cbd5e1; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="/icons/icon-192.png" alt="360 Intelligent" />
+      <h1>ยังไม่สามารถเชื่อมต่อระบบ 360</h1>
+      <p>โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต แล้วลองอีกครั้ง</p>
+      <button type="button" onclick="location.reload()">ลองอีกครั้ง</button>
+    </main>
+  </body>
+</html>

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Inter, Sarabun } from "next/font/google";
 import { cookies } from "next/headers";
 import "./globals.css";
@@ -17,6 +17,7 @@ import { ModuleProvider } from "@/contexts/module-context";
 import { DashboardScaleProvider } from "@/contexts/dashboard-scale-context";
 import { AppShellBackground } from "@/components/app-shell-background";
 import { ThemeSync } from "@/components/theme-sync";
+import { PWARegister } from "@/components/pwa-register";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -39,6 +40,36 @@ const sarabun = Sarabun({
 export const metadata: Metadata = {
   title: "360 Intelligent",
   description: "Enterprise Resource Planning 360 Online",
+  applicationName: "360 Intelligent",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "360",
+  },
+  icons: {
+    icon: [
+      {
+        url: "/icons/favicon-light.png",
+        type: "image/png",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/icons/favicon-dark.png",
+        type: "image/png",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+    shortcut: "/icons/favicon-light.png",
+    apple: "/icons/apple-touch-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f766e",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({
@@ -130,6 +161,7 @@ export default async function RootLayout({
           </LanguageProvider>
         </ThemeProvider>
         <Toaster />
+        <PWARegister />
       </body>
     </html>
   );
