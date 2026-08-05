@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server"
+import { getMobileAppConfig } from "@/lib/mobile-app-config"
 
-const CURRENT_APK_URL = "https://trirexinter-my.sharepoint.com/:u:/g/personal/isara-it_trirex_co_th/IQACLEnaHwX1RK-iE-GFwJCFAQCJEZu3pQoffO6eMC0lO5A?e=TJ7R8M"
+export const dynamic = "force-dynamic"
 
-export function GET() {
-  return NextResponse.redirect(CURRENT_APK_URL, 302)
+export async function GET() {
+  const { apkUrl } = await getMobileAppConfig()
+  return NextResponse.redirect(apkUrl, 302)
 }

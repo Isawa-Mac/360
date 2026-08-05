@@ -1,4 +1,4 @@
-import { Home, BarChart3, Key, Globe, FileText, ShoppingCart, Users, MessageCircle } from "lucide-react"
+import { Home, BarChart3, Key, Globe, FileText, ShoppingCart, Users, MessageCircle, Settings } from "lucide-react"
 
 export interface NavItem {
   title: string
@@ -110,6 +110,14 @@ export const navItems: NavItem[] = [
     })(),
     icon: MessageCircle,
     requiredPermission: 'erp360.chatbot.read',
+  },
+  {
+    title: "Mobile App Settings",
+    titleTh: "ตั้งค่า Mobile App",
+    titleEn: "Mobile App Settings",
+    url: "/settings/mobile-app",
+    icon: Settings,
+    isSuperAdminOnly: true,
   },
 ]
 
