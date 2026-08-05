@@ -4,11 +4,19 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Download, Smartphone, X } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
+import { usePermission } from "@/hooks/use-permission"
 
 const APK_DOWNLOAD_URL = "/download/mobile-app"
 
 export function MobileAppDownload() {
   const [open, setOpen] = useState(false)
+  const { user } = useAuth()
+  const { isSuperAdmin } = usePermission()
+  const allowedRoles = new Set(["administrator", "admin", "super"])
+  const canManageMobileApp = isSuperAdmin || (user?.roles ?? []).some((role) =>
+    allowedRoles.has(role.trim().toLowerCase())
+  )
 
   useEffect(() => {
     if (!open) return
@@ -87,13 +95,18 @@ export function MobileAppDownload() {
             </a>
             <div className="mt-3 flex items-center justify-center gap-2 text-xs">
               <span className="text-muted-foreground">สำหรับ Android เท่านั้น</span>
-              <span className="text-muted-foreground/60">•</span>
-              <Link
-                href="/settings/mobile-app"
-                className="text-primary underline-offset-4 hover:underline"
-              >
-                ตั้งค่า Mobile App
-              </Link>
+              {canManageMobileApp && (
+                <>
+                  <span className="text-muted-foreground/60">•</span>
+                  <Link
+                    href="/settings/mobile-app"
+                    onClick={() => setOpen(false)}
+                    className="text-primary underline-offset-4 hover:underline"
+                  >
+                    ตั้งค่า Mobile App
+                  </Link>
+                </>
+              )}
             </div>
           </section>
         </div>
