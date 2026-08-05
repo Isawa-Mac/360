@@ -169,8 +169,12 @@ export function clearBrowserSession(): void {
 
     // Clear all browser-side state so no app data or shared SSO value can
     // repopulate the session after logout (same behavior as crm360).
+    const savedTheme = localStorage.getItem("theme");
+    const savedNexusTheme = localStorage.getItem("nexus_theme");
     try {
         localStorage.clear();
+        if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "system") localStorage.setItem("theme", savedTheme);
+        if (savedNexusTheme === "light" || savedNexusTheme === "dark" || savedNexusTheme === "system") localStorage.setItem("nexus_theme", savedNexusTheme);
     } catch {
         /* ignore storage errors */
     }
