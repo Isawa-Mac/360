@@ -22,27 +22,26 @@ export default function LogoutPage() {
 
     return (
         <div
-            className="min-h-screen w-full flex flex-col items-center justify-center bg-[#f3f3f3]"
-            style={{ fontFamily: "'Segoe UI', 'Segoe UI Web (West European)', -apple-system, 'BlinkMacSystemFont', 'Roboto', sans-serif" }}
+            className="flex min-h-screen items-center justify-center bg-white px-6 text-slate-950 [color-scheme:light]"
         >
-            <div className="max-w-[440px] w-full px-6 text-center">
-                <h1 className="text-[28px] font-semibold text-[#1b1b1b] mb-4 tracking-tight">
+            <div className="w-full max-w-md text-center">
+                <h1 className="text-2xl font-semibold">
                     {t("signed_out_title")}
                 </h1>
-                <p className="text-[15px] text-[#605e5c] leading-relaxed mb-8">
+                <p className="mt-3 text-sm leading-relaxed text-slate-600">
                     {t("signed_out_description")}
                 </p>
 
-                <div className="flex flex-col gap-4">
+                <div className="mt-6 flex flex-col gap-4">
                     <Button
                         onClick={signInAgain}
-                        className="w-full h-11 bg-[#0078d4] hover:bg-[#106ebe] text-white font-medium rounded-sm"
+                        className="h-11 w-full rounded-md bg-blue-600 font-medium text-white hover:bg-blue-700"
                     >
                         {t("sign_in_another_account")}
                     </Button>
                 </div>
 
-                <p className="mt-10 text-[13px] text-[#8a8886]">
+                <p className="mt-10 text-xs text-slate-500">
                     360
                 </p>
             </div>
