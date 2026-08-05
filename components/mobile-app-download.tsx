@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { Download, Smartphone, X } from "lucide-react"
 
 const APK_DOWNLOAD_URL = "/download/mobile-app"
@@ -84,7 +85,16 @@ export function MobileAppDownload() {
               <Download className="h-4 w-4" aria-hidden="true" />
               ดาวน์โหลด APK
             </a>
-            <p className="mt-3 text-xs text-muted-foreground">สำหรับ Android เท่านั้น</p>
+            <div className="mt-3 flex items-center justify-center gap-2 text-xs">
+              <span className="text-muted-foreground">สำหรับ Android เท่านั้น</span>
+              <span className="text-muted-foreground/60">•</span>
+              <Link
+                href="/settings/mobile-app"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                ตั้งค่า Mobile App
+              </Link>
+            </div>
           </section>
         </div>
       )}
