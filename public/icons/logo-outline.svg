@@ -1,8 +1,0 @@
-<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M760 112C592 12 365 40 208 190C52 340 14 566 112 760C210 954 438 1030 635 948C802 878 900 735 901 578" stroke-width="28"/>
-    <path d="M820 218C675 116 477 118 332 218C184 320 130 507 188 676C248 851 432 934 600 882C746 837 830 718 831 584" stroke-width="22"/>
-    <path d="M854 341C752 254 604 234 476 282C337 334 258 474 282 616C307 766 442 850 576 825C696 802 764 706 765 600" stroke-width="18"/>
-    <path d="M214 808C302 900 433 936 558 904" stroke-width="18"/>
-  </g>
-</svg>

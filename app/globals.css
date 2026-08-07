@@ -136,35 +136,102 @@
   z-index: -1;
   pointer-events: none;
   overflow: hidden;
-  background: #f8fafc;
+  background:
+    radial-gradient(ellipse 68% 52% at 18% 86%, rgb(218 242 255 / 38%), transparent 70%),
+    radial-gradient(ellipse 62% 58% at 88% 12%, rgb(245 235 255 / 30%), transparent 68%),
+    #f8fafc;
 }
 
 .dark .app-shell-bg {
-  background: #0b1120;
+  background:
+    radial-gradient(ellipse 68% 52% at 18% 86%, rgb(20 53 98 / 30%), transparent 70%),
+    radial-gradient(ellipse 62% 58% at 88% 12%, rgb(69 34 110 / 26%), transparent 68%),
+    #0b1120;
 }
 
-.app-shell-bg__logo {
+.theme-gradient-bg {
   position: absolute;
-  width: min(74vw, 900px);
-  height: auto;
-  right: -285px;
-  bottom: -365px;
-  color: #64748b;
-  opacity: 0.25;
-  transform: rotate(-8deg);
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
-.dark .app-shell-bg__logo {
-  color: #94a3b8;
+.theme-gradient-bg__svg {
+  position: absolute;
+  inset: -4% -2%;
+  width: 104%;
+  height: 108%;
+  opacity: 0.95;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 22%, black 82%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 22%, black 82%, transparent 100%);
+}
+
+.theme-gradient-bg__line {
+  fill: none;
+  stroke: url(#logo-color-wind);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theme-gradient-bg__glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(62px);
+  opacity: 0.18;
+}
+
+.theme-gradient-bg__glow--indigo {
+  width: 44vw;
+  height: 34vw;
+  left: -14vw;
+  bottom: -12vw;
+  background: #3f35d4;
+}
+
+.theme-gradient-bg__glow--cyan {
+  width: 42vw;
+  height: 32vw;
+  right: 10vw;
+  bottom: -15vw;
+  background: #13c9e1;
+}
+
+.theme-gradient-bg__glow--gold {
+  width: 34vw;
+  height: 26vw;
+  right: -8vw;
+  top: -12vw;
+  background: #f0c73e;
+  opacity: 0.1;
+}
+
+.theme-gradient-bg__stars {
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image: radial-gradient(circle, rgb(255 255 255 / 80%) 0 1px, transparent 1.5px);
+  background-size: 126px 112px;
+  background-position: 62px 18px;
+  mask-image: linear-gradient(to bottom, black, transparent 75%);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 75%);
+}
+
+.dark .theme-gradient-bg__glow {
+  opacity: 0.12;
+}
+
+.dark .theme-gradient-bg__stars {
   opacity: 0.16;
 }
 
 @media (max-width: 640px) {
-  .app-shell-bg__logo {
-    width: 760px;
-    right: -330px;
-    bottom: -320px;
-    opacity: 0.18;
+  .theme-gradient-bg__svg {
+    inset: 0 -38%;
+    width: 176%;
+  }
+
+  .theme-gradient-bg__glow {
+    filter: blur(46px);
   }
 }
 
