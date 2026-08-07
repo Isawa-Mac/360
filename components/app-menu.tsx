@@ -1,6 +1,5 @@
 "use client"
 
-import { LayoutGrid } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { useLanguage } from "@/contexts/language-context"
@@ -20,7 +19,13 @@ export function AppMenu({ className }: { className?: string }) {
       aria-label={t("go_to_360")}
       title={t("go_to_360")}
     >
-      <LayoutGrid className="h-5 w-5 text-foreground group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4" />
+      {/* ใช้ Logo หลักของ 360 เป็นจุดเข้าสู่หน้า Home */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/icons/icon-512.png?v=8"
+        alt="360 Intelligent"
+        className="h-7 w-7 object-contain group-data-[collapsible=icon]:h-6 group-data-[collapsible=icon]:w-6"
+      />
     </Link>
   )
 }

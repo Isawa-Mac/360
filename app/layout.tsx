@@ -50,18 +50,18 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/icons/favicon-light.png?v=7",
+        url: "/icons/favicon-light.png?v=8",
         type: "image/png",
         media: "(prefers-color-scheme: light)",
       },
       {
-        url: "/icons/favicon-dark.png?v=7",
+        url: "/icons/favicon-dark.png?v=8",
         type: "image/png",
         media: "(prefers-color-scheme: dark)",
       },
     ],
-    shortcut: "/icons/favicon-light.png?v=7",
-    apple: "/icons/apple-touch-icon.png?v=7",
+    shortcut: "/icons/favicon-light.png?v=8",
+    apple: "/icons/apple-touch-icon.png?v=8",
   },
 };
 
