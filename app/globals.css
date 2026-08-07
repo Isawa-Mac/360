@@ -135,22 +135,37 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  overflow: hidden;
+  background: #f8fafc;
 }
 
-.app-shell-bg__grid {
+.dark .app-shell-bg {
+  background: #0b1120;
+}
+
+.app-shell-bg__logo {
   position: absolute;
-  inset: 0;
-  opacity: 1;
-  background-image:
-    linear-gradient(to right, var(--grid-color, oklch(0.145 0 0 / 0.12)) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-color, oklch(0.145 0 0 / 0.12)) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 60%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 60%, transparent 100%);
+  width: min(74vw, 900px);
+  height: auto;
+  right: -285px;
+  bottom: -365px;
+  color: #64748b;
+  opacity: 0.25;
+  transform: rotate(-8deg);
 }
 
-.dark .app-shell-bg__grid {
-  opacity: 0.5;
+.dark .app-shell-bg__logo {
+  color: #94a3b8;
+  opacity: 0.16;
+}
+
+@media (max-width: 640px) {
+  .app-shell-bg__logo {
+    width: 760px;
+    right: -330px;
+    bottom: -320px;
+    opacity: 0.18;
+  }
 }
 
 [data-slot="sidebar-wrapper"] {
