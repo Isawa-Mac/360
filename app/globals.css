@@ -277,29 +277,17 @@
   left: 0;
   z-index: 50;
   isolation: isolate;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in oklch, var(--header-tint, var(--primary)) 16%, transparent) 0%,
-      color-mix(in oklch, var(--header-tint, var(--primary)) 8%, transparent) 100%
-    ),
-    color-mix(in oklch, var(--background) 38%, transparent);
-  backdrop-filter: blur(28px) saturate(1.85);
-  -webkit-backdrop-filter: blur(28px) saturate(1.85);
+  background: transparent !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-bottom: none;
-  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--foreground) 8%, transparent);
+  box-shadow: none;
 }
 
 .dark .app-shell-header {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in oklch, var(--header-tint, var(--primary)) 20%, transparent) 0%,
-      color-mix(in oklch, var(--header-tint, var(--primary)) 10%, transparent) 100%
-    ),
-    color-mix(in oklch, var(--background) 32%, transparent);
+  background: transparent !important;
   border-bottom: none;
-  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--foreground) 12%, transparent);
+  box-shadow: none;
 }
 
 /* Soft card depth inspired by the reference: a crisp top highlight over a
