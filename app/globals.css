@@ -142,11 +142,28 @@
     #f8fafc;
 }
 
+.app-shell-bg__wind-image {
+  position: absolute;
+  inset: 0;
+  background-image: url('/backgrounds/360-wind-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.58;
+  mix-blend-mode: multiply;
+}
+
 .dark .app-shell-bg {
   background:
     radial-gradient(ellipse 68% 52% at 18% 86%, rgb(20 53 98 / 30%), transparent 70%),
     radial-gradient(ellipse 62% 58% at 88% 12%, rgb(69 34 110 / 26%), transparent 68%),
     #0b1120;
+}
+
+.dark .app-shell-bg__wind-image {
+  opacity: 0.2;
+  mix-blend-mode: screen;
+  filter: saturate(0.85) brightness(0.7);
 }
 
 .theme-gradient-bg {
