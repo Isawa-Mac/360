@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { usePathname } from "next/navigation"
 import { LogOut } from "lucide-react"
-import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarInset } from "@/components/ui/sidebar"
 import { useHeaderControl } from "@/contexts/header-control-context"
 import { cn } from "@/lib/utils"
 import { useDashboardScale } from "@/contexts/dashboard-scale-context"
@@ -91,9 +91,6 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
 
       {!isGlobalHeaderHidden && (
         <header className="app-shell-header flex h-12 shrink-0 items-center gap-2 px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-1 h-4" />
-
           <div className="flex min-w-0 items-center gap-2">
             <span className="text-[10px] font-bold tracking-widest text-muted-foreground/70 uppercase">
               {BRAND_NAME}
