@@ -1,6 +1,7 @@
 "use client"
 
 import { Layout } from '@/components/layout'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState, Suspense } from 'react'
 import {
@@ -165,7 +166,16 @@ function HomePageContent() {
         <div className="max-w-7xl mx-auto">
           {/* Main Menu Section */}
           <div className="mb-8 relative">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 tracking-tight">
+            <h2 className="mb-8 flex items-center gap-3 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:gap-4">
+              <Image
+                src="/icons/icon-512.png?v=8"
+                alt="360 Intelligent Logo"
+                width={56}
+                height={56}
+                sizes="(max-width: 640px) 44px, 56px"
+                className="h-11 w-11 shrink-0 object-contain sm:h-14 sm:w-14"
+                priority
+              />
               360 Intelligent
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
