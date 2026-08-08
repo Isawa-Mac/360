@@ -3,7 +3,7 @@
 import { Layout } from '@/components/layout'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useState, Suspense } from 'react'
+import { Suspense } from 'react'
 import {
   BarChart3,
   Key,
@@ -60,7 +60,6 @@ function getNexDocsBaseURL(): string {
 
 function HomePageContent() {
   const router = useRouter()
-  const [loadingItem, setLoadingItem] = useState<string | null>(null)
   const { hasPermission } = usePermission()
   const { t } = useLanguage()
 
@@ -131,26 +130,15 @@ function HomePageContent() {
     }
   ]
 
-  const handleItemClick = async (item: typeof menuItems[0] & { isExternal?: boolean, enabled?: boolean, pwaRoute?: string }) => {
+  const handleItemClick = (item: typeof menuItems[0] & { isExternal?: boolean, enabled?: boolean, pwaRoute?: string }) => {
     if (item.enabled === false) return // ไม่ให้กดถ้าโดน disable
 
-    setLoadingItem(item.title || null)
-    try {
-      // เพิ่ม delay เล็กน้อยเพื่อให้เห็น loading state
-      await new Promise(resolve => setTimeout(resolve, 500))
-
-      if (item.pwaRoute) {
-        router.push(item.pwaRoute)
-      } else if (item.url && (item.isExternal || item.url.startsWith('http'))) {
-        window.location.href = item.url
-      } else if (item.url) {
-        router.push(item.url)
-      } else {
-        setLoadingItem(null)
-      }
-    } catch (error) {
-      console.error('Error navigating:', error)
-      setLoadingItem(null)
+    if (item.pwaRoute) {
+      router.push(item.pwaRoute)
+    } else if (item.url && (item.isExternal || item.url.startsWith('http'))) {
+      window.location.href = item.url
+    } else if (item.url) {
+      router.push(item.url)
     }
   }
 
@@ -188,19 +176,9 @@ function HomePageContent() {
                     ${item.enabled === false
                       ? 'opacity-50 grayscale cursor-not-allowed pointer-events-none'
                       : 'hover:scale-105 hover:-translate-y-2 cursor-pointer'
-                    } 
-                    ${loadingItem === item.title ? 'opacity-75 pointer-events-none' : ''}`}
+                    }`}
                   onClick={() => handleItemClick(item)}
                 >
-                  {/* Loading indicator in top-right corner */}
-                  {loadingItem === item.title && (
-                    <div className="absolute top-4 right-4 z-10">
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
-                        {t("loading")}
-                      </Badge>
-                    </div>
-                  )}
-
                   <CardHeader className="pb-3">
                     <div className="flex items-center space-x-3">
                       <div className="p-2 bg-primary/10 dark:bg-primary/30 rounded-lg">
@@ -234,27 +212,8 @@ function HomePageContent() {
 
 export default function HomePage() {
   return (
-    <Suspense fallback={
-      <HomeLoadingFallback />
-    }>
+    <Suspense fallback={null}>
       <HomePageContent />
     </Suspense>
-  )
-}
-
-function HomeLoadingFallback() {
-  const { t } = useLanguage()
-
-  return (
-    <Layout
-      showFilters={false}
-      pageTitle="360 Intelligent"
-    >
-      <div className="min-h-full p-6 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400">{t("loading")}</p>
-        </div>
-      </div>
-    </Layout>
   )
 }
