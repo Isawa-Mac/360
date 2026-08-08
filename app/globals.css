@@ -154,16 +154,27 @@
 }
 
 .dark .app-shell-bg {
-  background:
-    radial-gradient(ellipse 68% 52% at 18% 86%, rgb(20 53 98 / 30%), transparent 70%),
-    radial-gradient(ellipse 62% 58% at 88% 12%, rgb(69 34 110 / 26%), transparent 68%),
-    #0b1120;
+  background: #020617 !important;
 }
 
 .dark .app-shell-bg__wind-image {
-  opacity: 0.5;
+  z-index: 0;
+  opacity: 0.42;
   mix-blend-mode: screen;
-  filter: invert(1) hue-rotate(180deg) saturate(0.9) brightness(0.72);
+  filter: invert(1) hue-rotate(180deg) saturate(0.9) brightness(0.58);
+}
+
+html.dark,
+html.dark body {
+  background-color: #020617 !important;
+}
+
+.dark .app-shell-bg::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: rgb(2 6 23 / 0.62);
+  content: "";
 }
 
 .theme-gradient-bg {
