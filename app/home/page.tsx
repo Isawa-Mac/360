@@ -7,7 +7,6 @@ import { useState, Suspense } from 'react'
 import {
   BarChart3,
   Key,
-  Loader2,
   ShoppingCart,
   Globe,
   FileText,
@@ -197,7 +196,6 @@ function HomePageContent() {
                   {loadingItem === item.title && (
                     <div className="absolute top-4 right-4 z-10">
                       <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
-                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
                         {t("loading")}
                       </Badge>
                     </div>
@@ -254,7 +252,6 @@ function HomeLoadingFallback() {
     >
       <div className="min-h-full p-6 flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
           <p className="text-sm text-gray-600 dark:text-gray-400">{t("loading")}</p>
         </div>
       </div>
