@@ -77,7 +77,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <SidebarInset className="relative flex h-screen flex-col overflow-hidden bg-transparent transition-all duration-300">
+    <SidebarInset className="relative flex h-screen flex-col overflow-hidden !bg-transparent transition-all duration-300">
       <ScrollArea className="h-full w-full" hideScrollbar={scaleMode === "fit"}>
         <div
           className={cn("p-4", isGlobalHeaderHidden ? "pt-4" : "pt-16")}
