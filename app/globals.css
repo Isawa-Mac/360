@@ -307,6 +307,7 @@
       color-mix(in oklch, var(--primary) 4%, transparent)
     ),
     color-mix(in oklch, var(--card) 32%, transparent);
+  background-color: transparent !important;
   color: var(--card-foreground);
   box-shadow:
     -2px -2px 6px var(--glass-highlight),
@@ -357,6 +358,7 @@
       color-mix(in oklch, var(--primary) 4%, transparent)
     ),
     color-mix(in oklch, var(--card) 30%, transparent);
+  background-color: transparent !important;
   box-shadow:
     -2px -2px 7px var(--glass-highlight),
     0 1px 2px rgb(0 0 0 / 0.42),
