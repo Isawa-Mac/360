@@ -161,9 +161,9 @@
 }
 
 .dark .app-shell-bg__wind-image {
-  opacity: 0.42;
+  opacity: 0.5;
   mix-blend-mode: screen;
-  filter: saturate(0.95) brightness(0.82);
+  filter: invert(1) hue-rotate(180deg) saturate(0.9) brightness(0.72);
 }
 
 .theme-gradient-bg {
