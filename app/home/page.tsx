@@ -185,10 +185,10 @@ function HomePageContent() {
               }).map((item, index) => (
                 <Card
                   key={index}
-                  className={`soft-depth-card transition-all duration-300 bg-white/50 dark:bg-gray-900/50 backdrop-blur-md
+                  className={`soft-depth-card transition-all duration-300
                     ${item.enabled === false
                       ? 'opacity-50 grayscale cursor-not-allowed pointer-events-none'
-                      : 'hover:bg-white/90 hover:dark:bg-gray-800/90 hover:scale-105 hover:-translate-y-2 cursor-pointer'
+                      : 'hover:scale-105 hover:-translate-y-2 cursor-pointer'
                     } 
                     ${loadingItem === item.title ? 'opacity-75 pointer-events-none' : ''}`}
                   onClick={() => handleItemClick(item)}
