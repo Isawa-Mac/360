@@ -303,6 +303,7 @@ html.dark body {
 
 /* ThemeColor-aware glass depth for the home application cards. */
 .soft-depth-card {
+  --glass-amber: 242 160 55;
   --glass-highlight: rgb(255 255 255 / 0.26);
   position: relative;
   overflow: hidden;
@@ -335,10 +336,10 @@ html.dark body {
   border-radius: inherit;
   background: linear-gradient(
     135deg,
-    rgb(23 40 184 / 0.68) 0%,
-    rgb(106 57 232 / 0.54) 34%,
-    rgb(18 207 229 / 0.58) 70%,
-    rgb(245 200 66 / 0.48) 100%
+    rgb(var(--glass-amber) / 0.94) 0%,
+    rgb(var(--glass-amber) / 0.72) 38%,
+    rgb(var(--glass-amber) / 0.56) 72%,
+    rgb(var(--glass-amber) / 0.42) 100%
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -357,7 +358,7 @@ html.dark body {
   border-radius: inherit;
   background:
     linear-gradient(135deg, rgb(255 255 255 / 0.20), transparent 27%),
-    linear-gradient(42deg, transparent 31%, rgb(18 207 229 / 0.06) 44%, transparent 57%);
+    linear-gradient(42deg, transparent 31%, rgb(var(--glass-amber) / 0.07) 44%, transparent 57%);
   box-shadow:
     inset 1px 1px 0 rgb(255 255 255 / 0.72),
     inset -1px -1px 0 color-mix(in oklch, var(--foreground) 8%, transparent);
@@ -409,7 +410,7 @@ html.dark body {
 .dark .soft-depth-card::after {
   background:
     linear-gradient(135deg, rgb(255 255 255 / 0.10), transparent 27%),
-    linear-gradient(42deg, transparent 31%, rgb(18 207 229 / 0.05) 44%, transparent 57%);
+    linear-gradient(42deg, transparent 31%, rgb(var(--glass-amber) / 0.06) 44%, transparent 57%);
   box-shadow:
     inset 1px 1px 0 rgb(255 255 255 / 0.30),
     inset -1px -1px 0 rgb(0 0 0 / 0.18);
