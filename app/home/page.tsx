@@ -174,7 +174,7 @@ function HomePageContent() {
                   key={index}
                   className={`soft-depth-card transition-all duration-300
                     ${item.enabled === false
-                      ? 'opacity-50 grayscale cursor-not-allowed pointer-events-none'
+                      ? 'soft-depth-card--disabled cursor-not-allowed pointer-events-none'
                       : 'hover:scale-105 hover:-translate-y-2 cursor-pointer'
                     }`}
                   onClick={() => handleItemClick(item)}
