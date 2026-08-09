@@ -1,6 +1,44 @@
 export const THEME_LOCAL_STORAGE_KEY = "themeLocal";
+export const SHARED_THEME_MODE_COOKIE = "nexus_shared_theme";
+export const SHARED_THEME_COLOR_COOKIE = "nexus_shared_theme_color";
 
 const DEFAULT_THEME_ACCENT = "oklch(0.55 0.18 253)";
+
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function getSharedCookieAttributes(): string {
+  if (typeof window === "undefined") return "";
+  const configured = process.env.NEXT_PUBLIC_SHARED_COOKIE_DOMAIN?.trim();
+  const domain = configured || (window.location.hostname.endsWith(".trirex.cloud") ? ".trirex.cloud" : "");
+  const domainAttribute = domain ? `; domain=${domain.startsWith(".") ? domain : `.${domain}`}` : "";
+  const secure = window.location.protocol === "https:" ? "; Secure" : "";
+  return `${domainAttribute}; SameSite=Lax${secure}`;
+}
+
+export type SharedThemeMode = "light" | "dark" | "system";
+
+export function getSharedThemeMode(): SharedThemeMode | null {
+  const value = getCookie(SHARED_THEME_MODE_COOKIE);
+  return value === "light" || value === "dark" || value === "system" ? value : null;
+}
+
+export function setSharedThemeMode(theme: SharedThemeMode): void {
+  if (typeof document === "undefined") return;
+  document.cookie = `${SHARED_THEME_MODE_COOKIE}=${theme}; path=/; max-age=31536000${getSharedCookieAttributes()}`;
+}
+
+export function getSharedThemeColor(): string | null {
+  return getCookie(SHARED_THEME_COLOR_COOKIE)?.trim() || null;
+}
+
+export function setSharedThemeColor(themeColor: string): void {
+  if (typeof document === "undefined" || !themeColor.trim()) return;
+  document.cookie = `${SHARED_THEME_COLOR_COOKIE}=${encodeURIComponent(themeColor.trim())}; path=/; max-age=31536000${getSharedCookieAttributes()}`;
+}
 
 export function parseThemeLocalColor(raw: string | null | undefined): string | null {
   if (!raw?.trim()) return null;
@@ -25,6 +63,8 @@ export function getThemeLocalColor(): string | null {
 }
 
 export function resolveThemeAccentColor(...fallbacks: Array<string | null | undefined>): string {
+  const sharedThemeColor = getSharedThemeColor();
+  if (sharedThemeColor) return sharedThemeColor;
   const fromThemeLocal = getThemeLocalColor();
   if (fromThemeLocal) return fromThemeLocal;
 

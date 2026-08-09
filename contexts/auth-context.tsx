@@ -8,6 +8,8 @@ import {
     applyThemeAccentProperties,
     getThemeLocalColor,
     resolveThemeAccentColor,
+    setSharedThemeColor,
+    setSharedThemeMode,
 } from "@/lib/theme-local";
 
 interface User {
@@ -393,9 +395,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const syncThemeToCookie = (theme: string, themeColor?: string) => {
         if (theme === "dark" || theme === "light") {
             setCookie(APP_THEME_COOKIE, theme);
+            setSharedThemeMode(theme);
         }
         if (themeColor !== undefined && themeColor !== "") {
             setCookie(APP_THEME_COLOR_COOKIE, themeColor);
+            setSharedThemeColor(themeColor);
         }
     };
 

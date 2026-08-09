@@ -2,15 +2,16 @@
 
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
-import { applyThemeAccentProperties, resolveThemeAccentColor } from "@/lib/theme-local";
+import { applyThemeAccentProperties, getSharedThemeMode, resolveThemeAccentColor, setSharedThemeColor } from "@/lib/theme-local";
 
 function syncThemeAccentFromLocalStorage(): void {
   const themeColor = resolveThemeAccentColor();
   applyThemeAccentProperties(themeColor);
+  setSharedThemeColor(themeColor);
 }
 
 export function ThemeSync() {
-  const { resolvedTheme, theme } = useTheme();
+  const { resolvedTheme, theme, setTheme } = useTheme();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -21,6 +22,8 @@ export function ThemeSync() {
     if (typeof window === "undefined") return;
 
     const handleThemeLocalChange = () => {
+      const sharedTheme = getSharedThemeMode();
+      if (sharedTheme && sharedTheme !== theme) setTheme(sharedTheme);
       syncThemeAccentFromLocalStorage();
     };
 
@@ -31,7 +34,7 @@ export function ThemeSync() {
       window.removeEventListener("storage", handleThemeLocalChange);
       window.removeEventListener("focus", handleThemeLocalChange);
     };
-  }, []);
+  }, [setTheme, theme]);
 
   return null;
 }
