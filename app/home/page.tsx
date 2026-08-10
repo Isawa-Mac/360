@@ -1,6 +1,7 @@
 "use client"
 
 import { Layout } from '@/components/layout'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Suspense } from 'react'
 import {
@@ -11,9 +12,8 @@ import {
   FileText,
   Boxes,
   MessageCircle,
-  ArrowUpRight,
 } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { usePermission } from '@/hooks/use-permission'
 import { useLanguage } from '@/contexts/language-context'
@@ -130,59 +130,44 @@ function HomePageContent() {
     }
   ]
 
+  const handleItemClick = (item: typeof menuItems[0] & { isExternal?: boolean, enabled?: boolean, pwaRoute?: string }) => {
+    if (item.enabled === false) return
+    if (item.pwaRoute) router.push(item.pwaRoute)
+    else if (item.url) window.location.href = item.url
+  }
+
   return (
-    <Layout
-      showFilters={false}
-      hideHeader
-    >
-      <div className="min-h-full px-2 py-6 sm:px-6 sm:py-10">
-        <div className="mx-auto w-full max-w-4xl">
-          <Card className="id-card-dashboard soft-depth-card">
-            <CardContent className="p-3 sm:p-5">
-              <div className="mb-4 px-2 sm:px-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">360 Intelligent</p>
-                <h1 className="mt-1 text-2xl font-bold tracking-tight text-card-foreground sm:text-3xl">เลือกบริการที่ต้องการ</h1>
-              </div>
-              <div className="space-y-2">
-              {menuItems.filter(item => {
-                if (!item.requiredPermission) return true
-                return hasPermission(item.requiredPermission)
-              }).map((item, index) => {
-                const href = item.pwaRoute || item.url || '#'
-                return (
-                  <a
-                    key={item.title}
-                    href={href}
-                    aria-disabled={item.enabled === false}
-                    className={`id-card-dashboard__row group ${item.enabled === false ? 'id-card-dashboard__row--disabled' : ''}`}
-                    onClick={(event) => {
-                      if (item.enabled === false) event.preventDefault()
-                      if (item.pwaRoute) {
-                        event.preventDefault()
-                        router.push(item.pwaRoute)
-                      }
-                    }}
-                  >
-                    <span className="id-card-dashboard__index">{String(index + 1).padStart(2, '0')}</span>
-                    <span className="id-card-dashboard__icon"><item.icon className="h-5 w-5" aria-hidden="true" /></span>
-                    <span className="min-w-0 flex-1">
-                      <span className="flex flex-wrap items-center gap-2 text-sm font-semibold text-card-foreground sm:text-base">
-                        {item.title}
-                        {item.enabled === false && (
-                          <Badge variant="outline" className="h-5 py-0 text-[10px]">{t("coming_soon")}</Badge>
-                        )}
-                      </span>
-                      <span className="mt-1 block text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                      {item.description}
-                      </span>
-                    </span>
-                    <ArrowUpRight className="h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
-                  </a>
-                )
-              })}
-              </div>
-            </CardContent>
-          </Card>
+    <Layout showFilters={false} hideHeader>
+      <div className="relative min-h-full p-6">
+        <div className="mx-auto max-w-7xl">
+          <div className="relative mb-8">
+            <h2 className="mb-8 flex items-center gap-3 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:gap-4">
+              <Image src="/icons/icon-512.png?v=8" alt="360 Intelligent Logo" width={56} height={56} sizes="(max-width: 640px) 44px, 56px" className="h-11 w-11 shrink-0 object-contain sm:h-14 sm:w-14" priority />
+              360 Intelligent
+            </h2>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {menuItems.filter(item => !item.requiredPermission || hasPermission(item.requiredPermission)).map((item) => (
+                <Card
+                  key={item.title}
+                  className={`id-card-service transition-all duration-300 ${item.enabled === false ? 'id-card-service--disabled cursor-not-allowed' : 'cursor-pointer hover:-translate-y-2 hover:scale-105'}`}
+                  onClick={() => handleItemClick(item)}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="id-card-service__icon"><item.icon className="h-6 w-6" aria-hidden="true" /></div>
+                      <div className="min-w-0">
+                        <CardTitle className="flex flex-wrap items-center gap-2 text-lg">
+                          {item.title}
+                          {item.enabled === false && <Badge variant="outline" className="h-4 py-0 text-[10px]">{t("coming_soon")}</Badge>}
+                        </CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent><CardDescription className="text-sm leading-relaxed">{item.description}</CardDescription></CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </Layout>
