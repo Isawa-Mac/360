@@ -15,6 +15,7 @@ interface LayoutProps {
     disableDepartment?: boolean
     disableEmployee?: boolean
     customYears?: number[]
+    hideHeader?: boolean
 }
 
 export function Layout({
@@ -29,6 +30,7 @@ export function Layout({
     disableDepartment = false,
     disableEmployee = false,
     customYears,
+    hideHeader = false,
 }: LayoutProps) {
     const {
         setPageTitle,
@@ -41,6 +43,7 @@ export function Layout({
         setDisableDepartment,
         setDisableEmployee,
         setCustomYears,
+        setGlobalHeaderHidden,
     } = useHeaderControl()
 
     useEffect(() => {
@@ -55,6 +58,7 @@ export function Layout({
         setDisableDepartment(disableDepartment)
         setDisableEmployee(disableEmployee)
         setCustomYears(customYears)
+        setGlobalHeaderHidden(hideHeader)
 
         // We don't reset on unmount here to avoid flicker during transitions
         // if the next page also uses Layout
@@ -69,6 +73,7 @@ export function Layout({
         disableDepartment,
         disableEmployee,
         customYears,
+        hideHeader,
         setPageTitle,
         setPageSubtitle,
         setShowFilters,
@@ -78,7 +83,8 @@ export function Layout({
         setHideYtd,
         setDisableDepartment,
         setDisableEmployee,
-        setCustomYears
+        setCustomYears,
+        setGlobalHeaderHidden
     ])
 
     return <>{children}</>
