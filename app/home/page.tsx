@@ -137,7 +137,7 @@ function HomePageContent() {
   }
 
   return (
-    <Layout showFilters={false} hideHeader>
+    <Layout showFilters={false}>
       <div className="relative min-h-full p-6">
         <div className="mx-auto max-w-7xl">
           <div className="relative mb-8">
