@@ -9,8 +9,9 @@
         Height="800"
         MinWidth="900"
         MinHeight="600"
-        WindowState="Maximized"
+        WindowState="Normal"
         WindowStartupLocation="CenterScreen"
+        Loaded="MainWindow_Loaded"
         Background="#F7F8FA">
   <Window.Resources>
     <Style x:Key="TitleBarButtonStyle" TargetType="Button">

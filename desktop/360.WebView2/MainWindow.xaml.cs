@@ -16,6 +16,8 @@ public partial class MainWindow : Window
     private readonly Uri _startUri;
     private bool _isInitialized;
     private bool _isDownloadingUpdate;
+    private bool _isWorkAreaMaximized;
+    private Rect _normalBounds;
     private Uri? _lastCommittedUri;
     private UpdateManifest? _availableUpdate;
     private readonly DispatcherTimer _updateCheckTimer = new() { Interval = TimeSpan.FromMinutes(60) };
@@ -301,9 +303,17 @@ public partial class MainWindow : Window
 
     private void MaximizeButton_Click(object sender, RoutedEventArgs e)
     {
-        WindowState = WindowState == WindowState.Maximized
-            ? WindowState.Normal
-            : WindowState.Maximized;
+        if (_isWorkAreaMaximized)
+        {
+            Left = _normalBounds.Left;
+            Top = _normalBounds.Top;
+            Width = _normalBounds.Width;
+            Height = _normalBounds.Height;
+            _isWorkAreaMaximized = false;
+            return;
+        }
+
+        MaximizeToWorkArea();
     }
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -323,6 +333,28 @@ public partial class MainWindow : Window
         {
             DragMove();
         }
+    }
+
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        Loaded -= MainWindow_Loaded;
+        MaximizeToWorkArea();
+    }
+
+    private void MaximizeToWorkArea()
+    {
+        if (!_isWorkAreaMaximized)
+        {
+            _normalBounds = new Rect(Left, Top, Width, Height);
+        }
+
+        var workArea = SystemParameters.WorkArea;
+        WindowState = WindowState.Normal;
+        Left = workArea.Left;
+        Top = workArea.Top;
+        Width = workArea.Width;
+        Height = workArea.Height;
+        _isWorkAreaMaximized = true;
     }
 
     private async void RetryButton_Click(object sender, RoutedEventArgs e)
@@ -375,7 +407,7 @@ public partial class MainWindow : Window
             profileName);
     }
 
-    private const string CurrentVersion = "1.0.5";
+    private const string CurrentVersion = "1.0.6";
 }
 
 internal sealed class DesktopSettings
