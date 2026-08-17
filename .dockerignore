@@ -1,9 +1,11 @@
 node_modules
 .next
+out
 .git
-.gitignore
+.github
+.env*
+*.log
 desktop/360.WebView2/bin
 desktop/360.WebView2/obj
 desktop/installer/output
-*.user
-*.suo
+.playwright-cli
