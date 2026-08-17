@@ -12,6 +12,7 @@ const WINDOWS_DOWNLOAD_URL = "/desktop/360-Setup-1.0.6-win-x64.exe"
 
 export function MobileAppDownload() {
   const [open, setOpen] = useState(false)
+  const [windowsDownloadStarted, setWindowsDownloadStarted] = useState(false)
   const { user } = useAuth()
   const { isSuperAdmin } = usePermission()
   const allowedRoles = new Set(["administrator", "admin", "super"])
@@ -97,11 +98,33 @@ export function MobileAppDownload() {
             <a
               href={WINDOWS_DOWNLOAD_URL}
               download
+              onClick={() => setWindowsDownloadStarted(true)}
               className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5 font-medium text-primary transition-colors hover:bg-primary/10"
             >
               <MonitorDown className="h-4 w-4" aria-hidden="true" />
               ดาวน์โหลด 360 สำหรับ Windows
             </a>
+            {windowsDownloadStarted && (
+              <div
+                className="mt-4 rounded-xl border border-orange-300/60 bg-orange-50 p-4 text-left text-sm text-orange-950"
+                role="alertdialog"
+                aria-labelledby="windows-install-title"
+              >
+                <p id="windows-install-title" className="font-semibold">
+                  ดาวน์โหลดตัวติดตั้งแล้วหรือยัง?
+                </p>
+                <p className="mt-1 text-xs leading-5 text-orange-900/80">
+                  เมื่อดาวน์โหลดเสร็จ ให้เปิดไฟล์ 360-Setup ในแถบ Downloads หรือโฟลเดอร์ Downloads เพื่อเริ่มติดตั้ง
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setWindowsDownloadStarted(false)}
+                  className="mt-3 rounded-md bg-orange-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-orange-600"
+                >
+                  เข้าใจแล้ว
+                </button>
+              </div>
+            )}
             <div className="mt-3 flex items-center justify-center gap-2 text-xs">
               <span className="text-muted-foreground">รองรับ Android และ Windows</span>
               {canManageMobileApp && (
