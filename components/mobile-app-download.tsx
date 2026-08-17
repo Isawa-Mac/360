@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Download, Smartphone, X } from "lucide-react"
+import { Download, MonitorDown, Smartphone, X } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { usePermission } from "@/hooks/use-permission"
 
 const APK_DOWNLOAD_URL = "/download/mobile-app"
+const WINDOWS_DOWNLOAD_URL = "/desktop/360-Setup-1.0.6-win-x64.exe"
 
 export function MobileAppDownload() {
   const [open, setOpen] = useState(false)
@@ -93,8 +94,16 @@ export function MobileAppDownload() {
               <Download className="h-4 w-4" aria-hidden="true" />
               ดาวน์โหลด APK
             </a>
+            <a
+              href={WINDOWS_DOWNLOAD_URL}
+              download
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5 font-medium text-primary transition-colors hover:bg-primary/10"
+            >
+              <MonitorDown className="h-4 w-4" aria-hidden="true" />
+              ดาวน์โหลด 360 สำหรับ Windows
+            </a>
             <div className="mt-3 flex items-center justify-center gap-2 text-xs">
-              <span className="text-muted-foreground">สำหรับ Android เท่านั้น</span>
+              <span className="text-muted-foreground">รองรับ Android และ Windows</span>
               {canManageMobileApp && (
                 <>
                   <span className="text-muted-foreground/60">•</span>
