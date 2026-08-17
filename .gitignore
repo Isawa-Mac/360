@@ -20,6 +20,11 @@
 # production
 /build
 
+# .NET desktop build output
+**/bin/
+**/obj/
+/desktop/installer/output/
+
 # misc
 .DS_Store
 *.pem
