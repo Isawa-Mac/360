@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.gitignore
+desktop/360.WebView2/bin
+desktop/360.WebView2/obj
+desktop/installer/output
+*.user
+*.suo
