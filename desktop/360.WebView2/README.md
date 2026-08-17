@@ -45,6 +45,6 @@ dotnet publish desktop/360.WebView2/360.WebView2.csproj -c Release -r win-x64 --
 powershell -ExecutionPolicy Bypass -File desktop/installer/build-installer.ps1
 ```
 
-ตัวติดตั้งจะอยู่ที่ `desktop/installer/output/360-Setup-1.0.6-win-x64.exe` และติดตั้งแบบ per-user ที่ `%LOCALAPPDATA%\Programs\TRIREX\360` โดยสร้าง shortcut ใน Start Menu และ Desktop
+ตัวติดตั้งจะอยู่ที่ `desktop/installer/output/360-Setup-1.0.8-win-x64.exe` และติดตั้งแบบ per-user ที่ `%LOCALAPPDATA%\Programs\TRIREX\360` โดยสร้าง shortcut ใน Start Menu และ Desktop
 
 เมื่อมีเวอร์ชันใหม่ ให้อัปโหลดไฟล์ setup ไปยัง URL ใน `downloadUrl` และแก้ `public/desktop/update.json` เป็นเวอร์ชันใหม่ ปุ่ม `UPDATE` สีส้มจะแสดงใน Header ของแอปโดยอัตโนมัติ แอปจะดาวน์โหลด setup แล้วเปิดตัวติดตั้งเมื่อกดปุ่ม

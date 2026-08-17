@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { usePermission } from "@/hooks/use-permission"
 
 const APK_DOWNLOAD_URL = "/download/mobile-app"
-const WINDOWS_DOWNLOAD_URL = "/desktop/360-Setup-1.0.7-win-x64.exe"
+const WINDOWS_DOWNLOAD_URL = "/desktop/360-Setup-1.0.8-win-x64.exe"
 
 export function MobileAppDownload() {
   const [open, setOpen] = useState(false)
