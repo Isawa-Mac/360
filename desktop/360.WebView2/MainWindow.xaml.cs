@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Input;
 using Microsoft.Web.WebView2.Core;
 
 namespace Trirex360.Desktop;
@@ -201,6 +202,45 @@ public partial class MainWindow : Window
         LoadingPanel.Visibility = Visibility.Collapsed;
         ErrorMessage.Text = message;
         ErrorPanel.Visibility = Visibility.Visible;
+    }
+
+    private void HomeButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (WebView.CoreWebView2 is not null)
+        {
+            WebView.CoreWebView2.Navigate(new Uri(new Uri(_startUri.GetLeftPart(UriPartial.Authority)), "/home").AbsoluteUri);
+        }
+    }
+
+    private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState.Minimized;
+    }
+
+    private void MaximizeButton_Click(object sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState == WindowState.Maximized
+            ? WindowState.Normal
+            : WindowState.Maximized;
+    }
+
+    private void CloseButton_Click(object sender, RoutedEventArgs e)
+    {
+        Close();
+    }
+
+    private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ClickCount == 2)
+        {
+            MaximizeButton_Click(sender, new RoutedEventArgs());
+            return;
+        }
+
+        if (e.LeftButton == MouseButtonState.Pressed)
+        {
+            DragMove();
+        }
     }
 
     private async void RetryButton_Click(object sender, RoutedEventArgs e)

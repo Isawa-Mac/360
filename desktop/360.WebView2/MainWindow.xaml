@@ -3,6 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         Title="360"
+        WindowStyle="None"
+        ResizeMode="CanResize"
         Width="1280"
         Height="800"
         MinWidth="900"
@@ -11,7 +13,40 @@
         WindowStartupLocation="CenterScreen"
         Background="#F7F8FA">
   <Grid>
-    <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="32" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <Grid Grid.Row="0" Background="#F7F8FA" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+
+      <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Foreground="#6B7280" FontSize="12" Text="360" />
+
+      <StackPanel Grid.Column="1" Orientation="Horizontal">
+        <Button Width="44" Height="32" Margin="0" Padding="0" BorderThickness="0" Background="Transparent"
+                Foreground="#374151" ToolTip="Home" Click="HomeButton_Click">
+          <TextBlock FontSize="16" Text="⌂" />
+        </Button>
+        <Button Width="46" Height="32" Margin="0" Padding="0" BorderThickness="0" Background="Transparent"
+                Foreground="#374151" ToolTip="ย่อหน้าต่าง" Click="MinimizeButton_Click">
+          <TextBlock FontSize="16" Text="&#x2212;" />
+        </Button>
+        <Button Width="46" Height="32" Margin="0" Padding="0" BorderThickness="0" Background="Transparent"
+                Foreground="#374151" ToolTip="ขยายหน้าต่าง" Click="MaximizeButton_Click">
+          <TextBlock FontSize="13" Text="&#x25A1;" />
+        </Button>
+        <Button Width="46" Height="32" Margin="0" Padding="0" BorderThickness="0" Background="Transparent"
+                Foreground="#374151" ToolTip="ปิดหน้าต่าง" Click="CloseButton_Click">
+          <TextBlock FontSize="16" Text="&#x2715;" />
+        </Button>
+      </StackPanel>
+    </Grid>
+
+    <Grid Grid.Row="1">
       <wv2:WebView2 x:Name="WebView" DefaultBackgroundColor="#F7F8FA" />
 
       <Border x:Name="LoadingPanel" Background="#F7F8FA">
