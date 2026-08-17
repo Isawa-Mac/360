@@ -1,8 +1,11 @@
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Microsoft.Web.WebView2.Core;
 
 namespace Trirex360.Desktop;
@@ -12,7 +15,11 @@ public partial class MainWindow : Window
     private readonly DesktopSettings _settings;
     private readonly Uri _startUri;
     private bool _isInitialized;
+    private bool _isDownloadingUpdate;
     private Uri? _lastCommittedUri;
+    private UpdateManifest? _availableUpdate;
+    private readonly DispatcherTimer _updateCheckTimer = new() { Interval = TimeSpan.FromMinutes(60) };
+    private static readonly HttpClient UpdateHttpClient = new();
 
     public MainWindow()
     {
@@ -20,6 +27,8 @@ public partial class MainWindow : Window
         _settings = DesktopSettings.Load();
         _startUri = ResolveStartUri(_settings);
         ContentRendered += MainWindow_ContentRendered;
+        _updateCheckTimer.Tick += async (_, _) => await CheckForUpdateAsync();
+        Closed += (_, _) => _updateCheckTimer.Stop();
     }
 
     private async void MainWindow_ContentRendered(object? sender, EventArgs e)
@@ -47,6 +56,8 @@ public partial class MainWindow : Window
             }
 
             Navigate(_startUri);
+            _updateCheckTimer.Start();
+            await CheckForUpdateAsync();
         }
         catch (WebView2RuntimeNotFoundException)
         {
@@ -212,6 +223,77 @@ public partial class MainWindow : Window
         }
     }
 
+    private async Task CheckForUpdateAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_settings.UpdateManifestUrl)
+            || !Uri.TryCreate(_settings.UpdateManifestUrl, UriKind.Absolute, out var manifestUri)
+            || manifestUri.Scheme != Uri.UriSchemeHttps)
+        {
+            return;
+        }
+
+        try
+        {
+            using var response = await UpdateHttpClient.GetAsync(manifestUri, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            var manifest = await JsonSerializer.DeserializeAsync<UpdateManifest>(stream, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (manifest is null
+                || !Version.TryParse(manifest.Version, out var remoteVersion)
+                || !Version.TryParse(CurrentVersion, out var currentVersion)
+                || remoteVersion <= currentVersion
+                || !Uri.TryCreate(manifest.DownloadUrl, UriKind.Absolute, out var downloadUri)
+                || downloadUri.Scheme != Uri.UriSchemeHttps)
+            {
+                return;
+            }
+
+            _availableUpdate = manifest with { DownloadUri = downloadUri };
+            UpdateButton.Visibility = Visibility.Visible;
+        }
+        catch (Exception) when (UpdateHttpClient is not null)
+        {
+            // Checking for updates must never prevent the desktop app from opening.
+        }
+    }
+
+    private async void UpdateButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_isDownloadingUpdate || _availableUpdate is null)
+        {
+            return;
+        }
+
+        _isDownloadingUpdate = true;
+        UpdateButton.IsEnabled = false;
+        ((TextBlock)UpdateButton.Content).Text = "กำลังโหลด…";
+
+        try
+        {
+            var installerPath = Path.Combine(Path.GetTempPath(), $"360-Setup-{_availableUpdate.Version}-win-x64.exe");
+            using var response = await UpdateHttpClient.GetAsync(_availableUpdate.DownloadUri, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            await using var source = await response.Content.ReadAsStreamAsync();
+            await using var target = File.Create(installerPath);
+            await source.CopyToAsync(target);
+            target.Close();
+
+            Process.Start(new ProcessStartInfo(installerPath) { UseShellExecute = true });
+            Close();
+        }
+        catch (Exception ex)
+        {
+            _isDownloadingUpdate = false;
+            UpdateButton.IsEnabled = true;
+            ((TextBlock)UpdateButton.Content).Text = "UPDATE";
+            MessageBox.Show($"ดาวน์โหลดตัวอัปเดตไม่สำเร็จ: {ex.Message}", "อัปเดต 360", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
     private void MinimizeButton_Click(object sender, RoutedEventArgs e)
     {
         WindowState = WindowState.Minimized;
@@ -292,6 +374,8 @@ public partial class MainWindow : Window
             "360",
             profileName);
     }
+
+    private const string CurrentVersion = "1.0.5";
 }
 
 internal sealed class DesktopSettings
@@ -301,6 +385,7 @@ internal sealed class DesktopSettings
     public string[] ExternalBrowserHosts { get; init; } = [];
     public bool OpenExternalHostsInBrowser { get; init; } = true;
     public bool AllowDevTools { get; init; }
+    public string UpdateManifestUrl { get; init; } = "https://360.trirex.cloud/desktop/update.json";
 
     public static DesktopSettings Load()
     {
@@ -322,4 +407,9 @@ internal sealed class DesktopSettings
             return new DesktopSettings();
         }
     }
+}
+
+internal sealed record UpdateManifest(string Version, string DownloadUrl)
+{
+    public Uri? DownloadUri { get; init; }
 }

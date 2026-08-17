@@ -12,6 +12,33 @@
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         Background="#F7F8FA">
+  <Window.Resources>
+    <Style x:Key="TitleBarButtonStyle" TargetType="Button">
+      <Setter Property="Width" Value="44" />
+      <Setter Property="Height" Value="32" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="#374151" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#E5E7EB" />
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#D1D5DB" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Resources>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="32" />
@@ -27,20 +54,22 @@
       <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Foreground="#6B7280" FontSize="12" Text="360" />
 
       <StackPanel Grid.Column="1" Orientation="Horizontal">
-        <Button Width="44" Height="32" Margin="0" Padding="0" BorderThickness="0" Background="Transparent"
-                Foreground="#374151" ToolTip="Home" Click="HomeButton_Click">
-          <TextBlock FontSize="16" Text="⌂" />
+        <Button Style="{StaticResource TitleBarButtonStyle}" ToolTip="หน้าหลัก" Click="HomeButton_Click">
+          <Path Width="16" Height="16" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                Data="M12,2.5 L21,10 V21.5 C21,22.3 20.3,23 19.5,23 H4.5 C3.7,23 3,22.3 3,21.5 V10 Z M12,5.1 L5,10.9 V20.5 H9 V14.5 H15 V20.5 H19 V10.9 Z" />
         </Button>
-        <Button Width="46" Height="32" Margin="0" Padding="0" BorderThickness="0" Background="Transparent"
-                Foreground="#374151" ToolTip="ย่อหน้าต่าง" Click="MinimizeButton_Click">
+        <Button x:Name="UpdateButton" Style="{StaticResource TitleBarButtonStyle}" Width="76" Height="24" Margin="4,4,4,4"
+                Background="#F97316" Foreground="White" ToolTip="มีเวอร์ชันใหม่" Visibility="Collapsed"
+                Click="UpdateButton_Click">
+          <TextBlock FontSize="11" FontWeight="SemiBold" Text="UPDATE" />
+        </Button>
+        <Button Style="{StaticResource TitleBarButtonStyle}" Width="46" ToolTip="ย่อหน้าต่าง" Click="MinimizeButton_Click">
           <TextBlock FontSize="16" Text="&#x2212;" />
         </Button>
-        <Button Width="46" Height="32" Margin="0" Padding="0" BorderThickness="0" Background="Transparent"
-                Foreground="#374151" ToolTip="ขยายหน้าต่าง" Click="MaximizeButton_Click">
+        <Button Style="{StaticResource TitleBarButtonStyle}" Width="46" ToolTip="ขยายหน้าต่าง" Click="MaximizeButton_Click">
           <TextBlock FontSize="13" Text="&#x25A1;" />
         </Button>
-        <Button Width="46" Height="32" Margin="0" Padding="0" BorderThickness="0" Background="Transparent"
-                Foreground="#374151" ToolTip="ปิดหน้าต่าง" Click="CloseButton_Click">
+        <Button Style="{StaticResource TitleBarButtonStyle}" Width="46" ToolTip="ปิดหน้าต่าง" Click="CloseButton_Click">
           <TextBlock FontSize="16" Text="&#x2715;" />
         </Button>
       </StackPanel>

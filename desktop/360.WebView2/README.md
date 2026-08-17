@@ -33,6 +33,7 @@ dotnet publish desktop/360.WebView2/360.WebView2.csproj -c Release -r win-x64 --
 - `ExternalBrowserHosts`: host ที่ต้องเปิดด้วยเบราว์เซอร์หลักของ Windows (ค่าเริ่มต้นเป็นรายการว่าง ระบบทั้งหมดจึงเปิดใน WebView2)
 - `OpenExternalHostsInBrowser`: เปิด host ภายนอกด้วยเบราว์เซอร์หลักของ Windows
 - `AllowDevTools`: เปิด DevTools และ context menu สำหรับการพัฒนา
+- `UpdateManifestUrl`: URL ไฟล์ JSON สำหรับตรวจสอบเวอร์ชันใหม่ โดยต้องมี `version` และ `downloadUrl` เช่น `/desktop/update.json`
 
 ข้อมูล cookie, SSO และ WebView2 profile ถูกเก็บแยกที่ `%LOCALAPPDATA%\TRIREX\360\WebView2-v2` โดย profile รุ่นเดิมยังถูกเก็บไว้และไม่ถูกลบ
 
@@ -44,4 +45,6 @@ dotnet publish desktop/360.WebView2/360.WebView2.csproj -c Release -r win-x64 --
 powershell -ExecutionPolicy Bypass -File desktop/installer/build-installer.ps1
 ```
 
-ตัวติดตั้งจะอยู่ที่ `desktop/installer/output/360-Setup-1.0.4-win-x64.exe` และติดตั้งแบบ per-user ที่ `%LOCALAPPDATA%\Programs\TRIREX\360` โดยสร้าง shortcut ใน Start Menu และ Desktop
+ตัวติดตั้งจะอยู่ที่ `desktop/installer/output/360-Setup-1.0.5-win-x64.exe` และติดตั้งแบบ per-user ที่ `%LOCALAPPDATA%\Programs\TRIREX\360` โดยสร้าง shortcut ใน Start Menu และ Desktop
+
+เมื่อมีเวอร์ชันใหม่ ให้อัปโหลดไฟล์ setup ไปยัง URL ใน `downloadUrl` และแก้ `public/desktop/update.json` เป็นเวอร์ชันใหม่ ปุ่ม `UPDATE` สีส้มจะแสดงใน Header ของแอปโดยอัตโนมัติ แอปจะดาวน์โหลด setup แล้วเปิดตัวติดตั้งเมื่อกดปุ่ม
