@@ -407,7 +407,7 @@ public partial class MainWindow : Window
             profileName);
     }
 
-    private const string CurrentVersion = "1.0.6";
+    private const string CurrentVersion = "1.0.7";
 }
 
 internal sealed class DesktopSettings
