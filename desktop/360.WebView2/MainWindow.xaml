@@ -59,6 +59,10 @@
           <Path Width="16" Height="16" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                 Data="M12,2.5 L21,10 V21.5 C21,22.3 20.3,23 19.5,23 H4.5 C3.7,23 3,22.3 3,21.5 V10 Z M12,5.1 L5,10.9 V20.5 H9 V14.5 H15 V20.5 H19 V10.9 Z" />
         </Button>
+        <Button Style="{StaticResource TitleBarButtonStyle}" ToolTip="รีโหลดหน้าเว็บ" Click="ReloadButton_Click">
+          <Path Width="16" Height="16" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                Data="M20.5,11 A8.5,8.5 0 1 0 21,14 H18.5 M21,6 V11 H16" />
+        </Button>
         <Button x:Name="UpdateButton" Style="{StaticResource TitleBarButtonStyle}" Width="76" Height="24" Margin="4,4,4,4"
                 Background="#F97316" Foreground="White" ToolTip="มีเวอร์ชันใหม่" Visibility="Collapsed"
                 Click="UpdateButton_Click">

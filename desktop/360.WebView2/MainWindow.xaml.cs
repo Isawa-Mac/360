@@ -225,6 +225,11 @@ public partial class MainWindow : Window
         }
     }
 
+    private void ReloadButton_Click(object sender, RoutedEventArgs e)
+    {
+        WebView.CoreWebView2?.Reload();
+    }
+
     private async Task CheckForUpdateAsync()
     {
         if (string.IsNullOrWhiteSpace(_settings.UpdateManifestUrl)
@@ -407,7 +412,7 @@ public partial class MainWindow : Window
             profileName);
     }
 
-    private const string CurrentVersion = "1.0.8";
+    private const string CurrentVersion = "1.0.10";
 }
 
 internal sealed class DesktopSettings
