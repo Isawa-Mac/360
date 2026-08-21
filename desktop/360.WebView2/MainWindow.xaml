@@ -13,6 +13,13 @@
         WindowStartupLocation="CenterScreen"
         Loaded="MainWindow_Loaded"
         Background="{DynamicResource WindowBackgroundBrush}">
+  <WindowChrome.WindowChrome>
+    <WindowChrome CaptionHeight="0"
+                  GlassFrameThickness="0"
+                  ResizeBorderThickness="6"
+                  CornerRadius="0"
+                  UseAeroCaptionButtons="False" />
+  </WindowChrome.WindowChrome>
   <Window.Resources>
     <Style x:Key="TitleBarButtonStyle" TargetType="Button">
       <Setter Property="Width" Value="44" />
