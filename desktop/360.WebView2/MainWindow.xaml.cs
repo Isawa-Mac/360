@@ -5,7 +5,9 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Threading;
+using System.Runtime.InteropServices;
 using Microsoft.Web.WebView2.Core;
 
 namespace Trirex360.Desktop;
@@ -20,6 +22,7 @@ public partial class MainWindow : Window
     private Rect _normalBounds;
     private Uri? _lastCommittedUri;
     private UpdateManifest? _availableUpdate;
+    private readonly WindowsThemeWatcher _themeWatcher;
     private readonly DispatcherTimer _updateCheckTimer = new() { Interval = TimeSpan.FromMinutes(60) };
     private static readonly HttpClient UpdateHttpClient = new();
 
@@ -28,10 +31,58 @@ public partial class MainWindow : Window
         InitializeComponent();
         _settings = DesktopSettings.Load();
         _startUri = ResolveStartUri(_settings);
+        _themeWatcher = new WindowsThemeWatcher();
+        _themeWatcher.ThemeChanged += ThemeWatcher_ThemeChanged;
+        _themeWatcher.Start();
+        ApplyWindowsTheme(_themeWatcher.IsDarkMode);
         ContentRendered += MainWindow_ContentRendered;
         _updateCheckTimer.Tick += async (_, _) => await CheckForUpdateAsync();
-        Closed += (_, _) => _updateCheckTimer.Stop();
+        Closed += (_, _) =>
+        {
+            _updateCheckTimer.Stop();
+            _themeWatcher.ThemeChanged -= ThemeWatcher_ThemeChanged;
+            _themeWatcher.Dispose();
+        };
     }
+
+    private void ThemeWatcher_ThemeChanged(object? sender, bool isDarkMode)
+    {
+        _ = Dispatcher.InvokeAsync(() => ApplyWindowsTheme(isDarkMode));
+    }
+
+    private void ApplyWindowsTheme(bool isDarkMode)
+    {
+        Application.Current.Resources["WindowBackgroundBrush"] = CreateBrush(isDarkMode ? "#202020" : "#F7F8FA");
+        Application.Current.Resources["ChromeBorderBrush"] = CreateBrush(isDarkMode ? "#3D3D3D" : "#D7DCE5");
+        Application.Current.Resources["PrimaryTextBrush"] = CreateBrush(isDarkMode ? "#F5F5F5" : "#111827");
+        Application.Current.Resources["SecondaryTextBrush"] = CreateBrush(isDarkMode ? "#C7C7C7" : "#6B7280");
+        Application.Current.Resources["TitleBarButtonTextBrush"] = CreateBrush(isDarkMode ? "#F5F5F5" : "#374151");
+        Application.Current.Resources["TitleBarButtonHoverBrush"] = CreateBrush(isDarkMode ? "#3A3A3A" : "#E5E7EB");
+        Application.Current.Resources["TitleBarButtonPressedBrush"] = CreateBrush(isDarkMode ? "#4A4A4A" : "#D1D5DB");
+
+        SetImmersiveDarkTitleBar(isDarkMode);
+    }
+
+    private static System.Windows.Media.SolidColorBrush CreateBrush(string color)
+    {
+        return new System.Windows.Media.SolidColorBrush(
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(color));
+    }
+
+    private void SetImmersiveDarkTitleBar(bool isDarkMode)
+    {
+        var handle = new WindowInteropHelper(this).Handle;
+        if (handle == IntPtr.Zero)
+        {
+            return;
+        }
+
+        var useDarkMode = isDarkMode ? 1 : 0;
+        _ = DwmSetWindowAttribute(handle, 20, ref useDarkMode, sizeof(int));
+    }
+
+    [DllImport("dwmapi.dll")]
+    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int attributeValue, int attributeSize);
 
     private async void MainWindow_ContentRendered(object? sender, EventArgs e)
     {
@@ -412,7 +463,7 @@ public partial class MainWindow : Window
             profileName);
     }
 
-    private const string CurrentVersion = "1.0.11";
+    private const string CurrentVersion = "1.0.12";
 }
 
 internal sealed class DesktopSettings

@@ -4,13 +4,20 @@
              StartupUri="MainWindow.xaml">
   <Application.Resources>
     <SolidColorBrush x:Key="PrimaryBrush" Color="#2563EB" />
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#F7F8FA" />
+    <SolidColorBrush x:Key="ChromeBorderBrush" Color="#D7DCE5" />
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="#111827" />
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="#6B7280" />
+    <SolidColorBrush x:Key="TitleBarButtonTextBrush" Color="#374151" />
+    <SolidColorBrush x:Key="TitleBarButtonHoverBrush" Color="#E5E7EB" />
+    <SolidColorBrush x:Key="TitleBarButtonPressedBrush" Color="#D1D5DB" />
     <Style TargetType="Button">
       <Setter Property="MinWidth" Value="36" />
       <Setter Property="Height" Value="32" />
       <Setter Property="Margin" Value="3,0" />
       <Setter Property="Padding" Value="9,0" />
       <Setter Property="Background" Value="Transparent" />
-      <Setter Property="BorderBrush" Value="#D7DCE5" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ChromeBorderBrush}" />
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="Cursor" Value="Hand" />
     </Style>
