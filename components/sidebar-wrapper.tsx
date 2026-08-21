@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { usePathname } from "next/navigation"
-import { LogOut } from "lucide-react"
+import { LogOut, UserRound, X } from "lucide-react"
+import * as Dialog from "@radix-ui/react-dialog"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { useHeaderControl } from "@/contexts/header-control-context"
 import { cn } from "@/lib/utils"
@@ -61,6 +62,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { locale, t } = useLanguage()
   const { user, logout } = useAuth()
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
 
   const headerControl = useHeaderControl()
   const dashboardScale = useDashboardScale()
@@ -141,6 +143,10 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => setIsProfileOpen(true)}>
+                  <UserRound className="h-4 w-4" />
+                  {locale === "th" ? "โปรไฟล์" : "Profile"}
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
                     logout()
@@ -156,6 +162,34 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
           </div>
         </header>
       )}
+
+      <Dialog.Root open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
+          <Dialog.Content className="fixed inset-4 z-50 flex h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-lg border bg-background shadow-2xl outline-none md:inset-8 md:h-[calc(100dvh-4rem)] md:w-[calc(100vw-4rem)]">
+            <Dialog.Title className="sr-only">
+              {locale === "th" ? "โปรไฟล์" : "Profile"}
+            </Dialog.Title>
+            <Dialog.Description className="sr-only">
+              {locale === "th" ? "หน้าตั้งค่าโปรไฟล์ผู้ใช้" : "User profile settings"}
+            </Dialog.Description>
+            <Dialog.Close asChild>
+              <button
+                type="button"
+                className="absolute top-3 right-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-md bg-background/90 text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-foreground"
+                aria-label={locale === "th" ? "ปิดหน้าต่างโปรไฟล์" : "Close profile dialog"}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </Dialog.Close>
+            <iframe
+              src="https://sso360.trirex.cloud/#/admin/profile"
+              title={locale === "th" ? "โปรไฟล์ SSO 360" : "SSO 360 profile"}
+              className="h-full w-full border-0"
+            />
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </SidebarInset>
   )
 }
