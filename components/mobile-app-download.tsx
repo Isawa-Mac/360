@@ -6,9 +6,10 @@ import Link from "next/link"
 import { Download, MonitorDown, Smartphone, X } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { usePermission } from "@/hooks/use-permission"
+import { DESKTOP_VERSION } from "@/lib/desktop-version"
 
 const APK_DOWNLOAD_URL = "/download/mobile-app"
-const WINDOWS_DOWNLOAD_URL = "/desktop/360-Setup-1.0.11-win-x64.exe"
+const WINDOWS_DOWNLOAD_URL = `/desktop/360-Setup-${DESKTOP_VERSION}-win-x64.exe`
 
 export function MobileAppDownload() {
   const [open, setOpen] = useState(false)

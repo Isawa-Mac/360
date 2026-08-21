@@ -13,6 +13,7 @@ import { useLanguage } from "@/contexts/language-context"
 import { useAuth } from "@/contexts/auth-context"
 import { normalizeProfileImageSrc } from "@/lib/profile-image"
 import { getPageTitle } from "@/lib/navigation"
+import { DESKTOP_VERSION } from "@/lib/desktop-version"
 import { MobileAppDownload } from "@/components/mobile-app-download"
 import {
   DropdownMenu,
@@ -96,6 +97,9 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
           <div className="flex min-w-0 items-center gap-2">
             <span className="text-[10px] font-bold tracking-widest text-muted-foreground/70 uppercase">
               {BRAND_NAME}
+            </span>
+            <span className="text-[10px] font-medium text-muted-foreground/60">
+              v{DESKTOP_VERSION}
             </span>
             <span className="text-muted-foreground/40">/</span>
             <span
