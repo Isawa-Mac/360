@@ -84,6 +84,36 @@ public partial class MainWindow : Window
     [DllImport("dwmapi.dll")]
     private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int attributeValue, int attributeSize);
 
+    [DllImport("user32.dll")]
+    private static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint flags);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetMonitorInfo(IntPtr monitor, ref MonitorInfo monitorInfo);
+
+    [DllImport("user32.dll")]
+    private static extern uint GetDpiForWindow(IntPtr hwnd);
+
+    private const uint MonitorDefaultToNearest = 2;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativeRect
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    private struct MonitorInfo
+    {
+        public int Size;
+        public NativeRect Monitor;
+        public NativeRect WorkArea;
+        public uint Flags;
+    }
+
     private async void MainWindow_ContentRendered(object? sender, EventArgs e)
     {
         ContentRendered -= MainWindow_ContentRendered;
@@ -404,13 +434,36 @@ public partial class MainWindow : Window
             _normalBounds = new Rect(Left, Top, Width, Height);
         }
 
-        var workArea = SystemParameters.WorkArea;
+        var workArea = GetCurrentMonitorWorkArea();
         WindowState = WindowState.Normal;
         Left = workArea.Left;
         Top = workArea.Top;
         Width = workArea.Width;
         Height = workArea.Height;
         _isWorkAreaMaximized = true;
+    }
+
+    private Rect GetCurrentMonitorWorkArea()
+    {
+        var handle = new WindowInteropHelper(this).Handle;
+        var monitor = MonitorFromWindow(handle, MonitorDefaultToNearest);
+        var monitorInfo = new MonitorInfo { Size = Marshal.SizeOf<MonitorInfo>() };
+
+        if (monitor == IntPtr.Zero || !GetMonitorInfo(monitor, ref monitorInfo))
+        {
+            return SystemParameters.WorkArea;
+        }
+
+        // Win32 returns physical pixels while WPF positions windows in device-independent pixels.
+        var dpi = GetDpiForWindow(handle);
+        var scale = dpi > 0 ? 96d / dpi : 1d;
+        var area = monitorInfo.WorkArea;
+
+        return new Rect(
+            area.Left * scale,
+            area.Top * scale,
+            (area.Right - area.Left) * scale,
+            (area.Bottom - area.Top) * scale);
     }
 
     private async void RetryButton_Click(object sender, RoutedEventArgs e)
