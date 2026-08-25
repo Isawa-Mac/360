@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 export default function MobileAppSettingsPage() {
-  const [apkUrl, setApkUrl] = useState("")
+  const [file, setFile] = useState<File | null>(null)
+  const [fileName, setFileName] = useState("")
   const [updatedAt, setUpdatedAt] = useState<string>()
   const [status, setStatus] = useState("")
   const [saving, setSaving] = useState(false)
@@ -16,7 +17,7 @@ export default function MobileAppSettingsPage() {
     fetch("/api/settings/mobile-app", { cache: "no-store" })
       .then((response) => response.json())
       .then((config) => {
-        setApkUrl(config.apkUrl || "")
+        setFileName(config.fileName || "ยังไม่ได้อัปโหลด APK")
         setUpdatedAt(config.updatedAt)
       })
       .catch(() => setStatus("โหลดการตั้งค่าไม่สำเร็จ"))
@@ -28,14 +29,14 @@ export default function MobileAppSettingsPage() {
     setStatus("")
     try {
       const response = await fetch("/api/settings/mobile-app", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ apkUrl }),
+        method: "POST",
+        body: (() => { const data = new FormData(); if (file) data.append("file", file); return data })(),
       })
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || "บันทึกไม่สำเร็จ")
       setUpdatedAt(result.updatedAt)
-      setStatus("บันทึกแล้ว QR Code เดิมจะใช้ลิงก์ใหม่นี้ทันที")
+      setFileName(result.fileName || "มีไฟล์ APK บนเซิร์ฟเวอร์แล้ว")
+      setStatus("บันทึกแล้ว ไฟล์ถูกเก็บไว้บนเซิร์ฟเวอร์และ QR Code เดิมใช้ได้ทันที")
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "บันทึกไม่สำเร็จ")
     } finally {
@@ -54,8 +55,9 @@ export default function MobileAppSettingsPage() {
       </div>
       <form onSubmit={save} className="rounded-2xl border bg-card p-6 shadow-sm">
         <Label htmlFor="apk-url">ลิงก์ดาวน์โหลด APK</Label>
-        <Input id="apk-url" value={apkUrl} onChange={(event) => setApkUrl(event.target.value)} className="mt-2" placeholder="https://..." required />
-        <p className="mt-2 text-xs text-muted-foreground">ต้องเป็นลิงก์ HTTPS เช่น SharePoint, OneDrive หรือ storage ของบริษัท</p>
+        <Input id="apk-file" type="file" accept=".apk,application/vnd.android.package-archive" onChange={(event) => setFile(event.target.files?.[0] || null)} className="mt-2" required />
+        <p className="mt-2 text-xs text-muted-foreground">เลือกไฟล์ APK เพื่ออัปโหลดและเก็บไว้บนเซิร์ฟเวอร์ของระบบ</p>
+        {fileName && <p className="mt-2 text-xs text-muted-foreground">ไฟล์ปัจจุบัน: {fileName}</p>}
         <div className="mt-5 flex items-center gap-3">
           <Button type="submit" disabled={saving}><Save className="mr-2 h-4 w-4" />{saving ? "กำลังบันทึก..." : "บันทึก"}</Button>
           {status && <p className="text-sm text-muted-foreground">{status}</p>}

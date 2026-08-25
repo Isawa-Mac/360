@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getMobileAppConfig, MOBILE_APP_CONFIG_PATH, MobileAppConfig } from "@/lib/mobile-app-config"
-import { writeJson } from "@/lib/fs-json"
+import { getMobileAppConfig, MOBILE_APP_FILE, saveMobileAppConfig } from "@/lib/mobile-app-config"
+import { promises as fs } from "fs"
+import path from "path"
 
 export const dynamic = "force-dynamic"
 
@@ -8,22 +9,20 @@ export async function GET() {
   return NextResponse.json(await getMobileAppConfig())
 }
 
-export async function PUT(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Partial<MobileAppConfig>
-    const apkUrl = typeof body.apkUrl === "string" ? body.apkUrl.trim() : ""
-
-    if (!/^https:\/\/[^\s]+$/i.test(apkUrl)) {
-      return NextResponse.json({ error: "กรุณาระบุ URL HTTPS ที่ถูกต้อง" }, { status: 400 })
-    }
-
-    const config: MobileAppConfig = {
-      apkUrl,
+    const file = (await request.formData()).get("file")
+    if (!(file instanceof File) || !file.name.toLowerCase().endsWith(".apk")) return NextResponse.json({ error: "กรุณาเลือกไฟล์ APK" }, { status: 400 })
+    await fs.mkdir(path.dirname(MOBILE_APP_FILE), { recursive: true })
+    await fs.writeFile(MOBILE_APP_FILE, Buffer.from(await file.arrayBuffer()))
+    const config = {
+      apkUrl: "/download/mobile-app",
+      fileName: file.name,
       updatedAt: new Date().toISOString(),
     }
-    await writeJson(MOBILE_APP_CONFIG_PATH, config)
+    await saveMobileAppConfig(config)
     return NextResponse.json(config)
   } catch {
-    return NextResponse.json({ error: "ไม่สามารถบันทึกการตั้งค่าได้" }, { status: 500 })
+    return NextResponse.json({ error: "ไม่สามารถบันทึกไฟล์ APK บนเซิร์ฟเวอร์ได้" }, { status: 500 })
   }
 }
