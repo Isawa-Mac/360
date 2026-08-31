@@ -25,5 +25,5 @@ finally {
     Pop-Location
 }
 
-$setupPath = Join-Path $installerDirectory "output\360-Setup-1.0.16-win-x64.exe"
+$setupPath = Join-Path $installerDirectory "output\360-Setup-1.0.17-win-x64.exe"
 Write-Host "Installer created: $setupPath"

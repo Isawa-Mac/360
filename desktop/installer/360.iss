@@ -1,9 +1,9 @@
 #define AppName "360"
 #define AppPublisher "TRIREX"
-#define AppVersion "1.0.16"
+#define AppVersion "1.0.17"
 #define AppExeName "360.exe"
 #define ProjectRoot "..\.."
-#define PublishDir ProjectRoot + "\desktop\360.WebView2\bin\Release\net9.0-windows\win-x64\publish"
+#define PublishDir ProjectRoot + "\desktop\360.WebView2\bin\Release\net9.0-windows10.0.17763.0\win-x64\publish"
 #define AppIcon ProjectRoot + "\desktop\360.WebView2\Resources\360.ico"
 
 [Setup]
