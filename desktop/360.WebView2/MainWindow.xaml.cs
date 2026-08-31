@@ -45,6 +45,151 @@ public partial class MainWindow : Window
         };
     }
 
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        // WebView2 is a native child window and can consume mouse hit-testing
+        // before WPF's WindowChrome gets a chance to identify resize borders.
+        var hwnd = new WindowInteropHelper(this).Handle;
+        HwndSource.FromHwnd(hwnd)?.AddHook(WindowProc);
+    }
+
+    private const int WM_NCHITTEST = 0x0084;
+    private const int WM_GETMINMAXINFO = 0x0024;
+    private const int HTLEFT = 10;
+    private const int HTRIGHT = 11;
+    private const int HTTOP = 12;
+    private const int HTTOPLEFT = 13;
+    private const int HTTOPRIGHT = 14;
+    private const int HTBOTTOM = 15;
+    private const int HTBOTTOMLEFT = 16;
+    private const int HTBOTTOMRIGHT = 17;
+    private const int ResizeBorder = 8;
+    private const int OuterResizeBorder = 4;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct WindowRect
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativePoint
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MinMaxInfo
+    {
+        public NativePoint Reserved;
+        public NativePoint MaxSize;
+        public NativePoint MaxPosition;
+        public NativePoint MinTrackSize;
+        public NativePoint MaxTrackSize;
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool GetWindowRect(IntPtr hwnd, out WindowRect rect);
+
+    private IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg == WM_GETMINMAXINFO)
+        {
+            ApplyMinMaxInfo(hwnd, lParam);
+            handled = true;
+            return IntPtr.Zero;
+        }
+
+        // The custom work-area maximize keeps WindowState.Normal, so check both flags.
+        if (msg != WM_NCHITTEST || WindowState == WindowState.Maximized || _isWorkAreaMaximized)
+        {
+            return IntPtr.Zero;
+        }
+
+        if (!GetWindowRect(hwnd, out var rect))
+        {
+            return IntPtr.Zero;
+        }
+
+        // WM_NCHITTEST carries physical pixels; scale the grab zones with the monitor DPI.
+        var dpi = GetDpiForWindow(hwnd);
+        var scale = dpi > 0 ? dpi / 96d : 1d;
+        var inner = (int)Math.Ceiling(ResizeBorder * scale);
+        var outer = (int)Math.Ceiling(OuterResizeBorder * scale);
+
+        var x = (short)(long)lParam;
+        var y = (short)((long)lParam >> 16);
+        var withinExtendedWidth = x >= rect.Left - outer && x < rect.Right + outer;
+        var withinExtendedHeight = y >= rect.Top - outer && y < rect.Bottom + outer;
+        var left = withinExtendedHeight && x >= rect.Left - outer && x < rect.Left + inner;
+        var right = withinExtendedHeight && x < rect.Right + outer && x >= rect.Right - inner;
+        var top = withinExtendedWidth && y >= rect.Top - outer && y < rect.Top + inner;
+        var bottom = withinExtendedWidth && y < rect.Bottom + outer && y >= rect.Bottom - inner;
+
+        var hit =
+            left && top ? HTTOPLEFT :
+            right && top ? HTTOPRIGHT :
+            left && bottom ? HTBOTTOMLEFT :
+            right && bottom ? HTBOTTOMRIGHT :
+            left ? HTLEFT :
+            right ? HTRIGHT :
+            top ? HTTOP :
+            bottom ? HTBOTTOM :
+            0;
+
+        if (hit != 0)
+        {
+            handled = true;
+            return new IntPtr(hit);
+        }
+
+        return IntPtr.Zero;
+    }
+
+    private void ApplyMinMaxInfo(IntPtr hwnd, IntPtr lParam)
+    {
+        var dpi = GetDpiForWindow(hwnd);
+        var scale = dpi > 0 ? dpi / 96d : 1d;
+        var info = Marshal.PtrToStructure<MinMaxInfo>(lParam);
+
+        // Keep the native sizing loop inside the WPF MinWidth/MinHeight bounds.
+        info.MinTrackSize = new NativePoint
+        {
+            X = (int)Math.Ceiling(MinWidth * scale),
+            Y = (int)Math.Ceiling(MinHeight * scale)
+        };
+
+        // Cap manual resizing at the current monitor's work area (physical pixels).
+        var monitor = MonitorFromWindow(hwnd, MonitorDefaultToNearest);
+        var monitorInfo = new MonitorInfo { Size = Marshal.SizeOf<MonitorInfo>() };
+        if (monitor != IntPtr.Zero && GetMonitorInfo(monitor, ref monitorInfo))
+        {
+            var workArea = monitorInfo.WorkArea;
+            var monitorArea = monitorInfo.Monitor;
+            var workAreaSize = new NativePoint
+            {
+                X = workArea.Right - workArea.Left,
+                Y = workArea.Bottom - workArea.Top
+            };
+
+            info.MaxPosition = new NativePoint
+            {
+                X = workArea.Left - monitorArea.Left,
+                Y = workArea.Top - monitorArea.Top
+            };
+            info.MaxSize = workAreaSize;
+            info.MaxTrackSize = workAreaSize;
+        }
+
+        Marshal.StructureToPtr(info, lParam, false);
+    }
+
     private void ThemeWatcher_ThemeChanged(object? sender, bool isDarkMode)
     {
         _ = Dispatcher.InvokeAsync(() => ApplyWindowsTheme(isDarkMode));
@@ -516,7 +661,7 @@ public partial class MainWindow : Window
             profileName);
     }
 
-    private const string CurrentVersion = "1.0.15";
+    private const string CurrentVersion = "1.0.16";
 }
 
 internal sealed class DesktopSettings

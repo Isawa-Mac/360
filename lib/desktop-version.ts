@@ -1,1 +1,1 @@
-export const DESKTOP_VERSION = "1.0.15"
+export const DESKTOP_VERSION = "1.0.16"
