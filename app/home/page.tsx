@@ -74,7 +74,7 @@ function HomePageContent() {
   const menuItems = [
     {
       title: "CEO 360 Intelligent",
-      description: t("crm_description"),
+      description: t("ceo_description"),
       icon: Globe,
       url: getCEOBaseURL(),
       isExternal: true,
