@@ -12,6 +12,7 @@ import {
   FileText,
   Boxes,
   MessageCircle,
+  LayoutDashboard,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -73,19 +74,19 @@ function HomePageContent() {
   // Main menu items — requiredPermission ใช้ permission string จาก SSO จริง
   const menuItems = [
     {
-      title: "CEO 360 Intelligent",
-      description: t("ceo_description"),
+      title: "CRM 360 Intelligent",
+      description: t("crm_description"),
       icon: Globe,
-      url: getCEOBaseURL(),
+      url: "https://crm360.trirex.cloud",
       isExternal: true,
       enabled: true,
       requiredPermission: ['erp360.crm.read'],
     },
     {
-      title: "CRM 360 Intelligent",
-      description: t("crm_description"),
-      icon: Globe,
-      url: "https://crm360.trirex.cloud",
+      title: "CEO 360 Intelligent",
+      description: t("ceo_description"),
+      icon: LayoutDashboard,
+      url: getCEOBaseURL(),
       isExternal: true,
       enabled: true,
       requiredPermission: ['erp360.crm.read'],
