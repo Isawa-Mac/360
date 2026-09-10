@@ -30,6 +30,12 @@ function getBIBaseURL(): string {
   return 'https://bi360.trirex.cloud';
 }
 
+/** ดึง CEO Base URL ตาม environment (client-side) */
+function getCEOBaseURL(): string {
+  const url = process.env.NEXT_PUBLIC_CEO360_URL || process.env.NEXT_PUBLIC_CEO_URL;
+  return url && /^https?:\/\//.test(url) ? url : 'https://ceo360.trirex.cloud';
+}
+
 /** ดึง ERP Base URL ตาม environment (ให้สอดคล้องกับ CRM 360) */
 function getERPBaseURL(): string {
   const url = process.env.NEXT_PUBLIC_ERP360_URL || process.env.NEXT_PUBLIC_ERP_URL;
@@ -66,6 +72,15 @@ function HomePageContent() {
 
   // Main menu items — requiredPermission ใช้ permission string จาก SSO จริง
   const menuItems = [
+    {
+      title: "CEO 360 Intelligent",
+      description: t("crm_description"),
+      icon: Globe,
+      url: getCEOBaseURL(),
+      isExternal: true,
+      enabled: true,
+      requiredPermission: ['erp360.crm.read'],
+    },
     {
       title: "CRM 360 Intelligent",
       description: t("crm_description"),
