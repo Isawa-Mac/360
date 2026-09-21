@@ -89,7 +89,9 @@
     </Grid>
 
     <Grid Grid.Row="1">
-      <wv2:WebView2CompositionControl x:Name="WebView" DefaultBackgroundColor="#F7F8FA" />
+      <wv2:WebView2CompositionControl x:Name="WebView"
+                                      AllowExternalDrop="True"
+                                      DefaultBackgroundColor="#F7F8FA" />
 
       <Border x:Name="LoadingPanel" Background="{DynamicResource WindowBackgroundBrush}">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">

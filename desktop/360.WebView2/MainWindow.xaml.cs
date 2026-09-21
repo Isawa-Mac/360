@@ -277,6 +277,10 @@ public partial class MainWindow : Window
             var environment = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
             await WebView.EnsureCoreWebView2Async(environment);
 
+            // Allow files and other supported objects to be dragged from outside
+            // the WebView2 window into the hosted web page.
+            WebView.AllowExternalDrop = true;
+
             if (!_isInitialized)
             {
                 ConfigureWebView();
