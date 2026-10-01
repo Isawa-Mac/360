@@ -3,7 +3,7 @@
 import { Layout } from '@/components/layout'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import {
   BarChart3,
   Key,
@@ -13,6 +13,7 @@ import {
   Boxes,
   MessageCircle,
   LayoutDashboard,
+  LoaderCircle,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -69,6 +70,7 @@ function HomePageContent() {
   const router = useRouter()
   const { hasPermission } = usePermission()
   const { t } = useLanguage()
+  const [loadingItem, setLoadingItem] = useState<string | null>(null)
 
 
   // Main menu items — requiredPermission ใช้ permission string จาก SSO จริง
@@ -147,7 +149,8 @@ function HomePageContent() {
   ]
 
   const handleItemClick = (item: typeof menuItems[0] & { isExternal?: boolean, enabled?: boolean, pwaRoute?: string }) => {
-    if (item.enabled === false) return
+    if (item.enabled === false || loadingItem) return
+    setLoadingItem(item.title)
     if (item.pwaRoute) router.push(item.pwaRoute)
     else if (item.url) window.location.href = item.url
   }
@@ -165,9 +168,16 @@ function HomePageContent() {
               {menuItems.filter(item => !item.requiredPermission || hasPermission(item.requiredPermission)).map((item) => (
                 <Card
                   key={item.title}
-                  className={`id-card-service transition-all duration-300 ${item.enabled === false ? 'id-card-service--disabled cursor-not-allowed' : 'cursor-pointer hover:-translate-y-2 hover:scale-105'}`}
+                  aria-busy={loadingItem === item.title}
+                  className={`id-card-service relative transition-all duration-300 ${item.enabled === false ? 'id-card-service--disabled cursor-not-allowed' : 'cursor-pointer hover:-translate-y-2 hover:scale-105'} ${loadingItem && loadingItem !== item.title ? 'pointer-events-none opacity-60' : ''}`}
                   onClick={() => handleItemClick(item)}
                 >
+                  {loadingItem === item.title && (
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-xl bg-background/80 backdrop-blur-sm" role="status" aria-live="polite">
+                      <LoaderCircle className="h-8 w-8 animate-spin text-primary" aria-hidden="true" />
+                      <span className="text-sm font-medium">{t("loading")}</span>
+                    </div>
+                  )}
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-3">
                       <div className="id-card-service__icon"><item.icon className="h-6 w-6" aria-hidden="true" /></div>
