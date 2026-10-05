@@ -36,7 +36,7 @@ function ProfileAvatar({
   fallbackClassName?: string
 }) {
   return (
-    <span className="inline-flex rounded-sm bg-[conic-gradient(from_210deg,color-mix(in_oklch,var(--primary)_36%,white)_0_26%,var(--primary)_26%_100%)] p-[2px] shadow-sm">
+    <span className="inline-flex rounded-sm bg-gray-200 p-[2px] shadow-sm">
       <Avatar className={cn("overflow-hidden rounded-[2px] after:rounded-[2px]", className)}>
         {avatarSrc ? <AvatarImage className="rounded-[2px]" src={avatarSrc} alt={name} referrerPolicy="no-referrer" /> : null}
         <AvatarFallback className={cn("rounded-[2px]", fallbackClassName)}>

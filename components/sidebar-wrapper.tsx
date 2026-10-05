@@ -123,7 +123,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
                   className="inline-flex h-9 w-9 items-center justify-center rounded-sm text-xs font-bold text-foreground transition-colors hover:bg-background/55"
                   aria-label={locale === "th" ? "เมนูโปรไฟล์" : "Profile menu"}
                 >
-                  <span className="inline-flex shrink-0 rounded-sm bg-gradient-to-br from-primary via-primary/80 to-primary/40 p-[2px] shadow-sm">
+                  <span className="inline-flex shrink-0 rounded-sm bg-gray-200 p-[2px] shadow-sm">
                     <UserAvatar src={avatarSrc} fallback={userFallback} className="h-6 w-6 rounded-[2px] bg-background/35" />
                   </span>
                 </button>
@@ -134,7 +134,7 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
                     <UserAvatar
                       src={avatarSrc}
                       fallback={userFallback}
-                      className="h-10 w-10 border border-border bg-muted text-sm font-semibold text-foreground"
+                      className="h-10 w-10 border border-gray-200 bg-muted text-sm font-semibold text-foreground"
                     />
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-foreground">
