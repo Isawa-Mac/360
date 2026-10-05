@@ -41,7 +41,7 @@ function UserAvatar({
   const showImage = Boolean(src && failedSrc !== src)
 
   return (
-    <span className={cn("inline-flex overflow-hidden rounded-full", className)}>
+    <span className={cn("inline-flex overflow-hidden rounded-sm", className)}>
       {showImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img

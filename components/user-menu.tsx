@@ -13,6 +13,7 @@ import {
 import { useAuth } from "@/contexts/auth-context"
 import { useLanguage } from "@/contexts/language-context"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { cn } from "@/lib/utils"
 
 interface UserMenuProps {
   name?: string
@@ -35,10 +36,10 @@ function ProfileAvatar({
   fallbackClassName?: string
 }) {
   return (
-    <span className="inline-flex rounded-full bg-[conic-gradient(from_210deg,color-mix(in_oklch,var(--primary)_36%,white)_0_26%,var(--primary)_26%_100%)] p-[2px] shadow-sm">
-      <Avatar className={className}>
-        {avatarSrc ? <AvatarImage src={avatarSrc} alt={name} referrerPolicy="no-referrer" /> : null}
-        <AvatarFallback className={fallbackClassName}>
+    <span className="inline-flex rounded-sm bg-[conic-gradient(from_210deg,color-mix(in_oklch,var(--primary)_36%,white)_0_26%,var(--primary)_26%_100%)] p-[2px] shadow-sm">
+      <Avatar className={cn("overflow-hidden rounded-[2px] after:rounded-[2px]", className)}>
+        {avatarSrc ? <AvatarImage className="rounded-[2px]" src={avatarSrc} alt={name} referrerPolicy="no-referrer" /> : null}
+        <AvatarFallback className={cn("rounded-[2px]", fallbackClassName)}>
           {initials}
         </AvatarFallback>
       </Avatar>
@@ -67,7 +68,7 @@ export function UserMenu({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full text-xs font-bold text-foreground transition-colors hover:bg-accent"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-xs font-bold text-foreground transition-colors hover:bg-accent"
           aria-label={t("profile_menu")}
         >
           <ProfileAvatar
