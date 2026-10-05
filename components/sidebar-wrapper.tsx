@@ -41,7 +41,7 @@ function UserAvatar({
   const showImage = Boolean(src && failedSrc !== src)
 
   return (
-    <span className={cn("inline-flex overflow-hidden rounded-sm", className)}>
+    <span className={cn("inline-flex overflow-hidden rounded-md", className)}>
       {showImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -120,11 +120,11 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-sm text-xs font-bold text-foreground transition-colors hover:bg-background/55"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-md text-xs font-bold text-foreground transition-colors hover:bg-background/55"
                   aria-label={locale === "th" ? "เมนูโปรไฟล์" : "Profile menu"}
                 >
-                  <span className="inline-flex shrink-0 rounded-sm bg-gray-200 p-[2px] shadow-sm">
-                    <UserAvatar src={avatarSrc} fallback={userFallback} className="h-6 w-6 rounded-[2px] bg-background/35" />
+                  <span className="inline-flex shrink-0 rounded-md bg-gray-200 p-[2px] shadow-sm">
+                    <UserAvatar src={avatarSrc} fallback={userFallback} className="h-6 w-6 rounded-[4px] bg-background/35" />
                   </span>
                 </button>
               </DropdownMenuTrigger>
