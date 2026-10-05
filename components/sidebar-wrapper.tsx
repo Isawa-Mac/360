@@ -120,10 +120,12 @@ export function SidebarWrapper({ children }: { children: React.ReactNode }) {
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/50 bg-background/35 text-xs font-bold text-foreground backdrop-blur-sm transition-colors hover:bg-background/55"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-xs font-bold text-foreground transition-colors hover:bg-background/55"
                   aria-label={locale === "th" ? "เมนูโปรไฟล์" : "Profile menu"}
                 >
-                  <UserAvatar src={avatarSrc} fallback={userFallback} className="h-full w-full bg-background/35" />
+                  <span className="inline-flex shrink-0 rounded-xl bg-gradient-to-br from-primary via-primary/80 to-primary/40 p-[2px] shadow-sm">
+                    <UserAvatar src={avatarSrc} fallback={userFallback} className="h-6 w-6 rounded-[10px] bg-background/35" />
+                  </span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" side="bottom" className="w-64">
