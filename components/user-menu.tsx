@@ -36,10 +36,10 @@ function ProfileAvatar({
   fallbackClassName?: string
 }) {
   return (
-    <span className="inline-flex rounded-md bg-gray-200 p-[2px] shadow-sm">
-      <Avatar className={cn("overflow-hidden rounded-[4px] after:rounded-[4px]", className)}>
-        {avatarSrc ? <AvatarImage className="rounded-[4px]" src={avatarSrc} alt={name} referrerPolicy="no-referrer" /> : null}
-        <AvatarFallback className={cn("rounded-[4px]", fallbackClassName)}>
+    <span className="inline-flex rounded-full bg-gray-200 p-[2px] shadow-sm">
+      <Avatar className={cn("overflow-hidden rounded-full after:rounded-full", className)}>
+        {avatarSrc ? <AvatarImage className="rounded-full" src={avatarSrc} alt={name} referrerPolicy="no-referrer" /> : null}
+        <AvatarFallback className={cn("rounded-full", fallbackClassName)}>
           {initials}
         </AvatarFallback>
       </Avatar>
@@ -68,7 +68,7 @@ export function UserMenu({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-md text-xs font-bold text-foreground transition-colors hover:bg-accent"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full text-xs font-bold text-foreground transition-colors hover:bg-accent"
           aria-label={t("profile_menu")}
         >
           <ProfileAvatar
