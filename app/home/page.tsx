@@ -91,7 +91,7 @@ function HomePageContent() {
       url: getCEOBaseURL(),
       isExternal: true,
       enabled: true,
-      requiredPermission: ['erp360.crm.read'],
+      requiredPermission: ['erp360.ceo.full', 'erp360.ceo.read'],
     },
     {
       title: "ERP 360 Intelligent",
